@@ -65,11 +65,11 @@ namespace WaDirectory
 
 	}
 
-	bool         Directory::LogOut(const Session* inSession){ 
+	bool         Directory::LogOut(const string inSession){ 
 
 		// = new Session();
 		Jsonparser Jspar;
-		Jspar.cookie = inSession->cookies;
+		Jspar.cookie = inSession;
 		bool resultat = Jspar.Logout();
 		
 		return resultat;

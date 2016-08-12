@@ -20,14 +20,21 @@ class Userwrap : public node::ObjectWrap {
 	
   explicit Userwrap();
   ~Userwrap();
-  static      Local<Object> returnobj(Isolate* isolate, User* b, uint32_t index);
+
+  static      Local<Object> CreateUserWrap(Isolate* isolate, User* PtUser);
+  
   static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
-  static void PlusOne(const v8::FunctionCallbackInfo<v8::Value>& args);
+  
   static void GetDirectorywrap(const v8::FunctionCallbackInfo<v8::Value>& args);
+  
   static void GetName(const v8::FunctionCallbackInfo<v8::Value>& args);
+  
   static void BelongsToGroupwrap_1(const v8::FunctionCallbackInfo<v8::Value>& args);
+  
   static void BelongsToGroupwrap_2(const v8::FunctionCallbackInfo<v8::Value>& args);
+  
   static void IsLoggedIn(const v8::FunctionCallbackInfo<v8::Value>& args);
+  
   static v8::Persistent<v8::Function> constructor;
  
   User *ptuser;

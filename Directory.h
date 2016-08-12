@@ -31,7 +31,7 @@ namespace WaDirectory
 
 		User*       GetUser(const std::string& inUserName) ;
 
-		bool         LogOut(const Session* inSession) ;
+		bool         LogOut(const string inSession) ;
 
 		Session*    GetSession(const std::string& inSessionID) ;
 

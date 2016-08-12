@@ -10,6 +10,7 @@ namespace WaDirectorywrap_data_v8 {
 
 class Groupwrap : public node::ObjectWrap {
 	friend class Directorywrap;
+	friend class Userwrap;
  public:
   static void Init(v8::Local<v8::Object> exports);
 
@@ -18,13 +19,19 @@ class Groupwrap : public node::ObjectWrap {
   ~Groupwrap();
 
   static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
-  static void PlusOne(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   static void GetName(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   static void GetUserwrapByName(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   static void GetSubGroupwrapName(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   static void GetDirectorywrap(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   static v8::Persistent<v8::Function> constructor;
-  static      Local<Object> returnobj(Isolate* isolate, Group* b, uint32_t index);
+
+  static      Local<Object> CreateGroupWrap(Isolate* isolate, Group* PtGroup);
+
   Group *ptgroup;
 };
 

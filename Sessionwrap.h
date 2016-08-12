@@ -29,20 +29,20 @@ class Sessionwrap : public node::ObjectWrap {
   char *Wsid;
   char *cookies;
   static v8::Persistent<v8::Function> constructor;
-  static      Local<Object> returnobj(Isolate* isolate, Session* b, uint32_t index);
+
   Session *ptsession;
  private:
 	 explicit Sessionwrap();
   ~Sessionwrap();
  // static  Local<Value> NewInstance();
-  
+  static      Local<Object> CreateSessionWrap(Isolate* isolate, Session* PtSession);
   static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void GetUserwrap(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void GetWASID(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void GetDirectorywrap(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void IsValid(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void LogOut(const v8::FunctionCallbackInfo<v8::Value>& args);
-  static void PlusOne(const v8::FunctionCallbackInfo<v8::Value>& args);
+
 
 
 };
