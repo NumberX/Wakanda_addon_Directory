@@ -1,10 +1,10 @@
 #include "Jsonparser.h"
 #include"curlcpp.h"
 #include "rapidjson\document.h"
-using namespace rapidjson;
 #include<string>
 #include<vector>
 using namespace std;
+using namespace rapidjson;
 
 namespace WaDirectory_data
 {
@@ -21,17 +21,23 @@ namespace WaDirectory_data
 	string Jsonparser::login(string Username, string Password)
 	{
 
-		curlcpp curltest;
+		curlcpp curltest("");
+
 		curltest.initall();
+
 		this->cookie = curltest.login(Username, Password, "http://localhost:8081/rest/$directory/login");
+
 		if (curltest.res != CURLE_OK)
+
 			cerr << "ERROR: " << curl_easy_strerror(curltest.res) << endl;
 		else {
 
 			Document document;
+
 			document.Parse(curltest.data.str.c_str());
-			assert(document["result"].IsBool());
+			
 			if (document["result"].GetBool() == true)return (getWASID());
+
 			if (document["result"].GetBool() == false)return "";
 		}
 		return "";
@@ -40,26 +46,38 @@ namespace WaDirectory_data
 	string Jsonparser::getWASID()
 	{
 		string sub = "";
+
 		int pos = cookie.find("WASID	");
+
 		sub = cookie.substr(pos + 6);
 		
 		return sub;
+	
 	}
+
 	bool Jsonparser::Logout()
 	{
 
-		curlcpp curltest;
+		curlcpp curltest("");
+
 		curltest.initall();
+
 		curltest.Logout("http://localhost:8081/rest/$directory/logout", this->cookie);
+
 		this->cookie = "";
+
 		if (curltest.res != CURLE_OK)
+
 			cerr << "ERROR: " << curl_easy_strerror(curltest.res) << endl;
+
 		else {
 
 			Document document;
+
 			document.Parse(curltest.data.str.c_str());
-			assert(document["result"].IsBool());
+
 			if (document["result"].GetBool() == true)return true;
+
 			if (document["result"].GetBool() == false)return false;
 		}
 		return false;
@@ -69,18 +87,26 @@ namespace WaDirectory_data
 	bool Jsonparser::currentUserBelongsTo(string Idgroup, string Namegroup)
 	{
 
-		curlcpp curltest;
+		curlcpp curltest("");
+
 		curltest.initall();
+
 		curltest.currentUserBelongsTo("http://localhost:8081/rest/$directory/currentUserBelongsTo", Idgroup, Namegroup, this->cookie);
+
 		if (curltest.res != CURLE_OK)
+
 			cerr << "ERROR: " << curl_easy_strerror(curltest.res) << endl;
+
 		else {
 
 			Document document;
+
 			document.Parse(curltest.data.str.c_str());
-			assert(document["result"].IsBool());
+
 			if (document["result"].GetBool() == true)return true;
+
 			if (document["result"].GetBool() == false)return false;
+
 		}
 		return false;
 	}
@@ -88,15 +114,23 @@ namespace WaDirectory_data
 
 	vector<std::string> Jsonparser::currentuser()
 	{
+
 		std::vector<std::string> resultat;
-		curlcpp curltest;
+
+		curlcpp curltest("");
+
 		curltest.initall();
+
 		curltest.curentuser("http://localhost:8081/rest/$directory/currentUser", this->cookie);
+
 		if (curltest.res != CURLE_OK)
+
 			cerr << "ERROR: " << curl_easy_strerror(curltest.res) << endl;
+
 		else {
 
 			Document document;
+
 			document.Parse(curltest.data.str.c_str());
 
 			if (document["result"].IsNull())
@@ -106,17 +140,17 @@ namespace WaDirectory_data
 			else
 			{
 
-				for (Value::ConstMemberIterator itr = document["result"].MemberBegin();
-					itr != document["result"].MemberEnd(); ++itr)
+				for (Value::ConstMemberIterator Iterator = document["result"].MemberBegin();
+					Iterator != document["result"].MemberEnd(); ++Iterator)
 				{
-					if (itr->name == "userName") {
-						resultat.push_back(itr->value.GetString());
+					if (Iterator->name == "userName") {
+						resultat.push_back(Iterator->value.GetString());
 					}
-					if (itr->name == "fullName") {
-						resultat.push_back(itr->value.GetString());
+					if (Iterator->name == "fullName") {
+						resultat.push_back(Iterator->value.GetString());
 					}
-					if (itr->name == "ID") {
-						resultat.push_back(itr->value.GetString());
+					if (Iterator->name == "ID") {
+						resultat.push_back(Iterator->value.GetString());
 					}
 
 				}
@@ -125,6 +159,7 @@ namespace WaDirectory_data
 
 		}
 		return resultat;
-		return vector<std::string>();
+
+		
 	}
 }

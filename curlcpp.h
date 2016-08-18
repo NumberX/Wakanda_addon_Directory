@@ -16,25 +16,43 @@ namespace WaDirectory_data
 	class JsonData;
 	class curlcpp
 	{
+	private: 
+		string Url;
 	public:
-		curlcpp();
+		curlcpp(string Url);
+		
 		~curlcpp();
+		
 		JsonData data, dataheaderstr;
+		
 		size_t write_databody(void *ptr, size_t size, size_t nmemb);
+		
 		static size_t WriteDataCallbackbody(void *ptr, size_t size, size_t nmemb, void* pInstance);
+		
 		size_t write_dataheader(void *ptr, size_t size, size_t nmemb);
+		
 		static size_t WriteDataCallbackheader(void *ptr, size_t size, size_t nmemb, void* pInstance);
+		
 		CURL *curl;
+		
 		CURLcode res;
+		
 		curl_slist *cookies;
+		
 		std::string m_data;
-		string data2_cookie, test;
+		
 		void initall();
 
 		string login(string username, string password, string url);
+		
 		void curentuser(string url, string cookie);
+		
 		void currentUserBelongsTo(string url, string Idgroup, string Namegroup, string cookie);
+		
 		void Logout(string url, string cookie);
+		
 		string getWASID();
+	private:
+		void CurlCppSetOption(string Url);
 	};
 }

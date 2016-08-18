@@ -4,7 +4,7 @@
 */
 
 #pragma once
-
+#include"ISession.h"
 #include<vector>
 #include<string>
 using namespace std;
@@ -16,7 +16,7 @@ namespace WaDirectory
 	class Directory;
 	class User;
 
-	class Session
+	class Session 
 	{
 	public:
 		Session();
@@ -32,7 +32,9 @@ namespace WaDirectory
 		bool    IsValid() ;
 
 		void LogOut() ;
+		
 		string wsid, cookies;
+
 
 
 	};

@@ -1,6 +1,6 @@
 #ifndef Directorywrap_H
 #define Directorywrap_H
-
+#include <uv.h>
 #include <node.h>
 #include <node_object_wrap.h>
 #include"Userwrap.h"
@@ -13,7 +13,7 @@ namespace WaDirectorywrap_data_v8 {
 	
 	class Sessionwrap;
 	class Userwrap;
-	class Groupwrapwrap;
+	class Groupwrap;
 class Directorywrap : public node::ObjectWrap {
 
 	friend class Userwrap;
@@ -35,9 +35,13 @@ class Directorywrap : public node::ObjectWrap {
   static void UserwrapBelongTo_2(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void UserwrapBelongTo_3(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void LogOut(const v8::FunctionCallbackInfo<v8::Value>& args);
+ 
   static v8::Persistent<v8::Function> constructor;
 
   Directory *ptdirectory;
+public:
+
+	
 };
 
 }  // namespace demo

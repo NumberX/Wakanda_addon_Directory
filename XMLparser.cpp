@@ -8,6 +8,19 @@ namespace WaDirectory_data
 {
 	XMLparser::XMLparser()
 	{
+		std::ifstream file("C:/Users/user/Documents/Wakanda/Untitled/Untitled Solution/directory.waDirectory");
+		std::stringstream buffer;
+
+		if (file) {
+			buffer << file.rdbuf();
+			file.close();
+
+			std::string content = buffer.str();
+
+		
+			xml.parse<0>((char*)&content[0]);
+
+		}
 	}
 
 
@@ -16,96 +29,81 @@ namespace WaDirectory_data
 	}
 
 
-	string XMLparser::NameUserById(string Id, string attribut)
+	string XMLparser::NameUserById(string Id, string NameAttribut)
 	{
-		std::ifstream file("C:/Users/user/Documents/Wakanda/Untitled/Untitled Solution/directory.waDirectory");
-		std::stringstream buffer;
 
-		if (file) {
-			buffer << file.rdbuf();
-			file.close();
+			rapidxml::xml_node<> * RootNode = xml.first_node("directory");
+		
+			if (RootNode == 0)
+				return "";
 
-			std::string content = buffer.str();
-
-			rapidxml::xml_document<> xml;
-			xml.parse<0>((char*)&content[0]);
-
-			rapidxml::xml_node<> * root_node = xml.first_node("directory");
-			if (root_node == 0) return "";
-
-
-			for (rapidxml::xml_node<> * node = root_node->first_node("user"); node; node = node->next_sibling("user")) {
-				//std::cout << "Found node: " << node->name() << std::endl;
-
-				rapidxml::xml_attribute<> * ID_attribute = node->first_attribute("ID");
-				rapidxml::xml_attribute<> * name_attribute = node->first_attribute("name");
-				rapidxml::xml_attribute<> * fullName_attribute = node->first_attribute("fullName");
-				if (ID_attribute != 0)
+			for (rapidxml::xml_node<> * Iterator = RootNode->first_node("user"); Iterator; Iterator = Iterator->next_sibling("user")) {
+				
+				rapidxml::xml_attribute<> * IDAttribute = Iterator->first_attribute("ID");
+				
+				rapidxml::xml_attribute<> * NameAttribute = Iterator->first_attribute("name");
+				
+				rapidxml::xml_attribute<> * FullNameAttribute = Iterator->first_attribute("fullName");
+				
+				if (IDAttribute != 0)
 				{
-					if (attribut == "name")
+					if (NameAttribut == "name")
 
 					{
-						if (name_attribute != 0)
+						if (NameAttribute != 0)
 		                    
-							if (ID_attribute->value() == Id)
+							if (IDAttribute->value() == Id)
 							{
 								
-								return name_attribute->value();
+								return NameAttribute->value();
 							}
 
 					}
-					if (attribut == "fullName")
-
+					if (NameAttribut == "fullName")
 					{
-						if (fullName_attribute != 0)
-							if (ID_attribute->value() == Id)
+						if (FullNameAttribute != 0)
+					
+							if (IDAttribute->value() == Id)
 							{
 							
-								return fullName_attribute->value();
+								return FullNameAttribute->value();
 							}
 
 					}
+				
 				}
 
 			}
-		}
-
+		
 		return "";
+	
 	}
 
 
 	string XMLparser::NameGrouoById(string Id)
 	{
-		std::ifstream file("C:/Users/user/Documents/Wakanda/Untitled/Untitled Solution/directory.waDirectory");
-		std::stringstream buffer;
-
-		if (file) {
-			buffer << file.rdbuf();
-			file.close();
-
-			std::string content = buffer.str();
-
-			rapidxml::xml_document<> xml;
-			xml.parse<0>((char*)&content[0]);
-
-			rapidxml::xml_node<> * root_node = xml.first_node("directory");
-			if (root_node == 0) return "";
+			rapidxml::xml_node<> * RootNode = xml.first_node("directory");
+			
+			if (RootNode == 0) return "";
 
 
-			for (rapidxml::xml_node<> * node = root_node->first_node("group"); node; node = node->next_sibling("group")) {
-				//std::cout << "Found node: " << node->name() << std::endl;
+			for (rapidxml::xml_node<> * Iterator = RootNode->first_node("group"); Iterator; Iterator = Iterator->next_sibling("group"))
+			{
+				
 
-				rapidxml::xml_attribute<> * ID_attribute = node->first_attribute("ID");
-				rapidxml::xml_attribute<> * name_attribute = node->first_attribute("name");
-				if (ID_attribute != 0)
+				rapidxml::xml_attribute<> * IDAttribute = Iterator->first_attribute("ID");
+				
+				rapidxml::xml_attribute<> * NameAttribute = Iterator->first_attribute("name");
+			
+				if (IDAttribute != 0)
 				{
-					if (ID_attribute->value() == Id)
+					if (IDAttribute->value() == Id)
 						
-						return name_attribute->value();
+						return NameAttribute->value();
 
 				}
 			}
-		}
+		
 
 		return "";
 	}
@@ -114,32 +112,22 @@ namespace WaDirectory_data
 	vector<string> XMLparser::ListGroup()
 	{
 		std::vector<string> resultat;
-		std::ifstream file("C:/Users/user/Documents/Wakanda/Untitled/Untitled Solution/directory.waDirectory");
-		std::stringstream buffer;
-
-		if (file) {
-			buffer << file.rdbuf();
-			file.close();
-
-			std::string content = buffer.str();
-
-			rapidxml::xml_document<> xml;
-			xml.parse<0>((char*)&content[0]);
-
-			rapidxml::xml_node<> * root_node = xml.first_node("directory");
-			if (root_node == 0) return resultat;
+		
+			rapidxml::xml_node<> * RootNode = xml.first_node("directory");
+			
+			if (RootNode == 0) return resultat;
 
 
-			for (rapidxml::xml_node<> * node = root_node->first_node("group"); node; node = node->next_sibling("group")) {
+			for (rapidxml::xml_node<> * Iterator = RootNode->first_node("group"); Iterator; Iterator = Iterator->next_sibling("group")) {
 
-				rapidxml::xml_attribute<> * ID_attribute = node->first_attribute("ID");
-				if (ID_attribute != 0)
+				rapidxml::xml_attribute<> * IDAttribute = Iterator->first_attribute("ID");
+				if (IDAttribute != 0)
 				{
-					rapidxml::xml_attribute<> * Name_attribute = node->first_attribute("name");
-					resultat.push_back(Name_attribute->value());
+					rapidxml::xml_attribute<> * NameAttribute = Iterator->first_attribute("name");
+					resultat.push_back(NameAttribute->value());
 				}
 			}
-		}
+		
 
 		return resultat;
 	}
@@ -150,46 +138,39 @@ namespace WaDirectory_data
 
 
 		std::vector<string> resultat;
-		std::ifstream file("C:/Users/user/Documents/Wakanda/Untitled/Untitled Solution/directory.waDirectory");
-		std::stringstream buffer;
 
-		if (file) {
-			buffer << file.rdbuf();
-			file.close();
-
-			std::string content = buffer.str();
-
-			rapidxml::xml_document<> xml;
-			xml.parse<0>((char*)&content[0]);
-
-			rapidxml::xml_node<> * root_node = xml.first_node("directory");
-			if (root_node == 0) return resultat;
+		rapidxml::xml_node<> * RootNode = xml.first_node("directory");
+		
+		if (RootNode == 0) return resultat;
 
 
-			for (rapidxml::xml_node<> * node = root_node->first_node("group"); node; node = node->next_sibling("group")) {
+		for (rapidxml::xml_node<> * Iterator = RootNode->first_node("group"); Iterator; Iterator = Iterator->next_sibling("group")) 
+		{
 
-				rapidxml::xml_attribute<> * ID_attribute = node->first_attribute("ID");
-				if (ID_attribute != 0)
+			rapidxml::xml_attribute<> * IDAttribute = Iterator->first_attribute("ID");
+			
+			if (IDAttribute != 0)
 				{
 
-					//resultat.push_back(ID_attribute->value());
-					if (ID_attribute->value() == Id)
+					if (IDAttribute->value() == Id)
 					{
 						
 
-						for (rapidxml::xml_node<> * node1 = node->first_node("include"); node1; node1 = node1->next_sibling("include")) {
-							rapidxml::xml_attribute<> * grpId = node1->first_attribute("id");
-
-							rapidxml::xml_attribute<> * pt = node1->first_attribute();
+						for (rapidxml::xml_node<> * IteratorInclude = Iterator->first_node("include"); IteratorInclude; IteratorInclude = IteratorInclude->next_sibling("include"))
+						{
+							
+							rapidxml::xml_attribute<> * Ptattribute = IteratorInclude->first_attribute();
 
 							string group = "group";
-							if (pt->name() == group)
+							
+							if (Ptattribute->name() == group)
 							{
 
-								rapidxml::xml_attribute<> * groupID = pt->next_attribute();
-								if (groupID != 0)
+								rapidxml::xml_attribute<> * GroupIDAttribute = Ptattribute->next_attribute();
+							
+								if (GroupIDAttribute != 0)
 								{
-									resultat.push_back(groupID->value());
+									resultat.push_back(GroupIDAttribute->value());
 								}
 
 							}
@@ -199,10 +180,10 @@ namespace WaDirectory_data
 				}
 			}
 
-			return resultat;
+		
 
-		}
-
+		
+		return resultat;
 	}
 
 
@@ -210,18 +191,6 @@ namespace WaDirectory_data
 	bool WaDirectory_data::XMLparser::UserBelongGroup(string UserId, string groupId)
 	{
 
-
-		std::ifstream file("C:/Users/user/Documents/Wakanda/Untitled/Untitled Solution/directory.waDirectory");
-		std::stringstream buffer;
-
-		if (file) {
-			buffer << file.rdbuf();
-			file.close();
-
-			std::string content = buffer.str();
-
-			rapidxml::xml_document<> xml;
-			xml.parse<0>((char*)&content[0]);
 
 			rapidxml::xml_node<> * root_node = xml.first_node("directory");
 			if (root_node == 0) return false;
@@ -233,7 +202,7 @@ namespace WaDirectory_data
 				if (ID_attribute != 0)
 				{
 
-					//resultat.push_back(ID_attribute->value());
+					
 					if (ID_attribute->value() == groupId)
 					{
 						
@@ -262,7 +231,7 @@ namespace WaDirectory_data
 
 		
 
-		}
+		
 
 		return false;
 	}

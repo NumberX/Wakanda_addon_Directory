@@ -4,7 +4,7 @@
 */
 
 #pragma once
-
+#include"IDirectory.h"
 #include<string>
 #include<vector>
 using namespace std;
@@ -16,14 +16,14 @@ namespace WaDirectory
 	class User;
 	class Session;
 
-	class Directory
+	class Directory 
 	{
 	public:
 
 		Directory();
 		~Directory();
-	
-		Session*    LogIn(const std::string& inUser, const std::string& inPassword) ;
+
+		Session*    LogIn(const std::string& inUser, const std::string& inPassword); 
 
 		void         GetGroupNames(std::vector<std::string>& outGroupName) ;
 
@@ -31,7 +31,7 @@ namespace WaDirectory
 
 		User*       GetUser(const std::string& inUserName) ;
 
-		bool         LogOut(const string inSession) ;
+		bool         LogOut(const Session* inSession);
 
 		Session*    GetSession(const std::string& inSessionID) ;
 

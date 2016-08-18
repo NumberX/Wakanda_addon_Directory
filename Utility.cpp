@@ -12,7 +12,7 @@ namespace WaDirectorywrap_data_v8 {
 	Utility::~Utility()
 	{
 	}
-}
+
 
 Local<Array> WaDirectorywrap_data_v8::Utility::StdVectorToV8Array(Isolate*  isolate, std::vector<std::string>& Vector)
 {
@@ -33,4 +33,5 @@ string WaDirectorywrap_data_v8::Utility::V8Utf8ValueToStdString(v8::Local<v8::Va
 	
 	string Localstdstring(*Localv8string);
 	return Localstdstring;
+}
 }

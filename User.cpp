@@ -12,7 +12,7 @@ namespace WaDirectory
 {
 
 
-	User::User()
+	User::User() 
 	{
 	}
 	User::User(string Username,string FullName,string Id,string Password)

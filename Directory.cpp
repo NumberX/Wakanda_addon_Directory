@@ -9,7 +9,7 @@ using namespace WaDirectory_data;
 namespace WaDirectory
 {
 
-	Directory::Directory()
+	Directory::Directory() 
 	{
 	}
 
@@ -23,12 +23,12 @@ namespace WaDirectory
 		Jsonparser Jspar;
 		string wsid=Jspar.login(inUser, inPassword);
 		if (wsid.length() > 0)
-		{
+		 {
 			session = new Session();
 			session->wsid = wsid;
 			session->cookies = Jspar.cookie;
 			return session;
-		}
+		 }
 		return nullptr;
 	
 	
@@ -65,11 +65,11 @@ namespace WaDirectory
 
 	}
 
-	bool         Directory::LogOut(const string inSession){ 
+	bool         Directory::LogOut(const Session* inSession){
 
 		// = new Session();
 		Jsonparser Jspar;
-		Jspar.cookie = inSession;
+		Jspar.cookie = inSession->cookies;
 		bool resultat = Jspar.Logout();
 		
 		return resultat;

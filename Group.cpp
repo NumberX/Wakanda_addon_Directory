@@ -9,7 +9,7 @@ namespace WaDirectory
 		return nullptr;
 
 	}
-	Group::Group()
+	Group::Group() 
 	{
 	}
 
@@ -30,7 +30,7 @@ namespace WaDirectory
 	}
 
 
-	User* Group::GetUserByName(string& Username)
+	User* Group::GetUserByName(const std::string&  Username)
 	{
 		XMLparser prt;
 		User *usr;

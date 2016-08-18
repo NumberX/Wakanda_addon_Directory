@@ -162,7 +162,7 @@ void Groupwrap::GetDirectorywrap(const FunctionCallbackInfo<Value>& args) {
 
 	Groupwrap* obj = ObjectWrap::Unwrap<Groupwrap>(args.Holder());
 	
-	double x;
+	double x=1;
 	
 	args.GetReturnValue().Set(Number::New(isolate, x));
 }

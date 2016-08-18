@@ -6,6 +6,7 @@
 #pragma once
 #include<string>
 #include<vector>
+#include"IUser.h"
 using namespace std;
 
 namespace WaDirectory
@@ -20,7 +21,7 @@ namespace WaDirectory
 		
 	public:
 		string Username, FullName, Id,Password;
-		User::User();
+		User();
 		User(string Username, string FullName, string Id,string Password);
 		User::~User();
 		Directory* GetDirectory()   const ;
@@ -32,7 +33,7 @@ namespace WaDirectory
 		bool    BelongsToGroup(const Group* inGroupName)  ;
 
 		bool    IsLoggedIn(const Session* inSession) ;
-
+		
 
 	};
 

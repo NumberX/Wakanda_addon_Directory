@@ -1,6 +1,7 @@
 #include "Directorywrap.h"
 #include"Sessionwrap.h"
 #include"Directory.h"
+#include"Work.h"
 #include"Session.h"
 #include"Utility.h"
 #include<vector>
@@ -22,7 +23,7 @@ using v8::Array;
 using namespace v8;
 using namespace WaDirectory;
 using namespace std;
-
+using namespace WaDirectorywrapAsynchro_data_v8;
 namespace WaDirectorywrap_data_v8 {
 Persistent<Function> Directorywrap::constructor;
 
@@ -32,7 +33,6 @@ Directorywrap::Directorywrap() :ptdirectory() {
 
 Directorywrap::~Directorywrap() {
 }
-
 
 
 void Directorywrap::Init(Local<Object> exports) {
@@ -46,7 +46,7 @@ void Directorywrap::Init(Local<Object> exports) {
 	tpl->InstanceTemplate()->SetInternalFieldCount(1);
   
 	NODE_SET_PROTOTYPE_METHOD(tpl, "LogIn", LogIn);
-  
+
 	NODE_SET_PROTOTYPE_METHOD(tpl, "GetGroupwrapNames", GetGroupwrapNames);
   
 	NODE_SET_PROTOTYPE_METHOD(tpl, "GetGroupwrap", GetGroupwrap);
@@ -254,11 +254,13 @@ void Directorywrap::LogOut(const FunctionCallbackInfo<Value>& args) {
 	Directorywrap* PtDirectoryWrap = ObjectWrap::Unwrap<Directorywrap>(args.Holder());
 	
 	Utility util;
-
-	string inSessionID = util.V8Utf8ValueToStdString(args[0]);
 	
-	bool resultat = PtDirectoryWrap->ptdirectory->LogOut(inSessionID);
+	Sessionwrap* PtSessionWrap = ObjectWrap::Unwrap<Sessionwrap>(args[0]->ToObject());
+
+	bool resultat = PtDirectoryWrap->ptdirectory->LogOut(PtSessionWrap->ptsession);
 
 	args.GetReturnValue().Set(Boolean::New(isolate, resultat));
 }
+
+
 } 
