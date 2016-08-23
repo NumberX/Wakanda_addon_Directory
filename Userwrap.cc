@@ -21,12 +21,35 @@ namespace WaDirectorywrap_data_v8 {
 
 Persistent<Function> Userwrap::constructor;
 
+Persistent<Value> Userwrap::prototype_User_Synchrone;
+
+Local<Boolean> Userwrap::ControleUserUnwrap(Local<Object> handle, Isolate* isolate)
+{
+	EscapableHandleScope scope(isolate);
+
+	if (!handle.IsEmpty() && handle->InternalFieldCount() == 1) {
+
+		Local<Value> Pt_Prototype = handle->GetPrototype();
+		Utility util;
+
+		if (Pt_Prototype == prototype_User_Synchrone) {
+			Local<Boolean> Resultat = Boolean::New(isolate, true);
+			return scope.Escape(Resultat);
+
+		}
+
+
+	}
+	Local<Boolean> Resultat = Boolean::New(isolate, false);
+	return scope.Escape(Resultat);
+}
 Userwrap::Userwrap() : ptuser() {
 }
 
+
 Userwrap::~Userwrap() {
 }
-Local<Object> Userwrap::CreateUserWrap(Isolate* isolate, User* PtUser)
+Local<Object> Userwrap::CreateUserWrap(Isolate* isolate, User* PtUser,Directorywrap* PtDirectoryWrap)
 {
 
 	EscapableHandleScope scope(isolate);
@@ -42,6 +65,10 @@ Local<Object> Userwrap::CreateUserWrap(Isolate* isolate, User* PtUser)
 	Userwrap* PtUserWrap = Userwrap::Unwrap<Userwrap>(ObjectUserWrap);
 
 	PtUserWrap->ptuser = PtUser;
+
+	PtUserWrap->Pt_DirectoryWrap = PtDirectoryWrap;
+
+	PtUserWrap->ptuser->Set_Directory(PtDirectoryWrap->GetDirectory());
 
 	return scope.Escape(ObjectUserWrap);
 
@@ -77,53 +104,61 @@ void Userwrap::Init(Local<Object> exports) {
 }
 
 void Userwrap::New(const FunctionCallbackInfo<Value>& args) {
-  Isolate* isolate = args.GetIsolate();
+	Isolate* isolate = args.GetIsolate();
 
-  if (args.IsConstructCall()) {
-  
-	  
-	  if (args.Length() == 0) {
+	if (args.IsConstructCall()) {
 
-		  /*
-		  Traitement du cas Userwrap User=new Userwrap();
-		  */
 
-		  Userwrap* PtUserWrap = new Userwrap();
 
-		  User *Ptuser = new User();
+		if (args.Length() == 1) {
 
-		  PtUserWrap->ptuser = Ptuser;
 
-		  PtUserWrap->Wrap(args.Holder());
+			Userwrap* PtUserWrap = new Userwrap();
 
-		  args.GetReturnValue().Set(args.Holder());
-	  }
-	  else if (args.Length() == 1) { 
+			PtUserWrap->Wrap(args.This());
 
-		  /*
-		  Traitement du cas Userwrap User=new Userwrap();
-		  */
+			prototype_User_Synchrone.Reset(isolate, args.This()->GetPrototype());
 
-		  Userwrap* PtUserWrap = new Userwrap();
+			args.GetReturnValue().Set(args.Holder());
+		}
+		else
+		{
 
-		  PtUserWrap->Wrap(args.Holder());
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "To create a object of User you need to pass from Directory object ")));
 
-		  args.GetReturnValue().Set(args.Holder());
-	  }
-  } else {
+			args.GetReturnValue().SetUndefined();
 
-  }
+		}
+	}
+	else {
+
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "To create a object of User  you need to pass from Directory object ")));
+
+		args.GetReturnValue().SetUndefined();
+	}
 }
 
 
 
 void Userwrap::GetDirectorywrap(const FunctionCallbackInfo<Value>& args) {
-	
+
 	Isolate* isolate = args.GetIsolate();
 
-	Userwrap* obj = ObjectWrap::Unwrap<Userwrap>(args.This());
+	if (ControleUserUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
+	{
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Group object")));
 
-	args.GetReturnValue().Set(args.This());
+		args.GetReturnValue().SetUndefined();
+	}
+	else{
+		Userwrap* PtUserwrap = ObjectWrap::Unwrap<Userwrap>(args.Holder());
+
+		Local<Object> ObjectDirectoryWrap = Directorywrap::CreateDirectoryWrap(isolate, PtUserwrap->Pt_DirectoryWrap->ptdirectory);
+
+		args.GetReturnValue().Set(ObjectDirectoryWrap);
+
+
+	}
 }
 
 void Userwrap::GetName(const FunctionCallbackInfo<Value>& args) {

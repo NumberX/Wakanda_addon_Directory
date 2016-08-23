@@ -10,8 +10,9 @@ namespace WaDirectory_data
 	class XMLparser
 	{
 		rapidxml::xml_document<> xml;
+		string UrlDirectory = "";
 	public:
-		XMLparser();
+		XMLparser(string UrlDirectory);
 		~XMLparser();
 		string NameUserById(string Id, string attribut);
 		string NameGrouoById(string Id);

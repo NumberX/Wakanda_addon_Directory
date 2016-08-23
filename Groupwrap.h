@@ -28,13 +28,25 @@ class Groupwrap : public node::ObjectWrap {
 
   static void GetDirectorywrap(const v8::FunctionCallbackInfo<v8::Value>& args);
 
+  static  Local<Boolean> ControleGroupUnwrap(Local<Object> handle, Isolate* isolate);
+
+  static v8::Persistent<v8::Value> prototype_Group_Synchrone;
+  
   static v8::Persistent<v8::Function> constructor;
 
-  static      Local<Object> CreateGroupWrap(Isolate* isolate, Group* PtGroup);
 
-  Group *ptgroup;
+
+  static      Local<Object> CreateGroupWrap(Isolate* isolate, Group* PtGroup, Directorywrap* PtDirectoryWrap);
+
+  Group *ptgroup=NULL;
+
+
+
+  Directorywrap *Pt_DirectoryWrap=NULL;
+
+
 };
 
-}  // namespace demo
+}  
 
 #endif

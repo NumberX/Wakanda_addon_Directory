@@ -10,6 +10,10 @@ namespace WaDirectory_data
 {
 	Jsonparser::Jsonparser()
 	{
+
+		this->Url = "";
+		this->UrlXml = "";
+
 	}
 
 
@@ -17,6 +21,25 @@ namespace WaDirectory_data
 	{
 	}
 
+	Jsonparser::Jsonparser(string Url, string UrlXml)
+	{
+		this->Url = Url;
+		this->UrlXml = UrlXml;
+
+	}
+	string Jsonparser::GetUrl(){
+		return this->Url;
+	}
+	string Jsonparser::GetUrlXML(){
+		return this->UrlXml;
+	}
+	void Jsonparser::SetUrl(string Url){
+	   this->Url=Url;
+	}
+	void Jsonparser::SetUrlXML(string UrlXml){
+	
+		this->UrlXml = UrlXml;
+	}
 
 	string Jsonparser::login(string Username, string Password)
 	{
@@ -24,8 +47,11 @@ namespace WaDirectory_data
 		curlcpp curltest("");
 
 		curltest.initall();
-
-		this->cookie = curltest.login(Username, Password, "http://localhost:8081/rest/$directory/login");
+		//"http://localhost:8081/rest/$directory/login"
+		
+		string Url = this->Url + "/rest/$directory/login";
+		
+		this->cookie = curltest.login(Username, Password, Url);
 
 		if (curltest.res != CURLE_OK)
 
@@ -36,7 +62,10 @@ namespace WaDirectory_data
 
 			document.Parse(curltest.data.str.c_str());
 			
-			if (document["result"].GetBool() == true)return (getWASID());
+			if (document["result"].GetBool() == true)
+			{
+				 return (getWASID());
+			}
 
 			if (document["result"].GetBool() == false)return "";
 		}
@@ -47,7 +76,7 @@ namespace WaDirectory_data
 	{
 		string sub = "";
 
-		int pos = cookie.find("WASID	");
+		int pos = static_cast<int>(cookie.find("WASID	"));
 
 		sub = cookie.substr(pos + 6);
 		
@@ -62,7 +91,9 @@ namespace WaDirectory_data
 
 		curltest.initall();
 
-		curltest.Logout("http://localhost:8081/rest/$directory/logout", this->cookie);
+		string Url = this->GetUrl() + "/rest/$directory/logout";
+
+		curltest.Logout(Url, this->cookie);
 
 		this->cookie = "";
 
@@ -91,7 +122,9 @@ namespace WaDirectory_data
 
 		curltest.initall();
 
-		curltest.currentUserBelongsTo("http://localhost:8081/rest/$directory/currentUserBelongsTo", Idgroup, Namegroup, this->cookie);
+		string Url = this->GetUrl() + "/rest/$directory/currentUserBelongsTo";
+
+		curltest.currentUserBelongsTo(Url, Idgroup, Namegroup, this->cookie);
 
 		if (curltest.res != CURLE_OK)
 
@@ -121,7 +154,9 @@ namespace WaDirectory_data
 
 		curltest.initall();
 
-		curltest.curentuser("http://localhost:8081/rest/$directory/currentUser", this->cookie);
+		string Url = this->GetUrl() + "/rest/$directory/currentUser";
+
+		curltest.curentuser(Url, this->cookie);
 
 		if (curltest.res != CURLE_OK)
 

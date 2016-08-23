@@ -6,9 +6,10 @@
 using namespace rapidxml;
 namespace WaDirectory_data
 {
-	XMLparser::XMLparser()
+	XMLparser::XMLparser(string UrlDirectory)
 	{
-		std::ifstream file("C:/Users/user/Documents/Wakanda/Untitled/Untitled Solution/directory.waDirectory");
+		this->UrlDirectory = UrlDirectory;
+		std::ifstream file(this->UrlDirectory);
 		std::stringstream buffer;
 
 		if (file) {

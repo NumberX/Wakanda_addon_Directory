@@ -3,10 +3,12 @@
 @abstract   define the user object interface
 */
 
-#pragma once
+#ifndef User_H
+#define User_H
 #include<string>
 #include<vector>
 #include"IUser.h"
+#include"IDirectory.h"
 using namespace std;
 
 namespace WaDirectory
@@ -15,10 +17,12 @@ namespace WaDirectory
 	class Directory;
 	class Session;
 	class Group;
-	class User
+	class User 
 	{
 	private :
 		
+		Directory *Pt_Directory = NULL;
+
 	public:
 		string Username, FullName, Id,Password;
 		User();
@@ -34,7 +38,9 @@ namespace WaDirectory
 
 		bool    IsLoggedIn(const Session* inSession) ;
 		
+		void Set_Directory(Directory* Pt_Directory);
 
 	};
 
 }
+#endif

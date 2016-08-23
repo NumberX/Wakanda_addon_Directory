@@ -3,7 +3,8 @@
 @abstract   define a session in Wakanda Directory
 */
 
-#pragma once
+#ifndef Session_H
+#define Session_H
 #include"ISession.h"
 #include<vector>
 #include<string>
@@ -18,6 +19,8 @@ namespace WaDirectory
 
 	class Session 
 	{
+		Directory* Pt_Directory = NULL;
+
 	public:
 		Session();
 		Session(string cookies);
@@ -35,9 +38,9 @@ namespace WaDirectory
 		
 		string wsid, cookies;
 
-
+		void Set_Directory(Directory* Pt_Directory);
 
 	};
 
 }
-
+#endif

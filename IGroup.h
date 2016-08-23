@@ -4,7 +4,8 @@
 */
 
 
-#pragma once
+#ifndef IGroup_H
+#define IGroup_H
 #include<string>
 #include<vector>
 using namespace std;
@@ -40,3 +41,4 @@ namespace WaDirectory
 
 
 }
+#endif

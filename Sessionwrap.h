@@ -26,27 +26,35 @@ class Sessionwrap : public node::ObjectWrap {
 	friend class Directorywrap;
  public:
   static void Init(v8::Local<v8::Object> exports);
+  
   char *Wsid;
+  
   char *cookies;
+
   static v8::Persistent<v8::Function> constructor;
 
+  static v8::Persistent<v8::Value> prototype_Session_Synchrone;
+
   Session *ptsession;
- private:
+
+private:
 	 explicit Sessionwrap();
   ~Sessionwrap();
- // static  Local<Value> NewInstance();
-  static      Local<Object> CreateSessionWrap(Isolate* isolate, Session* PtSession);
+
+  static      Local<Object> CreateSessionWrap(Isolate* isolate, Session* PtSession,Directorywrap* PtDirectoryWrap);
   static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void GetUserwrap(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void GetWASID(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void GetDirectorywrap(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void IsValid(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void LogOut(const v8::FunctionCallbackInfo<v8::Value>& args);
+  Directorywrap *Pt_DirectoryWrap = NULL;
+  static Local<Boolean> ControleSessionUnwrap(Local<Object> handle, Isolate* isolate);
 
-
+  Session* GetSession();
 
 };
 
-}  // namespace demo
+}  
 
 #endif

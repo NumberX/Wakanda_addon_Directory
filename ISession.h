@@ -3,7 +3,8 @@
     @abstract   define a session in Wakanda Directory
 */
 
-#pragma once
+#ifndef ISession_H
+#define ISession_H
 #include<string>
 #include<vector>
 using namespace std;
@@ -42,3 +43,4 @@ namespace WaDirectory
     };
 
 }
+#endif

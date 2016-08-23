@@ -6,7 +6,7 @@ namespace WaDirectory
 {
 	Directory* Group::GetDirectory() const
 	{
-		return nullptr;
+		return this->Pt_Directory;
 
 	}
 	Group::Group() 
@@ -21,21 +21,30 @@ namespace WaDirectory
 	Group::~Group()
 	{
 	}
+	void  Group::Set_Directory(Directory* Pt_Directory)
+	{
+		this->Pt_Directory = Pt_Directory;
 
+	}
 
 	void Group::GetName(string& ouName)
 	{
-		XMLparser prt;
-		ouName=prt.NameGrouoById(this->Idgroup);
+		XMLparser PtparseurXml(this->Pt_Directory->Get_Url_Directory());
+	
+		ouName = PtparseurXml.NameGrouoById(this->Idgroup);
 	}
 
 
 	User* Group::GetUserByName(const std::string&  Username)
 	{
-		XMLparser prt;
+		XMLparser PtparseurXml(this->Pt_Directory->Get_Url_Directory());
+		
 		User *usr;
-		if (prt.NameUserById(Username, "name").length()>0)
-		usr = new User(Username,prt.NameUserById(Username, "name"), prt.NameUserById(Username, "fullname"),"");
+		
+		if (PtparseurXml.NameUserById(Username, "name").length()>0)
+		
+			usr = new User(Username, PtparseurXml.NameUserById(Username, "name"), PtparseurXml.NameUserById(Username, "fullname"), "");
+		
 		return usr;
 	}
 
@@ -43,7 +52,9 @@ namespace WaDirectory
 	void Group::GetSubGroupName(vector<string>& ouSubGroupNames)
 	{
 		ouSubGroupNames.clear();
-		XMLparser prt;
-		ouSubGroupNames = prt.ListGroupInclude(this->Idgroup);
+		
+		XMLparser PtparseurXml(this->Pt_Directory->Get_Url_Directory());
+		
+		ouSubGroupNames = PtparseurXml.ListGroupInclude(this->Idgroup);
 	}
 }

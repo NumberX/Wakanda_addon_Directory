@@ -1,4 +1,6 @@
 #include "Groupwrap.h"
+#include"ControleGroup.h"
+#include"Directorywrap.h"
 #include"Utility.h"
 #include<string>
 #include<vector>
@@ -20,16 +22,42 @@ using v8::String;
 using namespace v8;
 using namespace std;
 using namespace WaDirectory;
+using namespace Controle;
 namespace WaDirectorywrap_data_v8 {
 
 Persistent<Function> Groupwrap::constructor;
 
+Persistent<Value> Groupwrap::prototype_Group_Synchrone;
+
+Local<Boolean> Groupwrap::ControleGroupUnwrap(Local<Object> handle, Isolate* isolate)
+{
+	EscapableHandleScope scope(isolate);
+
+	if (!handle.IsEmpty() && handle->InternalFieldCount() == 1) {
+
+		Local<Value> Pt_Prototype = handle->GetPrototype();
+		Utility util;
+
+		if (Pt_Prototype == prototype_Group_Synchrone) {
+			Local<Boolean> Resultat = Boolean::New(isolate, true);
+			return scope.Escape(Resultat);
+
+		}
+
+
+	}
+	Local<Boolean> Resultat = Boolean::New(isolate, false);
+	return scope.Escape(Resultat);
+}
+
 Groupwrap::Groupwrap() : ptgroup() {
 }
 
+
 Groupwrap::~Groupwrap() {
 }
-Local<Object> Groupwrap::CreateGroupWrap(Isolate* isolate, Group* PtGroup)
+
+Local<Object> Groupwrap::CreateGroupWrap(Isolate* isolate, Group* PtGroup,Directorywrap* PtDirectoryWrap)
 {
 
 	EscapableHandleScope scope(isolate);
@@ -45,6 +73,10 @@ Local<Object> Groupwrap::CreateGroupWrap(Isolate* isolate, Group* PtGroup)
 	Groupwrap* PtGroupWrap = Groupwrap::Unwrap<Groupwrap>(ObjectGroupWrap);
 
 	PtGroupWrap->ptgroup = PtGroup;
+
+	PtGroupWrap->Pt_DirectoryWrap = PtDirectoryWrap;
+
+	PtGroupWrap->ptgroup->Set_Directory(PtGroupWrap->Pt_DirectoryWrap->GetDirectory());
 
 	return scope.Escape(ObjectGroupWrap);
 
@@ -76,95 +108,176 @@ void Groupwrap::Init(Local<Object> exports) {
 }
 
 void Groupwrap::New(const FunctionCallbackInfo<Value>& args) {
-  Isolate* isolate = args.GetIsolate();
+	Isolate* isolate = args.GetIsolate();
 
-  if (args.IsConstructCall()) {
-	  if (args.Length() == 0) {
+	if (args.IsConstructCall()) {
 
-		  //Traitement GroupWrap PtGroupWrap=new PtGroupWrap(); 
-		  
-		  Groupwrap* PtGroupWrap = new Groupwrap();
 
-		  Group *PtGroup = new Group();
 
-		  PtGroupWrap->ptgroup = PtGroup;
+		if (args.Length() == 1) {
 
-		  PtGroupWrap->Wrap(args.Holder());
 
-		  args.GetReturnValue().Set(args.Holder());
-	  }
-	  else if (args.Length() == 1) { 
+			Groupwrap* PtGroupWrap = new Groupwrap();
 
-		  //Traitement GroupWrap PtGroupWrap=new PtGroupWrap(Group); 
+			PtGroupWrap->Wrap(args.This());
 
-		  Groupwrap* PtGroupWrap = new Groupwrap();
+			prototype_Group_Synchrone.Reset(isolate, args.This()->GetPrototype());
 
-		  PtGroupWrap->Wrap(args.Holder());
+			args.GetReturnValue().Set(args.Holder());
+		}
+		else
+		{
 
-		  args.GetReturnValue().Set(args.Holder());
-	  }
-  } else {
- 
-  }
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "To create a object of Group you need to pass from Directory object ")));
+
+			args.GetReturnValue().SetUndefined();
+
+		}
+	}
+	else {
+
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "To create a object of Group  you need to pass from Directory object ")));
+
+		args.GetReturnValue().SetUndefined();
+	}
 }
 
 
 void Groupwrap::GetName(const FunctionCallbackInfo<Value>& args) {
-	
+
 	Isolate* isolate = args.GetIsolate();
 
-	Groupwrap* PtGroupWrap = ObjectWrap::Unwrap<Groupwrap>(args.Holder());
-	
-	std::string resultat = "";
-	
-	PtGroupWrap->ptgroup->GetName(resultat);
+	if (ControleGroupUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
+	{
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Groupwrap object")));
 
-	args.GetReturnValue().Set(String::NewFromUtf8(isolate, resultat.c_str()));
+		args.GetReturnValue().SetUndefined();
+	}
+	else{
+		Groupwrap* PtGroupWrap = ObjectWrap::Unwrap<Groupwrap>(args.Holder());
+
+		std::string resultat = "";
+
+		std::string Message;
+		
+		ControleGroup PtcontroleGroup;
+		if (PtcontroleGroup.ControlePtGroup(PtGroupWrap->ptgroup,Message) == true)
+		{ 
+		PtGroupWrap->ptgroup->GetName(resultat);
+
+		args.GetReturnValue().Set(String::NewFromUtf8(isolate, resultat.c_str()));
+		}
+		else
+		{
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Group object")));
+
+			args.GetReturnValue().SetUndefined();
+		}
+		
+	}
 }
 void Groupwrap::GetUserwrapByName(const FunctionCallbackInfo<Value>& args) {
 	
 	Isolate* isolate = args.GetIsolate();
 	
-	std::string res="";
-	
-	Groupwrap* PtGroupWrap = ObjectWrap::Unwrap<Groupwrap>(args.Holder());
-	
-	Utility util;
-	
-	string  user=util.V8Utf8ValueToStdString(args[0]);
-	
-	User *PtUser = PtGroupWrap->ptgroup->GetUserByName(user);
-	
-	Local<Object> PtUserWrap = Userwrap::CreateUserWrap(isolate, PtUser);
+	if (ControleGroupUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
+	{
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Groupwrap object")));
 
-	args.GetReturnValue().Set(PtUserWrap);
+		args.GetReturnValue().SetUndefined();
+	}
+	else{
+
+		std::string res = "";
+
+		Groupwrap* PtGroupWrap = ObjectWrap::Unwrap<Groupwrap>(args.Holder());
+
+
+		std::string Message;
+
+		ControleGroup PtcontroleGroup;
+
+		if (PtcontroleGroup.ControlePtGroup(PtGroupWrap->ptgroup, Message) == true)
+		{
+
+			Utility util;
+
+			string  user = util.V8Utf8ValueToStdString(args[0]);
+
+			User *PtUser = PtGroupWrap->ptgroup->GetUserByName(user);
+
+			Local<Object> PtUserWrap = Userwrap::CreateUserWrap(isolate, PtUser, PtGroupWrap->Pt_DirectoryWrap);
+
+			args.GetReturnValue().Set(PtUserWrap);
+		}
+		else
+		{
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Group object")));
+
+			args.GetReturnValue().SetUndefined();
+
+		}
+	}
 }
 void Groupwrap::GetSubGroupwrapName(const FunctionCallbackInfo<Value>& args) {
 	
 	Isolate* isolate = args.GetIsolate();
 
-	Groupwrap* PtGroupWrap = ObjectWrap::Unwrap<Groupwrap>(args.Holder());
-	
-	std::vector<std::string> resultat;
-	
-	PtGroupWrap->ptgroup->GetSubGroupName(resultat);
-	
-	Utility util;
 
-	Local<Array> result_list = util.StdVectorToV8Array(isolate,resultat);
+	if (ControleGroupUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
+	{
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Group object")));
+	}
+	else{
 
-	args.GetReturnValue().Set(result_list);
+		Groupwrap* PtGroupWrap = ObjectWrap::Unwrap<Groupwrap>(args.Holder());
 
+		std::vector<std::string> resultat;
+
+		std::string Message;
+
+		ControleGroup PtcontroleGroup;
+		
+		if (PtcontroleGroup.ControlePtGroup(PtGroupWrap->ptgroup, Message) == true)
+		{
+
+			PtGroupWrap->ptgroup->GetSubGroupName(resultat);
+
+			Utility util;
+
+			Local<Array> result_list = util.StdVectorToV8Array(isolate, resultat);
+
+			args.GetReturnValue().Set(result_list);
+		}
+
+		else
+		{
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Group object")));
+
+			args.GetReturnValue().SetUndefined();
+		}
+	}
 }
 void Groupwrap::GetDirectorywrap(const FunctionCallbackInfo<Value>& args) {
-	
+
 	Isolate* isolate = args.GetIsolate();
 
-	Groupwrap* obj = ObjectWrap::Unwrap<Groupwrap>(args.Holder());
-	
-	double x=1;
-	
-	args.GetReturnValue().Set(Number::New(isolate, x));
+	if (ControleGroupUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
+	{
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Group object")));
+
+		args.GetReturnValue().SetUndefined();
+	}
+	else{
+		Groupwrap* PtGroupwrap = ObjectWrap::Unwrap<Groupwrap>(args.Holder());
+
+		Local<Object> ObjectDirectoryWrap = Directorywrap::CreateDirectoryWrap(isolate, PtGroupwrap->Pt_DirectoryWrap->ptdirectory);
+
+		args.GetReturnValue().Set(ObjectDirectoryWrap);
+
+
+	}
 }
+
 
 } 

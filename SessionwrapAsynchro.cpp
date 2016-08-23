@@ -315,17 +315,33 @@ void SessionwrapAsynchro::LogOutAsynchro(const v8::FunctionCallbackInfo<v8::Valu
 
 	work->callback.Reset(isolate, commeback);
 
-	uv_queue_work(uv_default_loop(), &work->request, GetWASIDAsynchroWork, GetWASIDAsynchroWorkComplete);
+	uv_queue_work(uv_default_loop(), &work->request, LogOutAsynchroWork, LogOutAsynchroWorkComplete);
 
 	args.GetReturnValue().Set(Undefined(isolate));
 
 };
 void SessionwrapAsynchro::LogOutAsynchroWork(uv_work_t  *request){
+	
+	Work *work = (Work*)(request->data);
 
+	work->Intra_Data[0].Argument.ptSessionwrapAsynchro->ptsession->LogOut();
 
 };
 void SessionwrapAsynchro::LogOutAsynchroWorkComplete(uv_work_t  *request, int status){
 
+	Isolate *isolate = Isolate::GetCurrent();
+
+	HandleScope scoop(isolate);
+
+	Work *work = (Work *)(request->data);
+
+	Handle<Value> args[] = { Null(isolate)};
+
+	Local<Function>::New(isolate, work->callback)->Call(isolate->GetCurrentContext()->Global(), 1, args);
+
+	work->callback.Reset();
+
+	delete work;
 
 
 };

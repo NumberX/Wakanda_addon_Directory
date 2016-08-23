@@ -68,7 +68,8 @@ namespace WaDirectory_data
 	{
 		string Resultat = "";
 
-	CURL*	curl = curl_easy_init();
+	//CURL*
+		curl = curl_easy_init();
 
 		string dataheader;
 		
@@ -99,7 +100,7 @@ namespace WaDirectory_data
 			Resultat=cookies->data;
 
 		}
-
+		
 		return Resultat;
 
 	}

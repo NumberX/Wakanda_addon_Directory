@@ -3,7 +3,8 @@
 @abstract Directory interface definition
 */
 
-#pragma once
+#ifndef Directory_H
+#define Directory_H
 #include"IDirectory.h"
 #include<string>
 #include<vector>
@@ -16,11 +17,14 @@ namespace WaDirectory
 	class User;
 	class Session;
 
-	class Directory 
+	class Directory
 	{
 	public:
 
 		Directory();
+
+		Directory(std::string Url_Wakanda, std::string Url_Directory);
+
 		~Directory();
 
 		Session*    LogIn(const std::string& inUser, const std::string& inPassword); 
@@ -40,6 +44,18 @@ namespace WaDirectory
 		bool         UserBelongTo(const User* inUser, const std::string& inGroupID) ;
 
 		bool         UserBelongTo(const User* inUser, const Group* inGroupID) ;
+		
+		std::string	 Get_Url_Wakanda();
+
+		std::string  Get_Url_Directory();
+		
+		void		 Set_Url_Wakanda(std::string Url_Wakanda);
+		
+		void		 Set_Url_Directory(std::string Url_Directory);
+	
+	private :
+		std::string Url_Wakanda, Url_Directory;
 
 	};
 }
+#endif

@@ -1,8 +1,11 @@
 #include "Sessionwrap.h"
+#include"ControleSession.h"
 #include "Userwrap.h"
+#include"Utility.h"
 #include<string>
 #include<iostream>
 #include"Session.h"
+#include"DirectoryWrap.h"
 using v8::Context;
 using v8::Function;
 using v8::FunctionCallbackInfo;
@@ -20,155 +23,276 @@ using v8::HandleScope;
 using namespace v8;
 using namespace WaDirectory;
 using namespace std;
+using namespace Controle;
 
 namespace WaDirectorywrap_data_v8 {
 
-Persistent<Function> Sessionwrap::constructor;
+	Persistent<Function> Sessionwrap::constructor;
 
-Sessionwrap::Sessionwrap():ptsession()  {
+	Persistent<Value> Sessionwrap::prototype_Session_Synchrone;
 	
+	Sessionwrap::Sessionwrap() :ptsession()  {
+
+	}
+
+	Sessionwrap::~Sessionwrap() {
+
+	}
+
+	Session* Sessionwrap::GetSession() {
+		return this->ptsession;
+	}
+	Local<Boolean> Sessionwrap::ControleSessionUnwrap(Local<Object> handle, Isolate* isolate)
+	{
+		EscapableHandleScope scope(isolate);
+
+		if (!handle.IsEmpty() && handle->InternalFieldCount() == 1) {
+
+			Local<Value> Pt_Prototype = handle->GetPrototype();
+			Utility util;
+
+			if (Pt_Prototype == prototype_Session_Synchrone) {
+				Local<Boolean> Resultat = Boolean::New(isolate, true);
+				return scope.Escape(Resultat);
+
+			}
+
+
+		}
+		Local<Boolean> Resultat = Boolean::New(isolate, false);
+		return scope.Escape(Resultat);
+	}
+	Local<Object> Sessionwrap::CreateSessionWrap(Isolate* isolate, Session* PtSession, Directorywrap* PtDirectoryWrap)
+	{
+		EscapableHandleScope scope(isolate);
+
+		Local<Value> argv[] = { Boolean::New(isolate, true) };
+
+		Local<Context> context = isolate->GetCurrentContext();
+
+		Local<Function> LocalFunct = Local<Function>::New(isolate, Sessionwrap::constructor);
+
+		Local<Object> ObjectSessionWrap = LocalFunct->NewInstance(context, 1, argv).ToLocalChecked();
+
+		Sessionwrap* PtSessionWrap = Sessionwrap::Unwrap<Sessionwrap>(ObjectSessionWrap);
+
+		PtSessionWrap->ptsession = PtSession;
+
+		PtSessionWrap->ptsession->Set_Directory(PtDirectoryWrap->GetDirectory());
+
+		PtSessionWrap->Pt_DirectoryWrap = PtDirectoryWrap;
+
+		return scope.Escape(ObjectSessionWrap);
+
+
+
+	}
+	void Sessionwrap::Init(Local<Object> exports) {
+
+		Isolate* isolate = exports->GetIsolate();
+
+		Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, New);
+
+		tpl->SetClassName(String::NewFromUtf8(isolate, "Sessionwrap"));
+
+		tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+		NODE_SET_PROTOTYPE_METHOD(tpl, "GetUserwrap", GetUserwrap);
+
+		NODE_SET_PROTOTYPE_METHOD(tpl, "GetWASID", GetWASID);
+
+		NODE_SET_PROTOTYPE_METHOD(tpl, "GetDirectorywrap", GetDirectorywrap);
+
+		NODE_SET_PROTOTYPE_METHOD(tpl, "IsValid", IsValid);
+
+		NODE_SET_PROTOTYPE_METHOD(tpl, "LogOut", LogOut);
+
+		constructor.Reset(isolate, tpl->GetFunction());
+
+		exports->Set(String::NewFromUtf8(isolate, "Sessionwrap"),
+			tpl->GetFunction());
+	}
+
+	void Sessionwrap::New(const FunctionCallbackInfo<Value>& args) {
+		Isolate* isolate = args.GetIsolate();
+
+		if (args.IsConstructCall()) {
+
+			
+
+			 if (args.Length() ==1 ) {
+				
+
+				Sessionwrap* PtSessionWrap = new Sessionwrap();
+
+				PtSessionWrap->Wrap(args.This());
+
+				prototype_Session_Synchrone.Reset(isolate, args.This()->GetPrototype());
+
+				args.GetReturnValue().Set(args.Holder());
+			}
+			 else
+			 {
+
+				 isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "To create a object of Session you need to pass from Directory object ")));
+
+				 args.GetReturnValue().SetUndefined();
+
+			 }
+		}
+		else {
+
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "To create a object of Session you need to pass from Directory object ")));
+
+			args.GetReturnValue().SetUndefined();
+		}
+	}
+
+
+	void Sessionwrap::GetUserwrap(const FunctionCallbackInfo<Value>& args) {
+
+		Isolate* isolate = args.GetIsolate();
+
+		if (ControleSessionUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
+		{
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Group object")));
+
+			args.GetReturnValue().SetUndefined();
+		}
+		else{
+			Sessionwrap* PtSessionWrap = ObjectWrap::Unwrap<Sessionwrap>(args.This());
+			string Message = "";
+			ControleSession PtcontroleSession;
+			if (PtcontroleSession.ControlePtSession(PtSessionWrap->ptsession, Message) == true)
+			{
+				User *PtUser = PtSessionWrap->ptsession->GetUser();
+
+				Local<Context> context = isolate->GetCurrentContext();
+
+				Local<Object> ObjectUserWrap = Userwrap::CreateUserWrap(isolate, PtUser, PtSessionWrap->Pt_DirectoryWrap);
+
+				args.GetReturnValue().Set(ObjectUserWrap);
+			}
+			else
+			{
+				isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Session object")));
+
+				args.GetReturnValue().SetUndefined();
+			}
+		}
+	}
+
+	void Sessionwrap::GetWASID(const FunctionCallbackInfo<Value>& args) {
+
+		Isolate* isolate = args.GetIsolate();
+
+		if (ControleSessionUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
+		{
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Group object")));
+
+			args.GetReturnValue().SetUndefined();
+		}
+		else{
+			Sessionwrap* PtSessionWrap = ObjectWrap::Unwrap<Sessionwrap>(args.Holder());
+
+			string Message = "";
+
+			ControleSession PtcontroleSession;
+			if (PtcontroleSession.ControlePtSession(PtSessionWrap->ptsession, Message) == true)
+			{
+				std::string resultat = PtSessionWrap->ptsession->cookies;
+
+				args.GetReturnValue().Set(String::NewFromUtf8(isolate, resultat.c_str()));
+			}
+			else
+			{
+				isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Session object")));
+
+				args.GetReturnValue().SetUndefined();
+			}
+		}
+	}
+
+	void Sessionwrap::GetDirectorywrap(const FunctionCallbackInfo<Value>& args) {
+
+		Isolate* isolate = args.GetIsolate();
+
+		if (ControleSessionUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
+		{
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Group object")));
+
+			args.GetReturnValue().SetUndefined();
+		}
+		else{
+			Sessionwrap* PtSessionWrap = ObjectWrap::Unwrap<Sessionwrap>(args.Holder());
+
+	        Local<Object> ObjectDirectoryWrap = Directorywrap::CreateDirectoryWrap(isolate, PtSessionWrap->Pt_DirectoryWrap->ptdirectory);
+
+			args.GetReturnValue().Set(ObjectDirectoryWrap);
+
+
+		}
+	}
+
+	void Sessionwrap::IsValid(const FunctionCallbackInfo<Value>& args) {
+
+		Isolate* isolate = args.GetIsolate();
+
+		if (ControleSessionUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
+		{
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Session object")));
+
+			args.GetReturnValue().SetUndefined();
+		}
+		else{
+			Sessionwrap* PtSessionWrap = ObjectWrap::Unwrap<Sessionwrap>(args.Holder());
+
+			string Message = "";
+
+			ControleSession PtcontroleSession;
+			if (PtcontroleSession.ControlePtSession(PtSessionWrap->ptsession, Message) == true)
+			{
+				args.GetReturnValue().Set(Boolean::New(isolate, PtSessionWrap->ptsession->IsValid()));
+			}
+			else
+			{
+				isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Session object")));
+
+				args.GetReturnValue().SetUndefined();
+			}
+		}
+	}
+
+	void Sessionwrap::LogOut(const FunctionCallbackInfo<Value>& args) {
+
+		Isolate* isolate = args.GetIsolate();
+
+		if (ControleSessionUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
+		{
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Session object")));
+
+			args.GetReturnValue().SetUndefined();
+		}
+		else{
+			Sessionwrap* PtSessionWrap = ObjectWrap::Unwrap<Sessionwrap>(args.Holder());
+
+			string Message = "";
+
+			ControleSession PtcontroleSession;
+			if (PtcontroleSession.ControlePtSession(PtSessionWrap->ptsession, Message) == true)
+			{
+
+				PtSessionWrap->ptsession->LogOut();
+			}
+			else
+			{
+				isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Session object")));
+
+				args.GetReturnValue().SetUndefined();
+			}
+		}
+	}
+
+
+
 }
-
-Sessionwrap::~Sessionwrap() {
-
-}
-Local<Object> Sessionwrap::CreateSessionWrap(Isolate* isolate, Session* PtSession)
-{
-	EscapableHandleScope scope(isolate);
-
-	Local<Value> argv[] = { Boolean::New(isolate, true) };
-	
-	Local<Context> context = isolate->GetCurrentContext();
-	
-	Local<Function> LocalFunct = Local<Function>::New(isolate, Sessionwrap::constructor);
-	
-	Local<Object> ObjectSessionWrap = LocalFunct->NewInstance(context, 1, argv).ToLocalChecked();
-	
-	Sessionwrap* PtSessionWrap = Sessionwrap::Unwrap<Sessionwrap>(ObjectSessionWrap);
-
-	PtSessionWrap->ptsession = PtSession;
-
-	return scope.Escape(ObjectSessionWrap);
-
-
-
-}
-void Sessionwrap::Init(Local<Object> exports) {
-
-  Isolate* isolate = exports->GetIsolate();
-  
-  Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, New);
-  
-  tpl->SetClassName(String::NewFromUtf8(isolate, "Sessionwrap"));
-  
-  tpl->InstanceTemplate()->SetInternalFieldCount(1);
-  
-  NODE_SET_PROTOTYPE_METHOD(tpl, "GetUserwrap", GetUserwrap);
-  
-  NODE_SET_PROTOTYPE_METHOD(tpl, "GetWASID", GetWASID);
-  
-  NODE_SET_PROTOTYPE_METHOD(tpl, "GetDirectorywrap", GetDirectorywrap);
-  
-  NODE_SET_PROTOTYPE_METHOD(tpl, "IsValid", IsValid);
-  
-  NODE_SET_PROTOTYPE_METHOD(tpl, "LogOut", LogOut);
-
-  constructor.Reset(isolate, tpl->GetFunction());
-  
-  exports->Set(String::NewFromUtf8(isolate, "Sessionwrap"),
-               tpl->GetFunction());
-}
-
-void Sessionwrap::New(const FunctionCallbackInfo<Value>& args) {
-  Isolate* isolate = args.GetIsolate();
-
-  if (args.IsConstructCall()) {
-	
-	  if (args.Length() == 0) {
-		  /*Traitement du cas UserWrap PtUserWarp = new UserWrap() */
-		  Sessionwrap*  PtSessionWrap= new Sessionwrap();
-		  
-		  Session *PtSession = new Session();
-		  
-		  PtSessionWrap->ptsession = PtSession;
-		  
-		  PtSessionWrap->Wrap(args.Holder());
-		  
-		  args.GetReturnValue().Set(args.Holder());
-	  }
-	  
-	  else if (args.Length() == 1) { 
-		  /*Traitement du cas UserWrap PtUserWarp = new UserWrap(User) */
-		
-		  Sessionwrap* PtSessionWrap = new Sessionwrap();
-		  
-		  PtSessionWrap->Wrap(args.This());
-		  
-		  args.GetReturnValue().Set(args.Holder());
-	  }
-  } else {
-    
-  }
-}
-
-
-void Sessionwrap::GetUserwrap(const FunctionCallbackInfo<Value>& args) {
-
-	Isolate* isolate = args.GetIsolate();
-
-	Sessionwrap* PtSessionWrap = ObjectWrap::Unwrap<Sessionwrap>(args.This());
-
-	User *PtUser = PtSessionWrap->ptsession->GetUser();
-	
-	Local<Context> context = isolate->GetCurrentContext();
-	
-	Local<Object> ObjectUserWrap = Userwrap::CreateUserWrap(isolate, PtUser);
-    
-	args.GetReturnValue().Set(ObjectUserWrap);
-}
-
-void Sessionwrap::GetWASID(const FunctionCallbackInfo<Value>& args) {
-	
-	Isolate* isolate = args.GetIsolate();
-
-	Sessionwrap* obj = ObjectWrap::Unwrap<Sessionwrap>(args.Holder());
-
-	std::string resultat = obj->ptsession->cookies;
-
-	args.GetReturnValue().Set(String::NewFromUtf8(isolate, resultat.c_str()));
-}
-
-void Sessionwrap::GetDirectorywrap(const FunctionCallbackInfo<Value>& args) {
-
-	Isolate* isolate = args.GetIsolate();
-
-	Sessionwrap* obj = ObjectWrap::Unwrap<Sessionwrap>(args.Holder());
-
-	double x = 1;
-
-	args.GetReturnValue().Set(Number::New(isolate, x));
-}
-
-void Sessionwrap::IsValid(const FunctionCallbackInfo<Value>& args) {
-
-	Isolate* isolate = args.GetIsolate();
-
-	Sessionwrap* PtSessionWrap = ObjectWrap::Unwrap<Sessionwrap>(args.Holder());
-	
-	args.GetReturnValue().Set(Boolean::New(isolate, PtSessionWrap->ptsession->IsValid()));
-}
-
-void Sessionwrap::LogOut(const FunctionCallbackInfo<Value>& args) {
-	
-	Isolate* isolate = args.GetIsolate();
-
-	Sessionwrap* PtSessionWrap = ObjectWrap::Unwrap<Sessionwrap>(args.Holder());
-	
-	PtSessionWrap->ptsession->LogOut();
-
-}
-
-
-
-}
-

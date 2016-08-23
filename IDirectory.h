@@ -3,7 +3,8 @@
     @abstract Directory interface definition
 */
 
-#pragma once
+#ifndef IDirectory_H
+#define IDirectory_H
 #include<string>
 #include<vector>
 using namespace std;
@@ -48,4 +49,5 @@ namespace WaDirectory
 
     };
 }
+#endif
 

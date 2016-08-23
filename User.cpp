@@ -1,6 +1,7 @@
 #include "User.h"
 #include"Session.h"
 #include"Group.h"
+#include"Directory.h"
 #include"Jsonparser.h"
 #include"XMLparser.h"
 #include<string>
@@ -22,6 +23,11 @@ namespace WaDirectory
 		this->Id = Id;
 		this->Password = Password;
 	}
+	void User::Set_Directory(Directory* Pt_Directory)
+	{
+	
+		this->Pt_Directory = Pt_Directory;
+	}
 
 	User::~User()
 	{
@@ -30,29 +36,34 @@ namespace WaDirectory
 
 	Directory* User::GetDirectory() const
 	{
-		return nullptr;
+		return this->Pt_Directory;
 	}
 
 
 	void User::GetName(string& outName)
 	{
-		XMLparser parse;
+		XMLparser PtparseurXml(this->Pt_Directory->Get_Url_Directory());
 
-		outName = parse.NameUserById(this->Id, "name");
+		outName = PtparseurXml.NameUserById(this->Id, "name");
 	
 	}
 
 
 	bool User::BelongsToGroup(const string& inGroupName)
 	{
-		bool resultat=false;// = new Session();
-		Jsonparser Jspar;
+		bool resultat=false;
+
+		Jsonparser Jspar(this->GetDirectory()->Get_Url_Wakanda(), this->GetDirectory()->Get_Url_Wakanda());
+		
 		string wsid = Jspar.login(this->Username, this->Password);
+		
 		if (wsid.length() > 0)
 		{
 			
+		
 			resultat=Jspar.currentUserBelongsTo("", inGroupName);
-			return resultat;
+			
+			
 		}
 		return resultat;
 	}
@@ -61,15 +72,17 @@ namespace WaDirectory
 	bool User::BelongsToGroup(const Group* inGroupName)
 	{
 
-		bool resultat = false;// = new Session();
-		Jsonparser Jspar;
+		bool resultat = false;
+
+		Jsonparser Jspar(this->GetDirectory()->Get_Url_Wakanda(), this->GetDirectory()->Get_Url_Wakanda());
+		
 		string wsid = Jspar.login(this->Username, this->Password);
+		
 		if (wsid.length() > 0)
 		{
 
 			resultat = Jspar.currentUserBelongsTo("", inGroupName->Namegroup);
 			
-			return resultat;
 		}
 		return resultat;
 	}
@@ -80,9 +93,13 @@ namespace WaDirectory
 
 
 		bool resultat = false;
-		Jsonparser Jspar;
-		Jspar.cookie=inSession->cookies;
+		
+		Jsonparser Jspar(this->GetDirectory()->Get_Url_Wakanda(), this->GetDirectory()->Get_Url_Wakanda()); 
+		
+		Jspar.cookie = inSession->cookies;
+		
 		vector<string> v1= Jspar.currentuser();
+		
 		if (v1[0] == this->Username)
 		{
 			

@@ -3,7 +3,8 @@
     @abstract   define the user object interface
 */
 
-#pragma once
+#ifndef IUser_H
+#define IUser_H
 #include"IDirectory.h"
 #include<string>
 #include<vector>
@@ -37,3 +38,4 @@ namespace WaDirectory
     };
     
 }
+#endif
