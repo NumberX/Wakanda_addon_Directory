@@ -29,12 +29,12 @@ class Directorywrap : public node::ObjectWrap {
 	
   explicit Directorywrap();
   ~Directorywrap();
-  static Local<Object> CreateDirectoryWrap(Isolate* isolate, Directory* PtDirectory);
   static Local<Boolean> ControleDirectoryUnwrap(Local<Object> handle, Isolate* isolate);
   static v8::Persistent<v8::Value> prototype_Directory_Synchrone;
   static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void LogIn(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void GetGroupwrapNames(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void GetGroupwrapID(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void GetGroupwrap(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void GetUserwrap(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void GetSessionwrap(const v8::FunctionCallbackInfo<v8::Value>& args);

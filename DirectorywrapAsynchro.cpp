@@ -367,7 +367,7 @@ void DirectorywrapAsynchro::GetUserwrapAsynchroWork(uv_work_t  *request){
 
 	Thread_Data Pt_UserWrapAsynchro_Intra;
 
-	Pt_UserWrapAsynchro_Intra.Argument.Ptuser = work->Intra_Data[0].Argument.PtDirectorywrapAsynchro->ptdirectory->GetUser(UserId);
+	Pt_UserWrapAsynchro_Intra.Argument.Ptuser = work->Intra_Data[0].Argument.PtDirectorywrapAsynchro->ptdirectory->GetUser(UserId,"");
 
 	work->Intra_Data.push_back(Pt_UserWrapAsynchro_Intra);
 

@@ -27,13 +27,49 @@ namespace WaDirectory
 	Directory::~Directory()
 	{
 	}
+
+
+	bool Directory::Existbyname(string name)
+	{
+		XMLparser *PtparseurXml;
+
+		PtparseurXml = new XMLparser(this->Get_Url_Directory());
+
+
+		if (PtparseurXml->ExistUserByname(name, "name"))
+		{
+			 return true;
+
+		}
+				return false;
+	}
+
+	bool Directory::Isvalid(string Username,string Password)
+	{
+		Jsonparser *Jspar;
+
+		Jspar = new Jsonparser(this->Url_Wakanda, this->Url_Directory);
+		string wsid = Jspar->login(Username, Password);
+
+
+		if (wsid.length() > 0)
+		{
+
+			return true;
+
+		}
+	
+		return false;
+	}
 	Session*    Directory::LogIn(const std::string& inUser, const std::string& inPassword)
 	{
 		Session* session=NULL;
 
-		Jsonparser Jspar(this->Url_Wakanda,this->Url_Directory);
-		
-		string wsid=Jspar.login(inUser, inPassword);
+		Jsonparser *Jspar;
+
+		Jspar = new Jsonparser(this->Url_Wakanda, this->Url_Directory);
+		string wsid=Jspar->login(inUser, inPassword);
+
 		
 		if (wsid.length() > 0)
 		{
@@ -42,7 +78,7 @@ namespace WaDirectory
 			
 			session->wsid = wsid;
 			
-			session->cookies = Jspar.cookie;
+			session->cookies = wsid;
 			
 
 		 }
@@ -80,22 +116,38 @@ namespace WaDirectory
 
 	void         Directory::GetGroupNames(std::vector<std::string>& outGroupName)
 	{
-		XMLparser PtparseurXml(this->Get_Url_Directory());
+		XMLparser *PtparseurXml;
+	
+		PtparseurXml = new XMLparser(this->Get_Url_Directory());
 	
 		outGroupName.clear();
 		
-		outGroupName = PtparseurXml.ListGroup();
+		outGroupName = PtparseurXml->ListGroup();
 	
 	
+	}
+	void         Directory::GetGroupId(std::vector<std::string>& outGroupName)
+	{
+		XMLparser *PtparseurXml;
+
+		PtparseurXml = new XMLparser(this->Get_Url_Directory());
+
+		outGroupName.clear();
+
+		outGroupName = PtparseurXml->ListGroupId();
+
+
 	}
 
 	Group*      Directory::GetGroup(const std::string& inGroupName){ 
 		
-		XMLparser PtparseurXml(this->Get_Url_Directory());
-		
+		XMLparser *PtparseurXml;
+
+		PtparseurXml = new XMLparser(this->Get_Url_Directory());
+
 		Group *PtGroup=NULL;
 		
-		if (PtparseurXml.NameGrouoById(inGroupName).length()>0)
+		if (PtparseurXml->NameGrouoById(inGroupName).length()>0)
 		
 			PtGroup = new Group(inGroupName);
 		
@@ -105,14 +157,19 @@ namespace WaDirectory
 	
 	}
 
-	User*       Directory::GetUser(const std::string& inUserName){ 
+	User*       Directory::GetUser(const std::string& inUserName, const std::string& Password){
 
-		XMLparser PtparseurXml(this->Get_Url_Directory());
+		XMLparser *PtparseurXml;
 
-		User *PtUser;
+		PtparseurXml = new XMLparser(this->Get_Url_Directory());
 
-		PtUser = new User(inUserName, PtparseurXml.NameUserById(inUserName, "name"), PtparseurXml.NameUserById(inUserName, "fullname"), "");
+		User *PtUser=NULL;
 
+		if (PtparseurXml->ExistUserByname(inUserName, "name"))
+		{
+			string Id = PtparseurXml->UserIdByname(inUserName);
+			PtUser = new User(inUserName, PtparseurXml->NameUserById(Id,"fullname"),Id , Password);
+		}
 		return PtUser;
 
 
@@ -120,11 +177,11 @@ namespace WaDirectory
 
 	bool         Directory::LogOut(const Session* inSession){
 
-		Jsonparser Jspar(this->Url_Wakanda, this->Url_Directory);
+		Jsonparser *Jspar;
+		Jspar = new Jsonparser(this->Url_Wakanda, this->Url_Directory);
+		Jspar->cookie = inSession->cookies;
 		
-		Jspar.cookie = inSession->cookies;
-		
-		bool resultat = Jspar.Logout();
+		bool resultat = Jspar->Logout();
 		
 		return resultat;
 		
@@ -145,11 +202,12 @@ namespace WaDirectory
 
 	bool         Directory::UserBelongTo(const Session* inSession, const std::string& inGroupID){
 		
-		Jsonparser Jspar(this->Url_Wakanda, this->Url_Directory);
+		Jsonparser* Jspar;
+		Jspar = new Jsonparser(this->Url_Wakanda, this->Url_Directory);
 
-		Jspar.cookie = inSession->cookies;
+		Jspar->cookie = inSession->cookies;
 		
-		bool resultat = Jspar.currentUserBelongsTo(inGroupID,"");
+		bool resultat = Jspar->currentUserBelongsTo(inGroupID,"");
 
 		return resultat;
 
@@ -161,10 +219,18 @@ namespace WaDirectory
 
 	bool         Directory::UserBelongTo(const User* inUser, const std::string& inGroupID)
 	{ 
-		XMLparser PtparseurXml(this->Get_Url_Directory());
+		XMLparser *PtparseurXml;
 
-		return PtparseurXml.UserBelongGroup(inUser->Id, inGroupID);
+		Jsonparser*PTJasper;
+
+		PTJasper = new Jsonparser(this->Url_Wakanda, this->Url_Directory);
 		
+		Session*PtSession=this->LogIn(inUser->Username, inUser->Password);
+
+		PtSession->GetWASID(PTJasper->cookie);
+
+		return  PTJasper->currentUserBelongsTo(inGroupID, "");
+
 	
 	}
 

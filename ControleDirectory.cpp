@@ -67,13 +67,13 @@ bool ControleDirectory::ControleGetGroupwrapNames(const v8::FunctionCallbackInfo
 
 
 }
-bool ControleDirectory::ControleGet(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &Message)
+bool ControleDirectory::ControleGet(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &Message,int Number)
 {
 	Isolate* isolate = args.GetIsolate();
 
 	if (PtDirectory != NULL)
 	{
-		if (args.Length() == 1) {
+		if (args.Length() == Number) {
 
 
 			if ((args[0]->IsString()))
@@ -87,7 +87,7 @@ bool ControleDirectory::ControleGet(const v8::FunctionCallbackInfo<v8::Value>& a
 			}
 
 		}
-		else if (args.Length() != 1) {
+		else if (args.Length() != Number) {
 
 			Message = "Wrong number of argument";
 
@@ -105,16 +105,16 @@ bool ControleDirectory::ControleGet(const v8::FunctionCallbackInfo<v8::Value>& a
 bool ControleDirectory::ControleGetGroupwrap(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &Message)
 {
 
-	return (this->ControleGet(args, PtDirectory, Message));
+	return (this->ControleGet(args, PtDirectory, Message,1));
 }
 bool ControleDirectory::ControleGetUserwrap(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &Message)
 {
-	return (this->ControleGet(args, PtDirectory, Message));
+	return (this->ControleGet(args, PtDirectory, Message,2));
 
 }
 bool ControleDirectory::ControleGetSessionwrap(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &Message)
 {
-	return (this->ControleGet(args, PtDirectory, Message));
+	return (this->ControleGet(args, PtDirectory, Message,1));
 }
 
 

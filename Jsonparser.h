@@ -23,5 +23,6 @@ namespace WaDirectory_data
 		string GetUrlXML();
 		void SetUrl(string Url);
 		void SetUrlXML(string Url);
+		bool isvalid(string Username, string Password);
 	};
 }

@@ -40,6 +40,8 @@ namespace WaDirectory
 		
 		void Set_Directory(Directory* Pt_Directory);
 
+
+
 	};
 
 }

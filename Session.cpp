@@ -3,6 +3,8 @@
 #include"User.h"
 #include"IUser.h"
 #include"Jsonparser.h"
+#include<iostream>
+using namespace std;
 using namespace WaDirectory_data;
 namespace WaDirectory
 {
@@ -29,18 +31,22 @@ namespace WaDirectory
 	{
 		
 		
-		Jsonparser json(this->GetDirectory()->Get_Url_Wakanda(), this->GetDirectory()->Get_Url_Directory());
+		Jsonparser *json;
+			json=	new Jsonparser(this->GetDirectory()->Get_Url_Wakanda(), this->GetDirectory()->Get_Url_Directory());
 
-		json.cookie = this->cookies;
+		json->cookie = this->cookies;
 		
-		vector<string>Id =json.currentuser();
+		vector<string>Id =json->currentuser();
+
 		
 		User *pt=NULL;
 		
 		if (Id.size()>1)
 		{ 
-		
+
 			pt = new User(Id[0], Id[1], Id[2],"");
+
+			
 
 		}
 		return pt;
@@ -50,11 +56,11 @@ namespace WaDirectory
 	bool Session::IsValid()
 	{
 		
-		Jsonparser json(this->GetDirectory()->Get_Url_Wakanda(), this->GetDirectory()->Get_Url_Directory());
+		Jsonparser *json;
+		json = new Jsonparser(this->GetDirectory()->Get_Url_Wakanda(), this->GetDirectory()->Get_Url_Directory());
+		json->cookie = this->cookies;
 		
-		json.cookie = this->cookies;
-		
-		vector<string>Id = json.currentuser();
+		vector<string>Id = json->currentuser();
 		
 		if (Id.size() > 1)
 			return true;
@@ -64,11 +70,11 @@ namespace WaDirectory
 
 	void Session::LogOut()
 	{
-		Jsonparser json(this->GetDirectory()->Get_Url_Wakanda(), this->GetDirectory()->Get_Url_Directory());
+		Jsonparser *json;
+		json =new Jsonparser (this->GetDirectory()->Get_Url_Wakanda(), this->GetDirectory()->Get_Url_Directory());
+		json->cookie = this->cookies;
 		
-		json.cookie = this->cookies;
-		
-		json.Logout();
+		json->Logout();
 	}
 
 

@@ -24,6 +24,7 @@ namespace WaDirectorywrap_data_v8{
 
 class Sessionwrap : public node::ObjectWrap {
 	friend class Directorywrap;
+	friend class Userwrap;
  public:
   static void Init(v8::Local<v8::Object> exports);
   

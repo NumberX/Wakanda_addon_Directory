@@ -30,10 +30,12 @@ namespace WaDirectory
 		Session*    LogIn(const std::string& inUser, const std::string& inPassword); 
 
 		void         GetGroupNames(std::vector<std::string>& outGroupName) ;
+		
+		void        GetGroupId(std::vector<std::string>& outGroupName);
 
 		Group*      GetGroup(const std::string& inGroupName) ;
 
-		User*       GetUser(const std::string& inUserName) ;
+		User*       GetUser(const std::string& inUserName, const std::string& Password);
 
 		bool         LogOut(const Session* inSession);
 
@@ -52,6 +54,10 @@ namespace WaDirectory
 		void		 Set_Url_Wakanda(std::string Url_Wakanda);
 		
 		void		 Set_Url_Directory(std::string Url_Directory);
+
+		bool         Existbyname(string name);
+
+		bool         Isvalid(string Username, string Password);
 	
 	private :
 		std::string Url_Wakanda, Url_Directory;

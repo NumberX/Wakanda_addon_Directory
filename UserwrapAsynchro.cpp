@@ -88,7 +88,7 @@ void UserwrapAsynchro::New(const FunctionCallbackInfo<Value>& args) {
 	  if (args.Length() == 0) {
 
 		  /*
-		  Traitement du cas UserwrapAsynchro User=new UserwrapAsynchro();
+		  Call from directory
 		  */
 
 		  UserwrapAsynchro* PtUserwrapAsynchro = new UserwrapAsynchro();

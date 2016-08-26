@@ -29,7 +29,75 @@ namespace WaDirectory_data
 	{
 	}
 
+	string XMLparser::UserIdByname(string name)
+	{
 
+		rapidxml::xml_node<> * RootNode = xml.first_node("directory");
+
+		if (RootNode == 0)
+			return false;
+
+		for (rapidxml::xml_node<> * Iterator = RootNode->first_node("user"); Iterator; Iterator = Iterator->next_sibling("user"))
+		{
+
+			rapidxml::xml_attribute<> * IDAttribute = Iterator->first_attribute("ID");
+
+			rapidxml::xml_attribute<> * NameAttribute = Iterator->first_attribute("name");
+
+
+			if (IDAttribute != 0)
+			{
+				
+					if (NameAttribute != 0)
+
+						if (NameAttribute->value() == name)
+						{
+
+							return IDAttribute->value();
+						}
+				
+			}
+		}
+
+		return "";
+	}
+
+
+
+	bool XMLparser::ExistUserByname(string name, string NameAttribut)
+	{
+
+		rapidxml::xml_node<> * RootNode = xml.first_node("directory");
+
+		if (RootNode == 0)
+			return false;
+
+		for (rapidxml::xml_node<> * Iterator = RootNode->first_node("user"); Iterator; Iterator = Iterator->next_sibling("user"))
+		{
+
+			rapidxml::xml_attribute<> * IDAttribute = Iterator->first_attribute("ID");
+
+			rapidxml::xml_attribute<> * NameAttribute = Iterator->first_attribute("name");
+
+
+			if (IDAttribute != 0)
+			{
+				if (NameAttribut == "name")
+
+				{
+					if (NameAttribute != 0)
+
+						if (NameAttribute->value() == name)
+						{
+
+							return true;
+						}
+				}
+			}
+		}
+
+		return false;
+	}
 	string XMLparser::NameUserById(string Id, string NameAttribut)
 	{
 
@@ -38,7 +106,8 @@ namespace WaDirectory_data
 			if (RootNode == 0)
 				return "";
 
-			for (rapidxml::xml_node<> * Iterator = RootNode->first_node("user"); Iterator; Iterator = Iterator->next_sibling("user")) {
+			for (rapidxml::xml_node<> * Iterator = RootNode->first_node("user"); Iterator; Iterator = Iterator->next_sibling("user")) 
+			{
 				
 				rapidxml::xml_attribute<> * IDAttribute = Iterator->first_attribute("ID");
 				
@@ -71,7 +140,17 @@ namespace WaDirectory_data
 							}
 
 					}
-				
+					if (NameAttribut == "ID")
+					{
+						if (FullNameAttribute != 0)
+
+							if (IDAttribute->value() == Id)
+							{
+
+								return IDAttribute->value();
+							}
+
+					}
 				}
 
 			}
@@ -133,7 +212,28 @@ namespace WaDirectory_data
 		return resultat;
 	}
 
+	vector<string> XMLparser::ListGroupId()
+	{
+		std::vector<string> resultat;
 
+		rapidxml::xml_node<> * RootNode = xml.first_node("directory");
+
+		if (RootNode == 0) return resultat;
+
+
+		for (rapidxml::xml_node<> * Iterator = RootNode->first_node("group"); Iterator; Iterator = Iterator->next_sibling("group")) {
+
+			rapidxml::xml_attribute<> * IDAttribute = Iterator->first_attribute("ID");
+			if (IDAttribute != 0)
+			{
+				rapidxml::xml_attribute<> * NameAttribute = Iterator->first_attribute("name");
+				resultat.push_back(IDAttribute->value());
+			}
+		}
+
+
+		return resultat;
+	}
 	vector<string> XMLparser::ListGroupInclude(string Id)
 	{
 
@@ -216,10 +316,11 @@ namespace WaDirectory_data
 							string user = "user";
 							if (pt->name() == user)
 							{
-
+								
 								rapidxml::xml_attribute<> * userID = pt->next_attribute();
 								if (userID != 0)
 								{
+									
 									if (userID->value() == UserId)return true;
 								}
 

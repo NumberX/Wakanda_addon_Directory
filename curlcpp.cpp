@@ -47,7 +47,7 @@ namespace WaDirectory_data
 		return (static_cast<curlcpp*>(pInstance))->write_dataheader(ptr, size, nmemb);
 	}
 
-	void curlcpp::initall()
+	void curlcpp::initall(CURL *curl2)
 	{
 		string header_accept = "Accept: application/json ";
 		
@@ -63,48 +63,99 @@ namespace WaDirectory_data
 
 	}
 
+	void curlcpp::isvalid(string username, string password, string url)
+	{
 
+
+
+		CURL *curl2;
+
+		curl2 = curl_easy_init();
+
+		initall(curl2);
+
+		if (curl2) {
+
+
+			this->CurlCppSetOption(url, curl2);
+
+			std::string data = "[\"" + username + "\",\"" + password + "\"]";
+
+			curl_easy_setopt(curl2, CURLOPT_SSL_VERIFYPEER, 0);  // for --insecure option
+
+			curl_easy_setopt(curl2, CURLOPT_POSTFIELDS, data.c_str());
+
+			curl_easy_setopt(curl2, CURLOPT_POSTFIELDSIZE, data.length());
+
+			curl_easy_setopt(curl2, CURLOPT_POST, 1);
+
+			curl_easy_setopt(curl2, CURLOPT_WRITEFUNCTION, WriteDataCallbackbody);
+
+			curl_easy_setopt(curl2, CURLOPT_HEADERFUNCTION, WriteDataCallbackheader);
+
+			curl_easy_setopt(curl2, CURLOPT_WRITEDATA, this);
+
+			curl_easy_setopt(curl2, CURLOPT_HEADERDATA, this);
+
+			res = curl_easy_perform(curl2);
+
+
+			curl_easy_cleanup(curl2);
+
+
+		}
+
+	}
 	string curlcpp::login(string username, string password, string url)
 	{
 		string Resultat = "";
 
-	//CURL*
-		curl = curl_easy_init();
+		CURL *curl2;
+
+		curl2 = curl_easy_init();
+
+		initall(curl2);
 
 		string dataheader;
 		
 		string UrlLogin = this->Url + url;
 		
-		if (curl) {
+		if (curl2) {
 
-			this->CurlCppSetOption(UrlLogin);
+			this->CurlCppSetOption(UrlLogin,curl2);
 
 			std::string data = "[\"" + username + "\",\"" + password + "\"]";
 			
-			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);  // for --insecure option
+			curl_easy_setopt(curl2, CURLOPT_SSL_VERIFYPEER, 0);  // for --insecure option
 			
-			curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
+			curl_easy_setopt(curl2, CURLOPT_POSTFIELDS, data.c_str());
 			
-			curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, data.length());
+			curl_easy_setopt(curl2, CURLOPT_POSTFIELDSIZE, data.length());
 			
-			curl_easy_setopt(curl, CURLOPT_POST, 1);
+			curl_easy_setopt(curl2, CURLOPT_POST, 1);
 			
-			curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
+			curl_easy_setopt(curl2, CURLOPT_COOKIEFILE, "");
 
-            res = curl_easy_perform(curl);
+            res = curl_easy_perform(curl2);
+		
+			curl_slist *cookies1; 
 			
-			res = curl_easy_getinfo(curl, CURLINFO_COOKIELIST, &cookies);
+			cookies1->data = "";
+			res = curl_easy_getinfo(curl2, CURLINFO_COOKIELIST, &cookies1);
 			
-            curl_easy_cleanup(curl);
+            curl_easy_cleanup(curl2);
 			
-			Resultat=cookies->data;
+			Resultat=cookies1->data;
+
+			
 
 		}
-		
+
+
 		return Resultat;
 
 	}
-	void WaDirectory_data::curlcpp::CurlCppSetOption(string Url)
+	void WaDirectory_data::curlcpp::CurlCppSetOption(string Url,CURL* curl)
 	{
 
 
@@ -127,21 +178,24 @@ namespace WaDirectory_data
 
 	void curlcpp::curentuser(string UrlCurrentUserin, string cookie)
 	{
+		CURL *curl2;
+		
+		curl2 = curl_easy_init();
 
-		curl = curl_easy_init();
+		initall(curl2);
 
 		string UrlCurentUser = this->Url + UrlCurrentUserin;
-		if (curl) {
+		if (curl2) {
 			
-			CurlCppSetOption(UrlCurentUser);
+			CurlCppSetOption(UrlCurentUser,curl2);
 
-			curl_easy_setopt(curl, CURLOPT_COOKIELIST, cookie.c_str());
+			curl_easy_setopt(curl2, CURLOPT_COOKIELIST, cookie.c_str());
 			
-			curl_easy_setopt(curl, CURLOPT_HTTPGET, 1);
+			curl_easy_setopt(curl2, CURLOPT_HTTPGET, 1);
 
-			res = curl_easy_perform(curl);
+			res = curl_easy_perform(curl2);
 		
-			curl_easy_cleanup(curl);
+			curl_easy_cleanup(curl2);
 
 		}
 
@@ -151,37 +205,41 @@ namespace WaDirectory_data
 
 	void curlcpp::currentUserBelongsTo(string UrlcurrentUserBelongsToIn, string Idgroup, string Namegroup, string cookie)
 	{
+		CURL *curl2;
 
-		curl = curl_easy_init();
+		curl2 = curl_easy_init();
+
+		initall(curl2);
 
 		std::string dataparametre;
 		
-		if (Idgroup.length() != 0)
+		if (Idgroup.length() > 0)
 		{
 			dataparametre = "[\"" + Idgroup + "\"]";
+			
 		}
-		if (Namegroup.length() != 0)
-		{
-			dataparametre = "[\"" + Namegroup + "\"]";
-		}
+
 		
 		string UrlcurrentUserBelongsTo = this->Url + UrlcurrentUserBelongsToIn;
 
-		if (curl) {
+		if (curl2) {
 
-			this->CurlCppSetOption(UrlcurrentUserBelongsTo);
+			this->CurlCppSetOption(UrlcurrentUserBelongsTo,curl2);
 			
-			curl_easy_setopt(curl, CURLOPT_POSTFIELDS, dataparametre.c_str());
+			curl_easy_setopt(curl2, CURLOPT_POSTFIELDS, dataparametre.c_str());
 			
-			curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, dataparametre.length());
+			curl_easy_setopt(curl2, CURLOPT_POSTFIELDSIZE, dataparametre.length());
 			
-			curl_easy_setopt(curl, CURLOPT_POST, 1);
+			curl_easy_setopt(curl2, CURLOPT_POST, 1);
 			
-			curl_easy_setopt(curl, CURLOPT_COOKIELIST, cookie.c_str());
+			curl_easy_setopt(curl2, CURLOPT_COOKIELIST, cookie.c_str());
 			
-            res = curl_easy_perform(curl);
+            res = curl_easy_perform(curl2);
 
-			curl_easy_cleanup(curl);
+			curl_easy_cleanup(curl2);
+			
+
+			
 
 		}
 
@@ -191,22 +249,25 @@ namespace WaDirectory_data
 	void curlcpp::Logout(string UrlLogoutIn, string cookie)
 	{
 
+		CURL *curl2;
 
-		curl = curl_easy_init();
+		curl2 = curl_easy_init();
+
+		initall(curl2);
 
 		string UrlLogout = this->Url + UrlLogoutIn;
 		
-		if (curl) {
+		if (curl2) {
 			
-			this->CurlCppSetOption(UrlLogout);
+			this->CurlCppSetOption(UrlLogout, curl2);
 
-			curl_easy_setopt(curl, CURLOPT_HTTPGET, 1);
+			curl_easy_setopt(curl2, CURLOPT_HTTPGET, 1);
 
-			curl_easy_setopt(curl, CURLOPT_COOKIELIST, cookie.c_str());
+			curl_easy_setopt(curl2, CURLOPT_COOKIELIST, cookie.c_str());
 			
-			res = curl_easy_perform(curl);
+			res = curl_easy_perform(curl2);
 			
-			curl_easy_cleanup(curl);
+			curl_easy_cleanup(curl2);
 
 		}
 

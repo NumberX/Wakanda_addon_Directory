@@ -221,8 +221,8 @@ namespace WaDirectorywrapAsynchro_data_v8 {
 		string user = work->Input_Data[0].Argument.user;
 
 		Thread_Data Pt_UserWrapAsynchro_Intra;
-
-		User *Pt_User=work->Intra_Data[0].Argument.PtGroupWrapAsynchro->ptgroup->GetUserByName(user);
+		//revoir
+		User *Pt_User=work->Intra_Data[0].Argument.PtGroupWrapAsynchro->ptgroup->GetUserByName(user,"");
 
 		Pt_UserWrapAsynchro_Intra.Argument.Ptuser = Pt_User;
 			

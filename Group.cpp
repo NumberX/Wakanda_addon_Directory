@@ -1,6 +1,8 @@
 #include "Group.h"
 #include"User.h"
 #include"XMLparser.h"
+#include<iostream>
+using namespace std;
 using namespace WaDirectory_data;
 namespace WaDirectory
 {
@@ -29,21 +31,32 @@ namespace WaDirectory
 
 	void Group::GetName(string& ouName)
 	{
-		XMLparser PtparseurXml(this->Pt_Directory->Get_Url_Directory());
+		XMLparser *PtparseurXml;
+		PtparseurXml=new XMLparser(this->Pt_Directory->Get_Url_Directory());
 	
-		ouName = PtparseurXml.NameGrouoById(this->Idgroup);
+		ouName = PtparseurXml->NameGrouoById(this->Idgroup);
 	}
 
 
-	User* Group::GetUserByName(const std::string&  Username)
+	User* Group::GetUserByName(const std::string&  Username, const std::string& Password)
 	{
-		XMLparser PtparseurXml(this->Pt_Directory->Get_Url_Directory());
-		
+		XMLparser *PtparseurXml;
+		PtparseurXml = new XMLparser(this->Pt_Directory->Get_Url_Directory());
+
 		User *usr;
+		if (PtparseurXml->ExistUserByname(Username,"name"))
+		{
+			
+
+			string Id = PtparseurXml->UserIdByname(Username);
 		
-		if (PtparseurXml.NameUserById(Username, "name").length()>0)
+			if (PtparseurXml->NameUserById(Id, "name").length()>0)
+
+				usr = new User(Username, PtparseurXml->NameUserById(Id, "fullname"), PtparseurXml->NameUserById(Id, "ID"), Password);
+
+
+		}
 		
-			usr = new User(Username, PtparseurXml.NameUserById(Username, "name"), PtparseurXml.NameUserById(Username, "fullname"), "");
 		
 		return usr;
 	}
@@ -53,8 +66,9 @@ namespace WaDirectory
 	{
 		ouSubGroupNames.clear();
 		
-		XMLparser PtparseurXml(this->Pt_Directory->Get_Url_Directory());
+		XMLparser *PtparseurXml;
+		PtparseurXml=new XMLparser(this->Pt_Directory->Get_Url_Directory());
 		
-		ouSubGroupNames = PtparseurXml.ListGroupInclude(this->Idgroup);
+		ouSubGroupNames = PtparseurXml->ListGroupInclude(this->Idgroup);
 	}
 }

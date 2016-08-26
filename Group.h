@@ -31,7 +31,7 @@ namespace WaDirectory
 		Group(string id);
 		void   GetName(std::string& outName);
 
-		User* GetUserByName(const std::string& inUserName);
+		User* GetUserByName(const std::string& inUserName, const std::string& Password);
 
 		void GetSubGroupName(std::vector<std::string>& ouSubGroupNames) ;
 		    

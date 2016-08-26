@@ -17,8 +17,11 @@ namespace WaDirectory_data
 		string NameUserById(string Id, string attribut);
 		string NameGrouoById(string Id);
 		vector<string> ListGroup();
+		vector<string> ListGroupId();
 		vector<string> ListGroupInclude(string Id);
 		bool UserBelongGroup(string UserId, string groupId);
+		bool ExistUserByname(string name, string NameAttribut);
+		string UserIdByname(string name);
 	};
 }
 

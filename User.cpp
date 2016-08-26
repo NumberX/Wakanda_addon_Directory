@@ -45,26 +45,25 @@ namespace WaDirectory
 		XMLparser PtparseurXml(this->Pt_Directory->Get_Url_Directory());
 
 		outName = PtparseurXml.NameUserById(this->Id, "name");
+		//outName = this->Username;
 	
 	}
 
 
 	bool User::BelongsToGroup(const string& inGroupName)
 	{
-		bool resultat=false;
+		bool resultat;
 
-		Jsonparser Jspar(this->GetDirectory()->Get_Url_Wakanda(), this->GetDirectory()->Get_Url_Wakanda());
+		Jsonparser *Jspar;
+		Jspar=new Jsonparser(this->GetDirectory()->Get_Url_Wakanda(), this->GetDirectory()->Get_Url_Wakanda());
 		
-		string wsid = Jspar.login(this->Username, this->Password);
+		string wsid = Jspar->login(this->Username, this->Password);
 		
-		if (wsid.length() > 0)
-		{
-			
+		Jspar->cookie = wsid;
 		
-			resultat=Jspar.currentUserBelongsTo("", inGroupName);
-			
-			
-		}
+		resultat = Jspar->currentUserBelongsTo(inGroupName, "");
+		
+
 		return resultat;
 	}
 
@@ -74,14 +73,19 @@ namespace WaDirectory
 
 		bool resultat = false;
 
-		Jsonparser Jspar(this->GetDirectory()->Get_Url_Wakanda(), this->GetDirectory()->Get_Url_Wakanda());
+		Jsonparser *Jspar;
+		Jspar = new Jsonparser(this->GetDirectory()->Get_Url_Wakanda(), this->GetDirectory()->Get_Url_Wakanda());
 		
-		string wsid = Jspar.login(this->Username, this->Password);
+		bool wsid = Jspar->isvalid(this->Username, this->Password);
 		
-		if (wsid.length() > 0)
+		if (wsid==true)
 		{
 
-			resultat = Jspar.currentUserBelongsTo("", inGroupName->Namegroup);
+			string wsid = Jspar->login(this->Username, this->Password);
+
+			Jspar->cookie = wsid;
+
+			resultat = Jspar->currentUserBelongsTo(inGroupName->Idgroup,"" );
 			
 		}
 		return resultat;
@@ -94,11 +98,12 @@ namespace WaDirectory
 
 		bool resultat = false;
 		
-		Jsonparser Jspar(this->GetDirectory()->Get_Url_Wakanda(), this->GetDirectory()->Get_Url_Wakanda()); 
+		Jsonparser *Jspar;
+		Jspar=new Jsonparser(this->GetDirectory()->Get_Url_Wakanda(), this->GetDirectory()->Get_Url_Wakanda());
 		
-		Jspar.cookie = inSession->cookies;
+		Jspar->cookie = inSession->cookies;
 		
-		vector<string> v1= Jspar.currentuser();
+		vector<string> v1= Jspar->currentuser();
 		
 		if (v1[0] == this->Username)
 		{

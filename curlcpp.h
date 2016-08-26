@@ -36,16 +36,20 @@ namespace WaDirectory_data
 		CURL *curl;
 		
 		CURLcode res;
+
+
 		
-		curl_slist *cookies;
+//		curl_slist *cookies;
 		
 		std::string m_data;
 		
-		void initall();
+		void initall(CURL *curl2);
 
 		string login(string username, string password, string url);
 		
 		void curentuser(string url, string cookie);
+
+		void isvalid(string username, string password, string url);
 		
 		void currentUserBelongsTo(string url, string Idgroup, string Namegroup, string cookie);
 		
@@ -53,6 +57,6 @@ namespace WaDirectory_data
 		
 		string getWASID();
 	private:
-		void CurlCppSetOption(string Url);
+		void CurlCppSetOption(string Url,CURL* curl);
 	};
 }

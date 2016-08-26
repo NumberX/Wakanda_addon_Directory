@@ -43,32 +43,51 @@ namespace WaDirectory_data
 
 	string Jsonparser::login(string Username, string Password)
 	{
+		if (isvalid(Username, Password)==true)
+		{ 
+		curlcpp *curltest;
 
-		curlcpp curltest("");
+		curltest = new curlcpp("");
 
-		curltest.initall();
-		//"http://localhost:8081/rest/$directory/login"
-		
+
+
+
 		string Url = this->Url + "/rest/$directory/login";
+
+		this->cookie = "";
 		
-		this->cookie = curltest.login(Username, Password, Url);
+		this->cookie = curltest->login(Username, Password, Url);
 
-		if (curltest.res != CURLE_OK)
 
-			cerr << "ERROR: " << curl_easy_strerror(curltest.res) << endl;
+		if (curltest->res != CURLE_OK)
+
+		{
+			cerr << "ERROR: " << curl_easy_strerror(curltest->res) << endl;
+
+		}
 		else {
 
 			Document document;
 
-			document.Parse(curltest.data.str.c_str());
+			document.Parse(curltest->data.str.c_str());
+
+			
 			
 			if (document["result"].GetBool() == true)
 			{
-				 return (getWASID());
+				return (this->cookie);
 			}
 
-			if (document["result"].GetBool() == false)return "";
+			if (document["result"].GetBool() == false)
+			{
+				return "";
+
+			}
 		}
+		
+		}
+
+
 		return "";
 	}
 
@@ -87,25 +106,25 @@ namespace WaDirectory_data
 	bool Jsonparser::Logout()
 	{
 
-		curlcpp curltest("");
+		curlcpp *curltest;
 
-		curltest.initall();
+		curltest = new curlcpp("");
 
 		string Url = this->GetUrl() + "/rest/$directory/logout";
 
-		curltest.Logout(Url, this->cookie);
+		curltest->Logout(Url, this->cookie);
 
 		this->cookie = "";
 
-		if (curltest.res != CURLE_OK)
+		if (curltest->res != CURLE_OK)
 
-			cerr << "ERROR: " << curl_easy_strerror(curltest.res) << endl;
+			cerr << "ERROR: " << curl_easy_strerror(curltest->res) << endl;
 
 		else {
 
 			Document document;
 
-			document.Parse(curltest.data.str.c_str());
+			document.Parse(curltest->data.str.c_str());
 
 			if (document["result"].GetBool() == true)return true;
 
@@ -114,31 +133,72 @@ namespace WaDirectory_data
 		return false;
 	}
 
-
-	bool Jsonparser::currentUserBelongsTo(string Idgroup, string Namegroup)
+	bool Jsonparser::isvalid(string Username, string Password)
 	{
+		curlcpp *curltest;
 
-		curlcpp curltest("");
+		curltest = new curlcpp("");
 
-		curltest.initall();
+		string Url = this->GetUrl() + "/rest/$directory/login";
 
-		string Url = this->GetUrl() + "/rest/$directory/currentUserBelongsTo";
+		curltest->isvalid(Username,Password,Url);
 
-		curltest.currentUserBelongsTo(Url, Idgroup, Namegroup, this->cookie);
+		this->cookie = "";
 
-		if (curltest.res != CURLE_OK)
+		if (curltest->res != CURLE_OK)
 
-			cerr << "ERROR: " << curl_easy_strerror(curltest.res) << endl;
+			cerr << "ERROR: " << curl_easy_strerror(curltest->res) << endl;
 
 		else {
 
 			Document document;
 
-			document.Parse(curltest.data.str.c_str());
+			document.Parse(curltest->data.str.c_str());
 
 			if (document["result"].GetBool() == true)return true;
 
 			if (document["result"].GetBool() == false)return false;
+		}
+		return false;
+
+
+	}
+	bool Jsonparser::currentUserBelongsTo(string Idgroup, string Namegroup)
+	{
+
+		curlcpp *curltest;
+
+		curltest = new curlcpp("");
+
+
+		string Url = this->GetUrl() + "/rest/$directory/currentUserBelongsTo";
+
+		
+		if (Idgroup.length()>1)
+		{
+			curltest->currentUserBelongsTo(Url, Idgroup, "", this->cookie);
+		}
+		if (Namegroup.length()>1)
+		{
+			curltest->currentUserBelongsTo(Url, Namegroup, "", this->cookie);
+		}
+
+		if (curltest->res != CURLE_OK)
+
+			cerr << "ERROR: " << curl_easy_strerror(curltest->res) << endl;
+
+		else {
+
+			Document document;
+
+			document.Parse(curltest->data.str.c_str());
+
+			if (document["result"].GetBool() == true)
+			{
+			
+				return true;
+			}
+			if (document["result"].GetBool() == false){ return false; }
 
 		}
 		return false;
@@ -150,23 +210,23 @@ namespace WaDirectory_data
 
 		std::vector<std::string> resultat;
 
-		curlcpp curltest("");
+		curlcpp *curltest;
 
-		curltest.initall();
+		curltest = new curlcpp("");
 
 		string Url = this->GetUrl() + "/rest/$directory/currentUser";
 
-		curltest.curentuser(Url, this->cookie);
+		curltest->curentuser(Url, this->cookie);
 
-		if (curltest.res != CURLE_OK)
+		if (curltest->res != CURLE_OK)
 
-			cerr << "ERROR: " << curl_easy_strerror(curltest.res) << endl;
+			cerr << "ERROR: " << curl_easy_strerror(curltest->res) << endl;
 
 		else {
 
 			Document document;
 
-			document.Parse(curltest.data.str.c_str());
+			document.Parse(curltest->data.str.c_str());
 
 			if (document["result"].IsNull())
 			{

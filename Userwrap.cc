@@ -3,6 +3,7 @@
 #include"Directorywrap.h"
 #include"Utility.h"
 #include<string>
+#include<iostream>
 using v8::Context;
 using v8::Function;
 using v8::FunctionCallbackInfo;
@@ -16,6 +17,8 @@ using v8::String;
 using v8::Value;
 using v8::Boolean;
 using namespace v8;
+
+using namespace std;
 
 namespace WaDirectorywrap_data_v8 {
 
@@ -55,22 +58,24 @@ Local<Object> Userwrap::CreateUserWrap(Isolate* isolate, User* PtUser,Directoryw
 	EscapableHandleScope scope(isolate);
 
 	Local<Value> argv[] = { Boolean::New(isolate, true) };
-	
+
 	Local<Context> context = isolate->GetCurrentContext();
-	
-	Local<Function> LocalFunction = Local<Function>::New(isolate, Userwrap::constructor);
-	
-	Local<Object> ObjectUserWrap = LocalFunction->NewInstance(context, 1, argv).ToLocalChecked();
-	
+
+	Local<Function> LocalFunct = Local<Function>::New(isolate, Userwrap::constructor);
+
+	Local<Object> ObjectUserWrap = LocalFunct->NewInstance(context, 1, argv).ToLocalChecked();
+
 	Userwrap* PtUserWrap = Userwrap::Unwrap<Userwrap>(ObjectUserWrap);
 
 	PtUserWrap->ptuser = PtUser;
 
-	PtUserWrap->Pt_DirectoryWrap = PtDirectoryWrap;
-
 	PtUserWrap->ptuser->Set_Directory(PtDirectoryWrap->GetDirectory());
 
+	PtUserWrap->Pt_DirectoryWrap = PtDirectoryWrap;
+
+
 	return scope.Escape(ObjectUserWrap);
+
 
 
 
@@ -85,15 +90,13 @@ void Userwrap::Init(Local<Object> exports) {
  
   tpl->SetClassName(String::NewFromUtf8(isolate, "Userwrap"));
   
-  tpl->InstanceTemplate()->SetInternalFieldCount(2);
+  tpl->InstanceTemplate()->SetInternalFieldCount(1);
   
   NODE_SET_PROTOTYPE_METHOD(tpl, "GetDirectorywrap", GetDirectorywrap);
   
   NODE_SET_PROTOTYPE_METHOD(tpl, "GetName", GetName);
   
-  NODE_SET_PROTOTYPE_METHOD(tpl, "BelongsToGroupwrap_1", BelongsToGroupwrap_1);
-  
-  NODE_SET_PROTOTYPE_METHOD(tpl, "BelongsToGroupwrap_2", BelongsToGroupwrap_2);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "BelongsToGroupwrap", BelongsToGroupwrap);
   
   NODE_SET_PROTOTYPE_METHOD(tpl, "IsLoggedIn", IsLoggedIn);
   
@@ -119,7 +122,9 @@ void Userwrap::New(const FunctionCallbackInfo<Value>& args) {
 
 			prototype_User_Synchrone.Reset(isolate, args.This()->GetPrototype());
 
-			args.GetReturnValue().Set(args.Holder());
+
+			
+			args.GetReturnValue().Set(args.This());
 		}
 		else
 		{
@@ -146,14 +151,14 @@ void Userwrap::GetDirectorywrap(const FunctionCallbackInfo<Value>& args) {
 
 	if (ControleUserUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
 	{
-		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Group object")));
+		//isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Group object")));
 
-		args.GetReturnValue().SetUndefined();
+		args.GetReturnValue().SetNull();
 	}
 	else{
 		Userwrap* PtUserwrap = ObjectWrap::Unwrap<Userwrap>(args.Holder());
 
-		Local<Object> ObjectDirectoryWrap = Directorywrap::CreateDirectoryWrap(isolate, PtUserwrap->Pt_DirectoryWrap->ptdirectory);
+		Local<Object> ObjectDirectoryWrap = PtUserwrap->Pt_DirectoryWrap->handle();
 
 		args.GetReturnValue().Set(ObjectDirectoryWrap);
 
@@ -165,58 +170,122 @@ void Userwrap::GetName(const FunctionCallbackInfo<Value>& args) {
 	
 	Isolate* isolate = args.GetIsolate();
 
-	Userwrap* PtUserWrap = ObjectWrap::Unwrap<Userwrap>(args.Holder());
-	
-	std::string resultat = "";  
-	
-	PtUserWrap->ptuser->GetName(resultat);
 
-	args.GetReturnValue().Set(String::NewFromUtf8(isolate, resultat.c_str()));
+	if (ControleUserUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
+	{
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a User object")));
+
+		args.GetReturnValue().SetNull();
+	}
+	else{
+		Userwrap* PtUserWrap = ObjectWrap::Unwrap<Userwrap>(args.Holder());
+
+		std::string resultat = "";
+
+		PtUserWrap->ptuser->GetName(resultat);
+		std::string res = PtUserWrap->ptuser->Username;
+
+		args.GetReturnValue().Set(String::NewFromUtf8(isolate, res.c_str()));
+	}
 }
 
-void Userwrap::BelongsToGroupwrap_1(const FunctionCallbackInfo<Value>& args) {
-	
+
+void Userwrap::BelongsToGroupwrap(const FunctionCallbackInfo<Value>& args) 
+{
+
 	Isolate* isolate = args.GetIsolate();
 
-	Userwrap* PtUserWrap = ObjectWrap::Unwrap<Userwrap>(args.Holder());
-	
-	Utility util;
-	
-	string inGroupName = util.V8Utf8ValueToStdString(args[0]);
+	bool resultat = false;
 
-	bool resultat = PtUserWrap->ptuser->BelongsToGroup(inGroupName);
+	if (ControleUserUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
+	{
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a User object")));
 
-	args.GetReturnValue().Set(Boolean::New(isolate, resultat));
+		args.GetReturnValue().SetNull();
+	}
+	else{
+		Userwrap* PtUserWrap = ObjectWrap::Unwrap<Userwrap>(args.Holder());
+		if (args.Length()==1)
+		{ 
+		if (Groupwrap::ControleGroupUnwrap(args[0]->ToObject(), isolate)->BooleanValue() == true)
+		{
+
+			Groupwrap* PtGroupWrap = ObjectWrap::Unwrap<Groupwrap>(args[0]->ToObject());
+			
+			resultat = PtUserWrap->ptuser->BelongsToGroup(PtGroupWrap->ptgroup);
+
+			args.GetReturnValue().Set(Boolean::New(isolate, resultat));
+		}
+		else
+		{
+			if (args[0]->IsString())
+			{
+				Utility util;
+				
+				string Idgroup = util.V8Utf8ValueToStdString(args[0]);
+
+				bool resultat1 ;resultat1 = PtUserWrap->ptuser->BelongsToGroup(Idgroup);
+
+			
+				
+			
+				args.GetReturnValue().Set(Boolean::New(isolate, resultat1));
+
+			}
+			else
+			{ 
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong Session argument ")));
+
+			args.GetReturnValue().SetNull();
+			}
+		}
+
+
+		}
+		else
+		{
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong Number of argument argument ")));
+
+			args.GetReturnValue().SetUndefined();
+
+		}
+	}
 }
 
-void Userwrap::BelongsToGroupwrap_2(const FunctionCallbackInfo<Value>& args) {
-	
-	Isolate* isolate = args.GetIsolate();
 
-	Userwrap* PtUserWrap = ObjectWrap::Unwrap<Userwrap>(args.Holder());
-
-	Groupwrap* PtGroupWrap = ObjectWrap::Unwrap<Groupwrap>(args[0]->ToObject());
-	
-	bool resultat = PtUserWrap->ptuser->BelongsToGroup(PtGroupWrap->ptgroup);
-
-	args.GetReturnValue().Set(Boolean::New(isolate, resultat));
-}
 
 void Userwrap::IsLoggedIn(const FunctionCallbackInfo<Value>& args) {
 
 	Isolate* isolate = args.GetIsolate();
 	
 	bool resultat = false;
-	
-	Userwrap* PtUserWrap = ObjectWrap::Unwrap<Userwrap>(args.Holder());
 
-	if (args[0]->IsObject())
+	if (ControleUserUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
 	{
-		Sessionwrap* PtSessionWrap = ObjectWrap::Unwrap<Sessionwrap>(args[0]->ToObject());
-		resultat= PtUserWrap->ptuser->IsLoggedIn(PtSessionWrap->ptsession);
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a User object")));
+
+		args.GetReturnValue().SetUndefined();
 	}
-	
-	args.GetReturnValue().Set(Boolean::New(isolate, resultat));
+	else{
+		Userwrap* PtUserWrap = ObjectWrap::Unwrap<Userwrap>(args.Holder());
+		if (Sessionwrap::ControleSessionUnwrap(args[0]->ToObject(), isolate)->BooleanValue() == true)
+		{
+
+				Sessionwrap* PtSessionWrap = ObjectWrap::Unwrap<Sessionwrap>(args[0]->ToObject());
+				if (PtSessionWrap->ptsession->IsValid())
+				resultat = PtUserWrap->ptuser->IsLoggedIn(PtSessionWrap->ptsession);
+
+		}
+		else
+		{
+			//isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong Session argument ")));
+
+			args.GetReturnValue().Set(Boolean::New(isolate, resultat));
+			//args.GetReturnValue().SetNull();
+		}
+
+		args.GetReturnValue().Set(Boolean::New(isolate, resultat));
+	}
 }
 
 }

@@ -14,7 +14,7 @@ namespace Controle{
 class ControleDirectory
 {
 private :
-	bool ControleGet(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &Message);
+	bool ControleGet(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &Message,int Number);
 public:
 ControleDirectory();
 ~ControleDirectory();

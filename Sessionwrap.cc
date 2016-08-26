@@ -165,13 +165,22 @@ namespace WaDirectorywrap_data_v8 {
 			ControleSession PtcontroleSession;
 			if (PtcontroleSession.ControlePtSession(PtSessionWrap->ptsession, Message) == true)
 			{
+				if (PtSessionWrap->ptsession->IsValid())
+				{ 
 				User *PtUser = PtSessionWrap->ptsession->GetUser();
 
 				Local<Context> context = isolate->GetCurrentContext();
 
+
 				Local<Object> ObjectUserWrap = Userwrap::CreateUserWrap(isolate, PtUser, PtSessionWrap->Pt_DirectoryWrap);
 
 				args.GetReturnValue().Set(ObjectUserWrap);
+				}
+				else
+				{
+					args.GetReturnValue().SetNull();
+
+				}
 			}
 			else
 			{
@@ -206,9 +215,9 @@ namespace WaDirectorywrap_data_v8 {
 			}
 			else
 			{
-				isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Session object")));
+				//isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Session object")));
 
-				args.GetReturnValue().SetUndefined();
+				args.GetReturnValue().SetNull();
 			}
 		}
 	}
@@ -221,13 +230,14 @@ namespace WaDirectorywrap_data_v8 {
 		{
 			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Group object")));
 
-			args.GetReturnValue().SetUndefined();
+			args.GetReturnValue().SetNull();
 		}
 		else{
 			Sessionwrap* PtSessionWrap = ObjectWrap::Unwrap<Sessionwrap>(args.Holder());
 
-	        Local<Object> ObjectDirectoryWrap = Directorywrap::CreateDirectoryWrap(isolate, PtSessionWrap->Pt_DirectoryWrap->ptdirectory);
+	        //Local<Object> ObjectDirectoryWrap = Directorywrap::CreateDirectoryWrap(isolate, PtSessionWrap->Pt_DirectoryWrap->ptdirectory);
 
+			Local<Object> ObjectDirectoryWrap = PtSessionWrap->Pt_DirectoryWrap->handle();
 			args.GetReturnValue().Set(ObjectDirectoryWrap);
 
 
@@ -256,9 +266,9 @@ namespace WaDirectorywrap_data_v8 {
 			}
 			else
 			{
-				isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Session object")));
+				//isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Session object")));
 
-				args.GetReturnValue().SetUndefined();
+				args.GetReturnValue().SetNull();
 			}
 		}
 	}
@@ -283,12 +293,15 @@ namespace WaDirectorywrap_data_v8 {
 			{
 
 				PtSessionWrap->ptsession->LogOut();
+				PtSessionWrap->ptsession->cookies = "";
+	
+				args.GetReturnValue().SetUndefined();
 			}
 			else
 			{
-				isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Session object")));
+				//isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Session object")));
 
-				args.GetReturnValue().SetUndefined();
+				args.GetReturnValue().SetNull();
 			}
 		}
 	}
