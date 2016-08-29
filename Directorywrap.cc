@@ -103,8 +103,11 @@ void Directorywrap::New(const FunctionCallbackInfo<Value>& args) {
 	
   Isolate* isolate = args.GetIsolate();
 
- 
-  if ((args.Length() == 2) || (args.Length() == 1) )
+  ControleDirectory* PtControleDirectory = new ControleDirectory();
+  
+  std::string Message;
+  
+if ((args.Length() == 2) || (args.Length() == 1) )
   {
 
 		  /*
@@ -183,19 +186,20 @@ void Directorywrap::LogIn(const FunctionCallbackInfo<Value>& args) {
 	{ 
 		Directorywrap* PtDirectoryWrap = ObjectWrap::Unwrap<Directorywrap>(args.Holder());
 		
-		Userwrap* PtUserWrap = ObjectWrap::Unwrap<Userwrap>(args[0]->ToObject());
-
-	
-
-		bool Resultat = true;// ContDirectory->ControleLogIn(args, PtDirectoryWrap->GetDirectory(), Message);
-	
+		bool Resultat = ContDirectory->ControleGetLenght(args, Message, 1);
+		
 	if (Resultat == true)
 	{
+
+		if (Userwrap::ControleUserUnwrap(args[0]->ToObject(), isolate)->BooleanValue() == true)
+		{ 
+		Userwrap* PtUserWrap = ObjectWrap::Unwrap<Userwrap>(args[0]->ToObject());
+
 		Utility util;
 
-		string user = PtUserWrap->ptuser->Username; //util.V8Utf8ValueToStdString(args[0]);
+		string user = PtUserWrap->ptuser->Username; 
 
-		string password = PtUserWrap->ptuser->Password;//util.V8Utf8ValueToStdString(args[1]);
+		string password = PtUserWrap->ptuser->Password;
 
 		
 		Session *PtSession = PtDirectoryWrap->ptdirectory->LogIn(user, password);
@@ -212,6 +216,13 @@ void Directorywrap::LogIn(const FunctionCallbackInfo<Value>& args) {
 		{
 
 		args.GetReturnValue().SetNull();
+		}
+		}
+		else
+		{
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "the argument need to be Userobject")));
+			args.GetReturnValue().SetUndefined();
+
 		}
 
 	
@@ -480,6 +491,12 @@ void Directorywrap::UserwrapBelongTo(const FunctionCallbackInfo<Value>& args) {
 
 	bool Resultat = false;
 
+	ControleDirectory *ConDirec;
+
+	ConDirec = new ControleDirectory();
+
+	std::string Message;
+
 	Isolate* isolate = args.GetIsolate();
 	if (args.Length()==2)
 	{ 
@@ -498,8 +515,9 @@ void Directorywrap::UserwrapBelongTo(const FunctionCallbackInfo<Value>& args) {
 				if (Userwrap::ControleUserUnwrap(args[0]->ToObject(), isolate)->BooleanValue() == true)
 	
 				{ 
+					
 		
-					if (args[1]->IsString())
+					if (ConDirec->ControleGetType(args,Message,1))
 					{
 			
 						
@@ -539,7 +557,7 @@ void Directorywrap::UserwrapBelongTo(const FunctionCallbackInfo<Value>& args) {
 				if (Sessionwrap::ControleSessionUnwrap(args[0]->ToObject(), isolate)->BooleanValue() == true)
 	
 				{
-					if (args[1]->IsString())
+					if (ConDirec->ControleGetType(args,  Message, 1))
 					{
 
 						Utility util;
@@ -602,6 +620,9 @@ void Directorywrap::LogOut(const FunctionCallbackInfo<Value>& args) {
 
 	ControleDirectory* ContDirectory = new ControleDirectory();
 
+	
+
+	std::string Message;
 
 	if (ControleDirectoryUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false) {
 
@@ -613,8 +634,9 @@ void Directorywrap::LogOut(const FunctionCallbackInfo<Value>& args) {
 	{
 		Directorywrap* PtDirectoryWrap = ObjectWrap::Unwrap<Directorywrap>(args.Holder());
 
+		
 
-		if (PtDirectoryWrap->ptdirectory != NULL)
+		if (ContDirectory->ControleGetPtDirectory(args, PtDirectoryWrap ->GetDirectory(),Message,1))
 		{
 
 			Utility util;
@@ -629,7 +651,7 @@ void Directorywrap::LogOut(const FunctionCallbackInfo<Value>& args) {
 
 		else
 		{
-			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "the Directory Object is NULL Value")));
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
 
 			args.GetReturnValue().SetUndefined();
 		}

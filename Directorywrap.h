@@ -19,6 +19,7 @@ class Directorywrap : public node::ObjectWrap {
 	friend class Userwrap;
 	friend class Groupwrap;
 	friend class Sessionwrap;
+
  public:
 
 	

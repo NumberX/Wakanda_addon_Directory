@@ -15,20 +15,45 @@ ControleUser::~ControleUser()
 {
 
 }
-bool ControleUser::ControleUserUnwrap(Handle<Object> handle, v8::Persistent<v8::Value> prototype)
+
+bool ControleUser::ControleGetLenght(const v8::FunctionCallbackInfo<v8::Value>& args, std::string &Message, int Number)
 {
-	if (!handle.IsEmpty() && handle->InternalFieldCount() == 1) {
+	if (args.Length() == Number) {
 
-		Handle<Value> objproto = handle->GetPrototype();
-		if (objproto == prototype) {
+		return true;
 
-			return true;
-		}
 	}
+
+
+	Message = "Wrong number of argument";
+
+	return false;
+
+}
+
+bool ControleUser::ControleGetType(const v8::FunctionCallbackInfo<v8::Value>& args, std::string &Message, int Number)
+{
+	if ((args[Number]->IsString()))
+	{
+		return true;
+	}
+
+
+	Message = "the argument need to be string value";
+
+	return false;
+
+}
+
+bool ControleUser::ControleGetPtUser(const v8::FunctionCallbackInfo<v8::Value>& args, User* PtUser, std::string &Message)
+{
+	if (PtUser != NULL)
+	{
+		return true;
+	}
+
+	Message = "the User Object is NULL Value";
 
 	return false;
 }
-
-
-
 }

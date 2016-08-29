@@ -1,6 +1,7 @@
 #ifndef Thread_Data_H
 #define Thread_Data_H
 #include"Directorywrap.h"
+#include"v8.h"
 #include"DirectorywrapAsynchro.h"
 #include"GroupwrapAsynchro.h"
 #include"UserwrapAsynchro.h"
@@ -8,6 +9,7 @@
 #include"Session.h"
 #include<string.h>
 #include<vector>
+using namespace v8;
 using namespace std;
 namespace WaDirectorywrapAsynchro_data_v8 {
 	union Data
@@ -43,6 +45,8 @@ namespace WaDirectorywrapAsynchro_data_v8 {
 
 		Data(){};
 
+		
+
 	};
 
 	class Thread_Data
@@ -53,6 +57,8 @@ namespace WaDirectorywrapAsynchro_data_v8 {
 		~Thread_Data(){};
 
 		Data Argument;
+
+		Local<Object> ObjectDirectoryWrap;
 	};
 	}
 #endif

@@ -161,6 +161,7 @@ void Groupwrap::GetName(const FunctionCallbackInfo<Value>& args) {
 		std::string Message;
 		
 		ControleGroup PtcontroleGroup;
+
 		if (PtcontroleGroup.ControlePtGroup(PtGroupWrap->ptgroup,Message) == true)
 		{ 
 		PtGroupWrap->ptgroup->GetName(resultat);
@@ -169,7 +170,7 @@ void Groupwrap::GetName(const FunctionCallbackInfo<Value>& args) {
 		}
 		else
 		{
-			//isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Group object")));
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
 
 			args.GetReturnValue().SetNull();
 		}
@@ -195,16 +196,21 @@ void Groupwrap::GetUserwrapByName(const FunctionCallbackInfo<Value>& args) {
 
 		std::string Message;
 
-		ControleGroup PtcontroleGroup;
+		ControleGroup *PtcontroleGroup = new ControleGroup();
 
-		if (PtcontroleGroup.ControlePtGroup(PtGroupWrap->ptgroup, Message) == true)
+		if (PtcontroleGroup->GetUserwrapByName(args,PtGroupWrap->ptgroup, Message,2) == true)
 		{
 			
 			Utility util;
+
 			User *PtUser=NULL;
+			
 			string  user = util.V8Utf8ValueToStdString(args[0]);
+
 			string  Password = util.V8Utf8ValueToStdString(args[1]);
+
 			PtUser = PtGroupWrap->ptgroup->GetUserByName(user, Password);
+
 			if (PtUser)
 			{
 				
@@ -217,7 +223,7 @@ void Groupwrap::GetUserwrapByName(const FunctionCallbackInfo<Value>& args) {
 		}
 		else
 		{
-			//isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Group object")));
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
 
 			args.GetReturnValue().SetNull();
 
@@ -241,9 +247,9 @@ void Groupwrap::GetSubGroupwrapName(const FunctionCallbackInfo<Value>& args) {
 
 		std::string Message;
 
-		ControleGroup PtcontroleGroup;
+		ControleGroup *PtcontroleGroup = new ControleGroup();
 		
-		if (PtcontroleGroup.ControlePtGroup(PtGroupWrap->ptgroup, Message) == true)
+		if (PtcontroleGroup->ControlePtGroup(PtGroupWrap->ptgroup, Message) == true)
 		{
 
 			PtGroupWrap->ptgroup->GetSubGroupName(resultat);
@@ -257,7 +263,7 @@ void Groupwrap::GetSubGroupwrapName(const FunctionCallbackInfo<Value>& args) {
 
 		else
 		{
-			//isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Group object")));
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
 
 			args.GetReturnValue().SetNull();
 		}
@@ -269,7 +275,7 @@ void Groupwrap::GetDirectorywrap(const FunctionCallbackInfo<Value>& args) {
 
 	if (ControleGroupUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
 	{
-		//isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Group object")));
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a Group object")));
 
 		args.GetReturnValue().SetNull();
 	}

@@ -46,7 +46,11 @@ namespace WaDirectorywrapAsynchro_data_v8 {
 
   static void GetDirectorywrapAsynchroWorkComplete(uv_work_t  *request, int status);
 
+  static  Local<Boolean> ControleGroupUnwrap(Local<Object> handle, Isolate* isolate);
+
   static v8::Persistent<v8::Function> constructor;
+
+  static v8::Persistent<v8::Value> prototype_Group_Synchrone;
 
   static      Local<Object> CreateGroupwrapAsynchro(Isolate* isolate, Group* PtGroup);
 

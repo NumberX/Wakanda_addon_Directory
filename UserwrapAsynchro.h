@@ -31,23 +31,19 @@ namespace WaDirectorywrapAsynchro_data_v8 {
   
   static void GetDirectorywrapAsynchro(const v8::FunctionCallbackInfo<v8::Value>& args);
 
-  static void GetDirectorywrapAsynchroWork(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void GetDirectorywrapAsynchroWork(uv_work_t  *request);
 
-  static void GetDirectorywrapAsynchroWorkComplete(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void GetDirectorywrapAsynchroWorkComplete(uv_work_t  *request, int status);
   
   static void GetNameAsynchro(const v8::FunctionCallbackInfo<v8::Value>& args);
 
   static void GetNameAsynchroWork(uv_work_t  *request);
 
   static void GetNameAsynchroWorkComplete(uv_work_t  *request, int status);
-  
-  static void BelongsToGroupwrap_1Asynchro(const v8::FunctionCallbackInfo<v8::Value>& args);
 
   static void BelongsToGroupwrap_1AsynchroWork(uv_work_t  *request);
 
   static void BelongsToGroupwrap_1AsynchroWorkComplete(uv_work_t  *request, int status);
-  
-  static void BelongsToGroupwrap_2Asynchro(const v8::FunctionCallbackInfo<v8::Value>& args);
   
   static void BelongsToGroupwrap_2AsynchroWork(uv_work_t  *request);
 
@@ -60,6 +56,14 @@ namespace WaDirectorywrapAsynchro_data_v8 {
   static void IsLoggedInAsynchroWorkComplete(uv_work_t  *request, int status);
  
   static v8::Persistent<v8::Function> constructor;
+
+  static Local<Boolean> ControleUserUnwrap(Local<Object> handle, Isolate* isolate);
+
+  static v8::Persistent<v8::Value> prototype_User_Synchrone;
+
+  static void BelongsToGroupwrapAsynchro(const FunctionCallbackInfo<Value>& args);
+
+  DirectorywrapAsynchro* Pt_DirectorywrapAsynchro;
  
   User *ptuser;
 };

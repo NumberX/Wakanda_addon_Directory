@@ -16,39 +16,55 @@ ControleDirectory::~ControleDirectory()
 
 }
 
+bool ControleDirectory::ControleGetLenght(const v8::FunctionCallbackInfo<v8::Value>& args, std::string &Message, int Number)
+{
+	if (args.Length() == Number) {
+
+	
+		return true;
+
+
+	}
+	
+
+		Message = "Wrong number of argument";
+
+		return false;
+
+
+
+}
+
+bool ControleDirectory::ControleGetType(const v8::FunctionCallbackInfo<v8::Value>& args,  std::string &Message, int Number)
+{
+
+		if ((args[Number]->IsString()))
+		{
+			return true;
+		}
+
+			
+		Message = "the argument need to be string value";
+
+		return false;
+
+}
+bool ControleDirectory::ControleGetPtDirectory(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &Message, int Number)
+{
+	if (PtDirectory != NULL)
+	{
+		return true;
+	}
+
+	Message = "the Directory Object is NULL Value";
+
+	return false;
+}
 bool ControleDirectory::ControleLogIn(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &Message)
 {
 	Isolate* isolate = args.GetIsolate();
 	
-	if (PtDirectory != NULL)
-	{
-		if (args.Length() == 2) {
-
-
-			if ((args[0]->IsString()) && (args[1]->IsString()))
-			{
-				return true;
-			}
-			else
-			{
-				Message="the arguments need to be string value";
-				
-			}
-
-		}
-		else if(args.Length() != 2) {
-
-			Message = "Wrong number of arguments";
-
-
-		}
-
-	}
-	else
-	{
-		Message = "the Directory Object is NULL Value";
-	}
-	return false;
+	return ControleGet(args, PtDirectory, Message, 2);
 
 }
 
@@ -56,49 +72,48 @@ bool ControleDirectory::ControleGetGroupwrapNames(const v8::FunctionCallbackInfo
 {
 	Isolate* isolate = args.GetIsolate();
 
-	if (PtDirectory == NULL)
-	{
-		
-		Message = "the Directory Object is NULL Value";
-		return false;
-	}
+	return ControleGetPtDirectory(args, PtDirectory, Message, 1);
 	
-	return true;
-
-
 }
+
+
 bool ControleDirectory::ControleGet(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &Message,int Number)
 {
 	Isolate* isolate = args.GetIsolate();
 
-	if (PtDirectory != NULL)
+	bool Resultat = ControleGetPtDirectory(args, PtDirectory, Message, Number);
+
+	if (Resultat)
 	{
-		if (args.Length() == Number) {
+		Resultat=ControleGetLenght(args,  Message, Number);
 
-
-			if ((args[0]->IsString()))
+		if (Resultat) {
+		
+			for (int Iterator = 0; Iterator < Number; Iterator++)
+			{
+				Resultat = this->ControleGetType(args,  Message,Iterator );
+		
+			}
+			if (Resultat)
 			{
 				return true;
 			}
 			else
 			{
-				Message = "the argument need to be string value";
+				return false;
 
 			}
 
 		}
-		else if (args.Length() != Number) {
+		else  {
 
-			Message = "Wrong number of argument";
+			return false;
 
 
 		}
 
 	}
-	else
-	{
-		Message = "the Directory Object is NULL Value";
-	}
+
 	return false;
 
 }

@@ -29,12 +29,13 @@ namespace WaDirectorywrapAsynchro_data_v8{
 	class SessionwrapAsynchro : public node::ObjectWrap {
 
 	friend class DirectorywrapAsynchro;
+	friend class UserwrapAsynchro;
  public:
   static void Init(v8::Local<v8::Object> exports);
   char *Wsid;
   char *cookies;
   static v8::Persistent<v8::Function> constructor;
-
+  static v8::Persistent<v8::Value> prototype_Session_Synchrone;
   Session *ptsession;
  private:
 	 explicit SessionwrapAsynchro();
@@ -57,6 +58,8 @@ namespace WaDirectorywrapAsynchro_data_v8{
   static void LogOutAsynchro(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void LogOutAsynchroWork(uv_work_t  *request);
   static void LogOutAsynchroWorkComplete(uv_work_t  *request, int status);
+  static Local<Boolean> ControleSessionUnwrap(Local<Object> handle, Isolate* isolate);
+  DirectorywrapAsynchro *Pt_DirectorywrapAsynchro = NULL;
 };
 
 }  // namespace demo

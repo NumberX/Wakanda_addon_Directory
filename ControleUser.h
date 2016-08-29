@@ -5,7 +5,7 @@
 #include <node.h>
 #include <node_object_wrap.h>
 #include<stdbool.h>
-
+#include"ControleUser.h"
 using namespace WaDirectorywrap_data_v8;
 using v8::Exception;
 using namespace v8;
@@ -18,7 +18,13 @@ private :
 public:
 ControleUser();
 ~ControleUser();
-bool ControleUserUnwrap(Handle<Object> handle, v8::Persistent<v8::Value> prototype);
+
+
+bool ControleGetLenght(const v8::FunctionCallbackInfo<v8::Value>& args,std::string &Message, int Number);
+
+bool ControleGetType(const v8::FunctionCallbackInfo<v8::Value>& args, std::string &Message, int Number);
+
+bool ControleGetPtUser(const v8::FunctionCallbackInfo<v8::Value>& args, User* PtUser, std::string &Message);
 
 };
 

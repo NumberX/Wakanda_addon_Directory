@@ -1,6 +1,7 @@
 #include "UserwrapAsynchro.h"
 #include"GroupwrapAsynchro.h"
 #include"DirectorywrapAsynchro.h"
+#include"ControleUser.h"
 #include"Work.h"
 #include"Thread_Data.h"
 #include"Utility.h"
@@ -19,12 +20,36 @@ using v8::String;
 using v8::Value;
 using v8::Boolean;
 using namespace v8;
+using namespace Controle;
 
 namespace WaDirectorywrapAsynchro_data_v8 {
 
 Persistent<Function> UserwrapAsynchro::constructor;
 
 UserwrapAsynchro::UserwrapAsynchro() : ptuser() {
+}
+
+Persistent<Value> UserwrapAsynchro::prototype_User_Synchrone;
+
+Local<Boolean> UserwrapAsynchro::ControleUserUnwrap(Local<Object> handle, Isolate* isolate)
+{
+	EscapableHandleScope scope(isolate);
+
+	if (!handle.IsEmpty() && handle->InternalFieldCount() == 1) {
+
+		Local<Value> Pt_Prototype = handle->GetPrototype();
+		Utility util;
+
+		if (Pt_Prototype == prototype_User_Synchrone) {
+			Local<Boolean> Resultat = Boolean::New(isolate, true);
+			return scope.Escape(Resultat);
+
+		}
+
+
+	}
+	Local<Boolean> Resultat = Boolean::New(isolate, false);
+	return scope.Escape(Resultat);
 }
 
 UserwrapAsynchro::~UserwrapAsynchro() {
@@ -61,15 +86,13 @@ void UserwrapAsynchro::Init(Local<Object> exports) {
  
   tpl->SetClassName(String::NewFromUtf8(isolate, "UserwrapAsynchro"));
   
-  tpl->InstanceTemplate()->SetInternalFieldCount(2);
+  tpl->InstanceTemplate()->SetInternalFieldCount(1);
   
   NODE_SET_PROTOTYPE_METHOD(tpl, "GetDirectorywrapAsynchro", GetDirectorywrapAsynchro);
   
   NODE_SET_PROTOTYPE_METHOD(tpl, "GetNameAsynchro", GetNameAsynchro);
   
-  NODE_SET_PROTOTYPE_METHOD(tpl, "BelongsToGroupwrap_1Asynchro", BelongsToGroupwrap_1Asynchro);
-  
-  NODE_SET_PROTOTYPE_METHOD(tpl, "BelongsToGroupwrap_2Asynchro", BelongsToGroupwrap_2Asynchro);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "BelongsToGroupwrapAsynchro", BelongsToGroupwrapAsynchro);
   
   NODE_SET_PROTOTYPE_METHOD(tpl, "IsLoggedInAsynchro", IsLoggedInAsynchro);
   
@@ -83,76 +106,159 @@ void UserwrapAsynchro::New(const FunctionCallbackInfo<Value>& args) {
   Isolate* isolate = args.GetIsolate();
 
   if (args.IsConstructCall()) {
-  
-	  
-	  if (args.Length() == 0) {
 
-		  /*
-		  Call from directory
-		  */
 
-		  UserwrapAsynchro* PtUserwrapAsynchro = new UserwrapAsynchro();
 
-		  User *Ptuser = new User();
+	  if (args.Length() == 1) {
 
-		  PtUserwrapAsynchro->ptuser = Ptuser;
 
-		  PtUserwrapAsynchro->Wrap(args.Holder());
+		  UserwrapAsynchro* PtUserWrap = new UserwrapAsynchro();
 
-		  args.GetReturnValue().Set(args.Holder());
+		  PtUserWrap->Wrap(args.This());
+
+		  prototype_User_Synchrone.Reset(isolate, args.This()->GetPrototype());
+
+		  args.GetReturnValue().Set(args.This());
 	  }
-	  else if (args.Length() == 1) { 
+	  else
+	  {
 
-		  /*
-		  Traitement du cas UserwrapAsynchro User=new UserwrapAsynchro();
-		  */
+		  isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "To create a object of User you need to pass from Directory object ")));
 
-		  UserwrapAsynchro* PtUserwrapAsynchro = new UserwrapAsynchro();
+		  args.GetReturnValue().SetUndefined();
 
-		  PtUserwrapAsynchro->Wrap(args.Holder());
-
-		  args.GetReturnValue().Set(args.Holder());
 	  }
-  } else {
+  }
+  else {
 
+	  isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "To create a object of User  you need to pass from Directory object ")));
+
+	  args.GetReturnValue().SetUndefined();
   }
 }
 
 void UserwrapAsynchro::GetDirectorywrapAsynchro(const v8::FunctionCallbackInfo<v8::Value>& args){
+	
+	Isolate *isolate = Isolate::GetCurrent();
+	
+	if (ControleUserUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
+	{
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a Session object")));
 
+		args.GetReturnValue().SetUndefined();
+	}
+	else{
+		Work *work = new Work();
+
+		work->request.data = work;
+
+		UserwrapAsynchro* PtUserWrapAsynchro = ObjectWrap::Unwrap<UserwrapAsynchro>(args.Holder());
+		string Message;
+
+		ControleUser PtcontroleUser;
+		if (PtcontroleUser.ControleGetPtUser(args,PtUserWrapAsynchro->ptuser, Message) == true)
+		{
+			Thread_Data Pt_UserWrapAsynchro_Intra;
+
+			Pt_UserWrapAsynchro_Intra.Argument.PtUserwrapAsynchro = PtUserWrapAsynchro;
+
+			work->Intra_Data.push_back(Pt_UserWrapAsynchro_Intra);
+
+			Local<Function> commeback = Local<Function>::Cast(args[0]);
+
+			work->callback.Reset(isolate, commeback);
+
+			uv_queue_work(uv_default_loop(), &work->request, GetDirectorywrapAsynchroWork, GetDirectorywrapAsynchroWorkComplete);
+
+			args.GetReturnValue().Set(Undefined(isolate));
+		}
+		else
+		{
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
+
+			args.GetReturnValue().SetNull();
+		}
+	}
 
 }
 
-void UserwrapAsynchro::GetDirectorywrapAsynchroWork(const v8::FunctionCallbackInfo<v8::Value>& args){
+void UserwrapAsynchro::GetDirectorywrapAsynchroWork(uv_work_t  *request){
+	Work *work = (Work*)(request->data);
 
+	bool Resultat = "";
+
+	Local<Object> ObjectDirectoryWrap = work->Intra_Data[0].Argument.PtUserwrapAsynchro->Pt_DirectorywrapAsynchro->handle();
+
+
+	Thread_Data Resultat_data;
+
+	Resultat_data.ObjectDirectoryWrap = ObjectDirectoryWrap;
+
+	work->Intra_Data.push_back(Resultat_data);
 
 }
 
-void UserwrapAsynchro::GetDirectorywrapAsynchroWorkComplete(const v8::FunctionCallbackInfo<v8::Value>& args){
+void UserwrapAsynchro::GetDirectorywrapAsynchroWorkComplete(uv_work_t  *request, int status){
 
+	Isolate *isolate = Isolate::GetCurrent();
 
+	HandleScope scoop(isolate);
+
+	Work *work = (Work *)(request->data);
+
+	Handle<Value> args[] = { Null(isolate), work->Intra_Data[0].ObjectDirectoryWrap };
+
+	Local<Function>::New(isolate, work->callback)->Call(isolate->GetCurrentContext()->Global(), 2, args);
+
+	work->callback.Reset();
+
+	delete work;
 }
 
 void UserwrapAsynchro::GetNameAsynchro(const v8::FunctionCallbackInfo<v8::Value>& args){
 	Isolate* isolate = args.GetIsolate();
 
-	Work *work = new Work();
+	if (ControleUserUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
+	{
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a User object")));
 
-	work->request.data = work;
+		args.GetReturnValue().SetNull();
+	}
+	else{
+		Work *work = new Work();
 
-	UserwrapAsynchro* PtUserWrapAsynchro = ObjectWrap::Unwrap<UserwrapAsynchro>(args.Holder());
+		work->request.data = work;
 
-	Thread_Data Pt_UserWrapAsynchro_Intra;
+		UserwrapAsynchro* PtUserWrapAsynchro = ObjectWrap::Unwrap<UserwrapAsynchro>(args.Holder());
 
-	Pt_UserWrapAsynchro_Intra.Argument.PtUserwrapAsynchro = PtUserWrapAsynchro;
+		std::string resultat = "";
 
-	work->Intra_Data.push_back(Pt_UserWrapAsynchro_Intra);
+		std::string Message;
 
-	Local<Function> commeback = Local<Function>::Cast(args[0]);
+		ControleUser* PtControleUser = new ControleUser();
 
-	work->callback.Reset(isolate, commeback);
+		if (PtControleUser->ControleGetPtUser(args, PtUserWrapAsynchro->ptuser, Message))
+		{
+			Thread_Data Pt_UserWrapAsynchro_Intra;
 
-	uv_queue_work(uv_default_loop(), &work->request, GetNameAsynchroWork, GetNameAsynchroWorkComplete);
+			Pt_UserWrapAsynchro_Intra.Argument.PtUserwrapAsynchro = PtUserWrapAsynchro;
+
+			work->Intra_Data.push_back(Pt_UserWrapAsynchro_Intra);
+
+			Local<Function> commeback = Local<Function>::Cast(args[0]);
+
+			work->callback.Reset(isolate, commeback);
+
+			uv_queue_work(uv_default_loop(), &work->request, GetNameAsynchroWork, GetNameAsynchroWorkComplete);
+		}
+		else
+		{
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
+
+			args.GetReturnValue().SetNull();
+
+		}
+	}
 
 
 }
@@ -193,43 +299,104 @@ void UserwrapAsynchro::GetNameAsynchroWorkComplete(uv_work_t  *request, int stat
 
 	work->callback.Reset();
 
+	delete work;
 
 }
 
-void UserwrapAsynchro::BelongsToGroupwrap_1Asynchro(const v8::FunctionCallbackInfo<v8::Value>& args){
+void UserwrapAsynchro::BelongsToGroupwrapAsynchro(const FunctionCallbackInfo<Value>& args)
+{
+
 	Isolate* isolate = args.GetIsolate();
 
-	Work *work = new Work();
+	bool resultat = false;
 
-	work->request.data = work;
+	ControleUser* PtControleUser = new ControleUser();
+	std::string Message;
 
-	UserwrapAsynchro* PtUserWrapAsynchro = ObjectWrap::Unwrap<UserwrapAsynchro>(args.Holder());
+	if (ControleUserUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
+	{
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a User object")));
 
-	Thread_Data Pt_UserWrapAsynchro_Intra;
+		args.GetReturnValue().SetNull();
+	}
+	else{
+		
+		Work *work = new Work();
 
-	Pt_UserWrapAsynchro_Intra.Argument.PtUserwrapAsynchro = PtUserWrapAsynchro;
+		work->request.data = work;
 
-	work->Intra_Data.push_back(Pt_UserWrapAsynchro_Intra);
+		UserwrapAsynchro* PtUserWrapAsynchro = ObjectWrap::Unwrap<UserwrapAsynchro>(args.Holder());
 
-	Utility util;
+		Thread_Data Pt_UserWrapAsynchro_Intra;
 
-	string inGroupName = util.V8Utf8ValueToStdString(args[0]);
+		Pt_UserWrapAsynchro_Intra.Argument.PtUserwrapAsynchro = PtUserWrapAsynchro;
+
+		work->Intra_Data.push_back(Pt_UserWrapAsynchro_Intra);
+
+		if (PtControleUser->ControleGetLenght(args, Message, 2))
+		{
+			if (GroupwrapAsynchro::ControleGroupUnwrap(args[0]->ToObject(), isolate)->BooleanValue() == true)
+			{
+
+				GroupwrapAsynchro* PtGroupWrapAsynchro = ObjectWrap::Unwrap<GroupwrapAsynchro>(args[0]->ToObject());
+
+				Thread_Data Pt_GroupWrapAsynchro_Intra;
+
+				Pt_GroupWrapAsynchro_Intra.Argument.PtGroupWrapAsynchro = PtGroupWrapAsynchro;
+
+				work->Intra_Data.push_back(Pt_UserWrapAsynchro_Intra);
+
+				Local<Function> commeback = Local<Function>::Cast(args[1]);
+
+				work->callback.Reset(isolate, commeback);
+
+				uv_queue_work(uv_default_loop(), &work->request, BelongsToGroupwrap_2AsynchroWork, BelongsToGroupwrap_2AsynchroWorkComplete);
+
+			}
+			else
+			{
+				if (PtControleUser->ControleGetType(args, Message, 0))
+				{
+					Utility util;
+
+					string inGroupName = util.V8Utf8ValueToStdString(args[0]);
 
 
-	Thread_Data Pt_inGroupID;
+					Thread_Data Pt_inGroupID;
 
-	Pt_inGroupID.Argument.GroupId = new char[inGroupName.length() + 1];;
+					Pt_inGroupID.Argument.GroupId = new char[inGroupName.length() + 1];;
 
-	std::strcpy(Pt_inGroupID.Argument.GroupId, inGroupName.c_str());
+					std::strcpy(Pt_inGroupID.Argument.GroupId, inGroupName.c_str());
 
-	work->Input_Data.push_back(Pt_inGroupID);
+					work->Input_Data.push_back(Pt_inGroupID);
 
-	Local<Function> commeback = Local<Function>::Cast(args[1]);
+					Local<Function> commeback = Local<Function>::Cast(args[1]);
 
-	work->callback.Reset(isolate, commeback);
+					work->callback.Reset(isolate, commeback);
 
-	uv_queue_work(uv_default_loop(), &work->request, BelongsToGroupwrap_1AsynchroWork, BelongsToGroupwrap_1AsynchroWorkComplete);
+					uv_queue_work(uv_default_loop(), &work->request, BelongsToGroupwrap_1AsynchroWork, BelongsToGroupwrap_1AsynchroWorkComplete);
 
+
+
+				}
+				else
+				{
+					isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
+
+					args.GetReturnValue().SetNull();
+				}
+			}
+
+
+		}
+		else
+		{
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
+
+			args.GetReturnValue().SetUndefined();
+
+		}
+	}
 }
 
 void UserwrapAsynchro::BelongsToGroupwrap_1AsynchroWork(uv_work_t  *request){
@@ -266,41 +433,10 @@ void UserwrapAsynchro::BelongsToGroupwrap_1AsynchroWorkComplete(uv_work_t  *requ
 
 	work->callback.Reset();
 
-}
-
-void UserwrapAsynchro::BelongsToGroupwrap_2Asynchro(const v8::FunctionCallbackInfo<v8::Value>& args){
-	
-	Isolate* isolate = args.GetIsolate();
-
-	Work *work = new Work();
-
-	work->request.data = work;
-
-	UserwrapAsynchro* PtUserWrapAsynchro = ObjectWrap::Unwrap<UserwrapAsynchro>(args.Holder());
-
-	Thread_Data Pt_UserWrapAsynchro_Intra;
-
-	Pt_UserWrapAsynchro_Intra.Argument.PtUserwrapAsynchro = PtUserWrapAsynchro;
-
-	work->Intra_Data.push_back(Pt_UserWrapAsynchro_Intra);
-
-	GroupwrapAsynchro* PtGroupWrapAsynchro = ObjectWrap::Unwrap<GroupwrapAsynchro>(args[0]->ToObject());
-
-	Thread_Data Pt_GroupWrapAsynchro_Intra;
-
-	Pt_GroupWrapAsynchro_Intra.Argument.PtGroupWrapAsynchro = PtGroupWrapAsynchro;
-
-	work->Intra_Data.push_back(Pt_UserWrapAsynchro_Intra);
-
-	Local<Function> commeback = Local<Function>::Cast(args[1]);
-
-	work->callback.Reset(isolate, commeback);
-
-	uv_queue_work(uv_default_loop(), &work->request, BelongsToGroupwrap_2AsynchroWork, BelongsToGroupwrap_2AsynchroWorkComplete);
-
-
+	delete work;
 
 }
+
 
 void UserwrapAsynchro::BelongsToGroupwrap_2AsynchroWork(uv_work_t  *request){
 	Work *work = (Work*)(request->data);
@@ -334,37 +470,68 @@ void UserwrapAsynchro::BelongsToGroupwrap_2AsynchroWorkComplete(uv_work_t  *requ
 	Local<Function>::New(isolate, work->callback)->Call(isolate->GetCurrentContext()->Global(), 2, args);
 
 	work->callback.Reset();
+
+	delete work;
 }
 
 void UserwrapAsynchro::IsLoggedInAsynchro(const v8::FunctionCallbackInfo<v8::Value>& args){
 
 	Isolate* isolate = args.GetIsolate();
 
-	Work *work = new Work();
+	bool resultat = false;
 
-	work->request.data = work;
+	if (ControleUserUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
+	{
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a User object")));
 
-	UserwrapAsynchro* PtUserWrapAsynchro = ObjectWrap::Unwrap<UserwrapAsynchro>(args.Holder());
+		args.GetReturnValue().SetUndefined();
+	}
+	else{
+		Work *work = new Work();
 
-	Thread_Data Pt_UserWrapAsynchro_Intra;
+		work->request.data = work;
 
-	Pt_UserWrapAsynchro_Intra.Argument.PtUserwrapAsynchro = PtUserWrapAsynchro;
+		UserwrapAsynchro* PtUserWrapAsynchro = ObjectWrap::Unwrap<UserwrapAsynchro>(args.Holder());
 
-	work->Intra_Data.push_back(Pt_UserWrapAsynchro_Intra);
+		if (SessionwrapAsynchro::ControleSessionUnwrap(args[0]->ToObject(), isolate)->BooleanValue() == true)
+		{
 
-	SessionwrapAsynchro* PtSessionWrapAsynchro = ObjectWrap::Unwrap<SessionwrapAsynchro>(args[0]->ToObject());
+			Sessionwrap* PtSessionWrap = ObjectWrap::Unwrap<Sessionwrap>(args[0]->ToObject());
+			if (PtSessionWrap->ptsession->IsValid())
+			{
+				Thread_Data Pt_UserWrapAsynchro_Intra;
 
-	Thread_Data Pt_SessionWrapAsynchro_Intra;
+				Pt_UserWrapAsynchro_Intra.Argument.PtUserwrapAsynchro = PtUserWrapAsynchro;
 
-	Pt_SessionWrapAsynchro_Intra.Argument.ptSessionwrapAsynchro = PtSessionWrapAsynchro;
+				work->Intra_Data.push_back(Pt_UserWrapAsynchro_Intra);
 
-	work->Intra_Data.push_back(Pt_UserWrapAsynchro_Intra);
+				SessionwrapAsynchro* PtSessionWrapAsynchro = ObjectWrap::Unwrap<SessionwrapAsynchro>(args[0]->ToObject());
 
-	Local<Function> commeback = Local<Function>::Cast(args[1]);
+				Thread_Data Pt_SessionWrapAsynchro_Intra;
 
-	work->callback.Reset(isolate, commeback);
+				Pt_SessionWrapAsynchro_Intra.Argument.ptSessionwrapAsynchro = PtSessionWrapAsynchro;
 
-	uv_queue_work(uv_default_loop(), &work->request, IsLoggedInAsynchroWork, IsLoggedInAsynchroWorkComplete);
+				work->Intra_Data.push_back(Pt_UserWrapAsynchro_Intra);
+
+				Local<Function> commeback = Local<Function>::Cast(args[1]);
+
+				work->callback.Reset(isolate, commeback);
+
+				uv_queue_work(uv_default_loop(), &work->request, IsLoggedInAsynchroWork, IsLoggedInAsynchroWorkComplete);
+			}
+				
+
+		}
+		else
+		{
+			//isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong Session argument ")));
+
+			args.GetReturnValue().Set(Boolean::New(isolate, resultat));
+			//args.GetReturnValue().SetNull();
+		}
+
+		args.GetReturnValue().Set(Boolean::New(isolate, resultat));
+	}
 
 
 
@@ -403,6 +570,8 @@ void UserwrapAsynchro::IsLoggedInAsynchroWorkComplete(uv_work_t  *request, int s
 	Local<Function>::New(isolate, work->callback)->Call(isolate->GetCurrentContext()->Global(), 2, args);
 
 	work->callback.Reset();
+
+	delete work;
 
 }
 

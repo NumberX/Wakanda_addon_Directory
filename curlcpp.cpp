@@ -141,6 +141,7 @@ namespace WaDirectory_data
 			curl_slist *cookies1; 
 			
 			cookies1->data = "";
+
 			res = curl_easy_getinfo(curl2, CURLINFO_COOKIELIST, &cookies1);
 			
             curl_easy_cleanup(curl2);

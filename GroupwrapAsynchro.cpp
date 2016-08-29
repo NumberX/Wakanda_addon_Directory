@@ -2,6 +2,7 @@
 #include<string>
 #include<vector>
 #include"Group.h"
+#include"ControleGroup.h"
 #include"Work.h"
 #include"Thread_Data.h"
 #include"UserwrapAsynchro.h"
@@ -17,13 +18,36 @@ using v8::Number;
 using v8::Object;
 using v8::Persistent;
 using v8::String;
-
+using namespace Controle;
 using namespace v8;
 using namespace std;
 using namespace WaDirectory;
 namespace WaDirectorywrapAsynchro_data_v8 {
 
 	Persistent<Function> GroupwrapAsynchro::constructor;
+
+	Persistent<Value> GroupwrapAsynchro::prototype_Group_Synchrone;
+
+	Local<Boolean> GroupwrapAsynchro::ControleGroupUnwrap(Local<Object> handle, Isolate* isolate)
+	{
+		EscapableHandleScope scope(isolate);
+
+		if (!handle.IsEmpty() && handle->InternalFieldCount() == 1) {
+
+			Local<Value> Pt_Prototype = handle->GetPrototype();
+			Utility util;
+
+			if (Pt_Prototype == prototype_Group_Synchrone) {
+				Local<Boolean> Resultat = Boolean::New(isolate, true);
+				return scope.Escape(Resultat);
+
+			}
+
+
+		}
+		Local<Boolean> Resultat = Boolean::New(isolate, false);
+		return scope.Escape(Resultat);
+	}
 
 	GroupwrapAsynchro::GroupwrapAsynchro() : ptgroup() {
 	}
@@ -80,33 +104,34 @@ namespace WaDirectorywrapAsynchro_data_v8 {
 		Isolate* isolate = args.GetIsolate();
 
 		if (args.IsConstructCall()) {
-			if (args.Length() == 0) {
 
-				//Traitement GroupwrapAsynchro PtGroupwrapAsynchro=new PtGroupwrapAsynchro(); 
 
-				GroupwrapAsynchro* PtGroupwrapAsynchro = new GroupwrapAsynchro();
 
-				Group *PtGroup = new Group();
+			if (args.Length() == 1) {
 
-				PtGroupwrapAsynchro->ptgroup = PtGroup;
 
-				PtGroupwrapAsynchro->Wrap(args.Holder());
+				GroupwrapAsynchro* PtGroupWrap = new GroupwrapAsynchro();
+
+				PtGroupWrap->Wrap(args.This());
+
+				prototype_Group_Synchrone.Reset(isolate, args.This()->GetPrototype());
 
 				args.GetReturnValue().Set(args.Holder());
 			}
-			else if (args.Length() == 1) {
+			else
+			{
 
-				//Traitement GroupwrapAsynchro PtGroupwrapAsynchro=new PtGroupwrapAsynchro(Group); 
+				isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "To create a object of Group you need to pass from Directory object ")));
 
-				GroupwrapAsynchro* PtGroupwrapAsynchro = new GroupwrapAsynchro();
+				args.GetReturnValue().SetUndefined();
 
-				PtGroupwrapAsynchro->Wrap(args.Holder());
-
-				args.GetReturnValue().Set(args.Holder());
 			}
 		}
 		else {
 
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "To create a object of Group  you need to pass from Directory object ")));
+
+			args.GetReturnValue().SetUndefined();
 		}
 	}
 	
@@ -114,25 +139,49 @@ namespace WaDirectorywrapAsynchro_data_v8 {
 		
 		Isolate* isolate = args.GetIsolate();
 
-		Work *work = new Work();
+		if (ControleGroupUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
+		{
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Groupwrap object")));
 
-		work->request.data = work;
+			args.GetReturnValue().SetUndefined();
+		}
+		else{
+			GroupwrapAsynchro* PtGroupWrapAsynchro = ObjectWrap::Unwrap<GroupwrapAsynchro>(args.Holder());
 
-		GroupwrapAsynchro* PtGroupWrapAsynchro = ObjectWrap::Unwrap<GroupwrapAsynchro>(args.Holder());
+			std::string resultat = "";
 
-		Thread_Data Pt_GroupWrapAsynchro_Intra;
+			std::string Message;
 
-		Pt_GroupWrapAsynchro_Intra.Argument.PtGroupWrapAsynchro = PtGroupWrapAsynchro;
+			ControleGroup PtcontroleGroup;
 
-		work->Intra_Data.push_back(Pt_GroupWrapAsynchro_Intra);
+			if (PtcontroleGroup.ControlePtGroup(PtGroupWrapAsynchro->ptgroup, Message) == true)
+			{
+				Work *work = new Work();
 
-		Local<Function> commeback = Local<Function>::Cast(args[0]);
+				work->request.data = work;
 
-		work->callback.Reset(isolate, commeback);
+				Thread_Data Pt_GroupWrapAsynchro_Intra;
 
-		uv_queue_work(uv_default_loop(), &work->request, GetNameAsynchroWork, GetNameAsynchroWorkComplete);
+				Pt_GroupWrapAsynchro_Intra.Argument.PtGroupWrapAsynchro = PtGroupWrapAsynchro;
 
-		args.GetReturnValue().Set(Undefined(isolate));
+				work->Intra_Data.push_back(Pt_GroupWrapAsynchro_Intra);
+
+				Local<Function> commeback = Local<Function>::Cast(args[0]);
+
+				work->callback.Reset(isolate, commeback);
+
+				uv_queue_work(uv_default_loop(), &work->request, GetNameAsynchroWork, GetNameAsynchroWorkComplete);
+
+				args.GetReturnValue().Set(Undefined(isolate));
+			}
+			else
+			{
+				isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
+
+				args.GetReturnValue().SetNull();
+			}
+
+		}
 	 }
 
 	void GroupwrapAsynchro::GetNameAsynchroWork(uv_work_t  *request){
@@ -179,37 +228,65 @@ namespace WaDirectorywrapAsynchro_data_v8 {
 	void GroupwrapAsynchro::GetUserwrapByNameAsynchro(const v8::FunctionCallbackInfo<v8::Value>& args){
 		Isolate* isolate = args.GetIsolate();
 
-		Work *work = new Work();
+		
+		if (ControleGroupUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
+		{
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Groupwrap object")));
 
-		work->request.data = work;
+			args.GetReturnValue().SetUndefined();
+		}
+		else{
 
-		GroupwrapAsynchro* PtGroupWrapAsynchro = ObjectWrap::Unwrap<GroupwrapAsynchro>(args.Holder());
+			std::string res = "";
 
-		Thread_Data Pt_GroupWrapAsynchro_Intra;
+			Work *work = new Work();
 
-		Pt_GroupWrapAsynchro_Intra.Argument.PtGroupWrapAsynchro = PtGroupWrapAsynchro;
+			work->request.data = work;
 
-		work->Intra_Data.push_back(Pt_GroupWrapAsynchro_Intra);
+			GroupwrapAsynchro* PtGroupWrapAsynchro = ObjectWrap::Unwrap<GroupwrapAsynchro>(args.Holder());
 
-		Utility util;
 
-		string user = util.V8Utf8ValueToStdString(args[0]);
+			std::string Message;
 
-		Thread_Data Pt_User;
+			ControleGroup *PtcontroleGroup = new ControleGroup();
 
-		Pt_User.Argument.user = new char[user.length() + 1];;
+			Thread_Data Pt_GroupWrapAsynchro_Intra;
 
-		std::strcpy(Pt_User.Argument.user, user.c_str());
+			Pt_GroupWrapAsynchro_Intra.Argument.PtGroupWrapAsynchro = PtGroupWrapAsynchro;
 
-		work->Input_Data.push_back(Pt_User);
+			work->Intra_Data.push_back(Pt_GroupWrapAsynchro_Intra);
 
-		Local<Function> commeback = Local<Function>::Cast(args[1]);
+			Utility util;
 
-		work->callback.Reset(isolate, commeback);
+			string user = util.V8Utf8ValueToStdString(args[0]);
 
-		uv_queue_work(uv_default_loop(), &work->request, GetUserwrapByNameAsynchroWork, GetUserwrapByNameAsynchroWorkComplete);
+			string password = util.V8Utf8ValueToStdString(args[1]);
 
-		args.GetReturnValue().Set(Undefined(isolate));
+			Thread_Data Pt_User;
+
+			Thread_Data Pt_Password;
+
+			Pt_User.Argument.user = new char[user.length() + 1];;
+
+			std::strcpy(Pt_User.Argument.user, user.c_str());
+
+			work->Input_Data.push_back(Pt_User);
+
+			Pt_User.Argument.password = new char[password.length() + 1];;
+
+			std::strcpy(Pt_User.Argument.password, password.c_str());
+
+			work->Input_Data.push_back(Pt_Password);
+
+			Local<Function> commeback = Local<Function>::Cast(args[2]);
+
+			work->callback.Reset(isolate, commeback);
+
+			uv_queue_work(uv_default_loop(), &work->request, GetUserwrapByNameAsynchroWork, GetUserwrapByNameAsynchroWorkComplete);
+
+			args.GetReturnValue().Set(Undefined(isolate));
+
+		}
 	
 	
 	}
@@ -220,9 +297,11 @@ namespace WaDirectorywrapAsynchro_data_v8 {
 
 		string user = work->Input_Data[0].Argument.user;
 
+		string password = work->Input_Data[0].Argument.password;
+
 		Thread_Data Pt_UserWrapAsynchro_Intra;
-		//revoir
-		User *Pt_User=work->Intra_Data[0].Argument.PtGroupWrapAsynchro->ptgroup->GetUserByName(user,"");
+		
+		User *Pt_User = work->Intra_Data[0].Argument.PtGroupWrapAsynchro->ptgroup->GetUserByName(user, password);
 
 		Pt_UserWrapAsynchro_Intra.Argument.Ptuser = Pt_User;
 			

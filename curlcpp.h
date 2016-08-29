@@ -1,12 +1,12 @@
 #pragma once
 #pragma comment(lib, "curl.lib") 
-#pragma comment(lib, "wldap32.lib") 
-#pragma comment(lib, "ws2_32.lib") 
 #pragma comment(lib, "libssh2.lib")
 #pragma comment(lib, "libcurl.lib")
 #pragma comment(lib, "openssl.lib")
 #pragma comment(lib, "zlib.lib")
 #pragma comment(lib, "wsock32.lib")
+#pragma comment(lib, "wldap32.lib") 
+#pragma comment(lib, "ws2_32.lib") 
 #include<node.h>
 #include"JsonData.h"
 #include "curl/curl.h"

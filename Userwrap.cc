@@ -2,6 +2,7 @@
 #include"GroupWrap.h"
 #include"Directorywrap.h"
 #include"Utility.h"
+#include"ControleUser.h"
 #include<string>
 #include<iostream>
 using v8::Context;
@@ -17,7 +18,7 @@ using v8::String;
 using v8::Value;
 using v8::Boolean;
 using namespace v8;
-
+using namespace Controle;
 using namespace std;
 
 namespace WaDirectorywrap_data_v8 {
@@ -122,8 +123,6 @@ void Userwrap::New(const FunctionCallbackInfo<Value>& args) {
 
 			prototype_User_Synchrone.Reset(isolate, args.This()->GetPrototype());
 
-
-			
 			args.GetReturnValue().Set(args.This());
 		}
 		else
@@ -151,7 +150,7 @@ void Userwrap::GetDirectorywrap(const FunctionCallbackInfo<Value>& args) {
 
 	if (ControleUserUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
 	{
-		//isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Group object")));
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a User object")));
 
 		args.GetReturnValue().SetNull();
 	}
@@ -173,7 +172,7 @@ void Userwrap::GetName(const FunctionCallbackInfo<Value>& args) {
 
 	if (ControleUserUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
 	{
-		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a User object")));
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a User object")));
 
 		args.GetReturnValue().SetNull();
 	}
@@ -181,11 +180,26 @@ void Userwrap::GetName(const FunctionCallbackInfo<Value>& args) {
 		Userwrap* PtUserWrap = ObjectWrap::Unwrap<Userwrap>(args.Holder());
 
 		std::string resultat = "";
+		
+		std::string Message;
 
+		ControleUser* PtControleUser = new ControleUser();
+
+		if (PtControleUser->ControleGetPtUser(args,PtUserWrap->ptuser,Message))
+		{ 
 		PtUserWrap->ptuser->GetName(resultat);
+
 		std::string res = PtUserWrap->ptuser->Username;
 
 		args.GetReturnValue().Set(String::NewFromUtf8(isolate, res.c_str()));
+		}
+		else
+		{
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
+
+			args.GetReturnValue().SetNull();
+
+		}
 	}
 }
 
@@ -197,15 +211,18 @@ void Userwrap::BelongsToGroupwrap(const FunctionCallbackInfo<Value>& args)
 
 	bool resultat = false;
 
+	ControleUser* PtControleUser = new ControleUser();
+	std::string Message;
+
 	if (ControleUserUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
 	{
-		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a User object")));
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a User object")));
 
 		args.GetReturnValue().SetNull();
 	}
 	else{
 		Userwrap* PtUserWrap = ObjectWrap::Unwrap<Userwrap>(args.Holder());
-		if (args.Length()==1)
+		if (PtControleUser->ControleGetLenght(args,Message,1))
 		{ 
 		if (Groupwrap::ControleGroupUnwrap(args[0]->ToObject(), isolate)->BooleanValue() == true)
 		{
@@ -218,23 +235,20 @@ void Userwrap::BelongsToGroupwrap(const FunctionCallbackInfo<Value>& args)
 		}
 		else
 		{
-			if (args[0]->IsString())
+			if (PtControleUser->ControleGetType(args, Message, 0))
 			{
 				Utility util;
 				
 				string Idgroup = util.V8Utf8ValueToStdString(args[0]);
 
 				bool resultat1 ;resultat1 = PtUserWrap->ptuser->BelongsToGroup(Idgroup);
-
-			
-				
 			
 				args.GetReturnValue().Set(Boolean::New(isolate, resultat1));
 
 			}
 			else
 			{ 
-			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong Session argument ")));
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
 
 			args.GetReturnValue().SetNull();
 			}
@@ -244,7 +258,7 @@ void Userwrap::BelongsToGroupwrap(const FunctionCallbackInfo<Value>& args)
 		}
 		else
 		{
-			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong Number of argument argument ")));
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
 
 			args.GetReturnValue().SetUndefined();
 

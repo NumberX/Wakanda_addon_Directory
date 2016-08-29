@@ -115,12 +115,15 @@ namespace WaDirectorywrap_data_v8 {
 
 	void Sessionwrap::New(const FunctionCallbackInfo<Value>& args) {
 		Isolate* isolate = args.GetIsolate();
+		
+		ControleSession* ControSession = new ControleSession();
 
+		std::string Message;
 		if (args.IsConstructCall()) {
 
 			
 
-			 if (args.Length() ==1 ) {
+			 if (ControSession->ControleGetLenght(args,Message,1 )) {
 				
 
 				Sessionwrap* PtSessionWrap = new Sessionwrap();
@@ -134,7 +137,7 @@ namespace WaDirectorywrap_data_v8 {
 			 else
 			 {
 
-				 isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "To create a object of Session you need to pass from Directory object ")));
+				 isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
 
 				 args.GetReturnValue().SetUndefined();
 
@@ -184,7 +187,7 @@ namespace WaDirectorywrap_data_v8 {
 			}
 			else
 			{
-				isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Session object")));
+				isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
 
 				args.GetReturnValue().SetUndefined();
 			}
@@ -197,7 +200,7 @@ namespace WaDirectorywrap_data_v8 {
 
 		if (ControleSessionUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
 		{
-			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Group object")));
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a Group object")));
 
 			args.GetReturnValue().SetUndefined();
 		}
@@ -215,7 +218,7 @@ namespace WaDirectorywrap_data_v8 {
 			}
 			else
 			{
-				//isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Session object")));
+				isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
 
 				args.GetReturnValue().SetNull();
 			}
@@ -228,16 +231,15 @@ namespace WaDirectorywrap_data_v8 {
 
 		if (ControleSessionUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
 		{
-			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Group object")));
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a Group object")));
 
 			args.GetReturnValue().SetNull();
 		}
 		else{
 			Sessionwrap* PtSessionWrap = ObjectWrap::Unwrap<Sessionwrap>(args.Holder());
 
-	        //Local<Object> ObjectDirectoryWrap = Directorywrap::CreateDirectoryWrap(isolate, PtSessionWrap->Pt_DirectoryWrap->ptdirectory);
-
 			Local<Object> ObjectDirectoryWrap = PtSessionWrap->Pt_DirectoryWrap->handle();
+			
 			args.GetReturnValue().Set(ObjectDirectoryWrap);
 
 
@@ -250,7 +252,7 @@ namespace WaDirectorywrap_data_v8 {
 
 		if (ControleSessionUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
 		{
-			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Session object")));
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a Session object")));
 
 			args.GetReturnValue().SetUndefined();
 		}
@@ -266,7 +268,7 @@ namespace WaDirectorywrap_data_v8 {
 			}
 			else
 			{
-				//isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Session object")));
+				isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
 
 				args.GetReturnValue().SetNull();
 			}
@@ -279,7 +281,7 @@ namespace WaDirectorywrap_data_v8 {
 
 		if (ControleSessionUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
 		{
-			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Session object")));
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a Session object")));
 
 			args.GetReturnValue().SetUndefined();
 		}
@@ -299,7 +301,7 @@ namespace WaDirectorywrap_data_v8 {
 			}
 			else
 			{
-				//isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Session object")));
+				isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
 
 				args.GetReturnValue().SetNull();
 			}

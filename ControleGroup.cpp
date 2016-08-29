@@ -15,6 +15,50 @@ ControleGroup::~ControleGroup()
 {
 
 }
+bool ControleGroup::ControleGetLenght(const v8::FunctionCallbackInfo<v8::Value>& args,  std::string &Message, int Number)
+{
+	if (args.Length() == Number) {
+
+
+		return true;
+
+
+	}
+	
+
+		Message = "Wrong number of argument";
+
+		return false;
+
+	
+
+}
+bool ControleGroup::GetUserwrapByName(const v8::FunctionCallbackInfo<v8::Value>& args, Group *ptgroup, std::string &Message, int Number)
+{
+	bool Resultat = ControlePtGroup(ptgroup, Message);
+
+	Resultat = this->ControleGetLenght(args, Message, 2);
+
+	for (int Iterator = 0; Iterator < Number; Iterator++)
+		Resultat = this->ControleGetType(args, Message, Iterator);
+
+	return Resultat;
+
+}
+bool ControleGroup::ControleGetType(const v8::FunctionCallbackInfo<v8::Value>& args, std::string &Message, int Number)
+{
+
+	if ((args[Number]->IsString()))
+	{
+		return true;
+	}
+
+
+	Message = "the argument need to be string value";
+
+	return false;
+
+}
 bool ControleGroup::ControleGet(const v8::FunctionCallbackInfo<v8::Value>& args, Group* PtGroup, std::string &Message)
 {
 	Isolate* isolate = args.GetIsolate();
@@ -57,12 +101,11 @@ bool ControleGroup::ControlePtGroup(Group* PtGroup, std::string &Message)
 	{
 		return true;
 	}
-	else
-	{
 
-		Message = "the Directory Object is NULL Value";
 
-	}
+	
+	Message = "the Group Object is NULL Value";
+
 	return false;
 }
 

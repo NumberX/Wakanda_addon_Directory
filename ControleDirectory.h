@@ -14,10 +14,17 @@ namespace Controle{
 class ControleDirectory
 {
 private :
-	bool ControleGet(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &Message,int Number);
+
 public:
 ControleDirectory();
 ~ControleDirectory();
+bool ControleGet(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &Message, int Number);
+
+bool ControleGetLenght(const v8::FunctionCallbackInfo<v8::Value>& args, std::string &Message, int Number);
+
+bool ControleGetType(const v8::FunctionCallbackInfo<v8::Value>& args,  std::string &Message, int Number);
+
+bool ControleGetPtDirectory(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &Message, int Number);
 
 bool ControleLogIn(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &error);
 bool ControleGetGroupwrapNames(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &Message);

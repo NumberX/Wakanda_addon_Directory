@@ -25,19 +25,19 @@ if (DirectoryObject) {
             //test User.IsLoggedIn(const v8::FunctionCallbackInfo<v8::Value>& args);
 
 
-            console.log("User isLoggedIn " + UserWrap.IsLoggedIn(SessionObject));
+            console.log("\n User isLoggedIn " + UserWrap.IsLoggedIn(SessionObject));
 
-            console.log("Session Wsid" + SessionObject.GetWASID());
+            console.log("\n Session Wsid" + SessionObject.GetWASID());
 
             //deconnectes  Session
 
             SessionObject.LogOut();
 
-            console.log("User isLoggedIn " + UserWrap.IsLoggedIn(SessionObject));
+            console.log("\n User isLoggedIn " + UserWrap.IsLoggedIn(SessionObject));
 
-            console.log("Etat Session"+SessionObject.IsValid());
+            console.log("\n Etat Session"+SessionObject.IsValid());
 
-            console.log("Wsid after logout"+SessionObject.GetWASID());
+            console.log("\n Wsid after logout"+SessionObject.GetWASID());
 
             var SessionObject1 = DirectoryObject.LogIn(UserWrap);
 
@@ -47,7 +47,7 @@ if (DirectoryObject) {
 
                 if (DirectoryObjectclone == DirectoryObject) {
 
-                    console.log("The clone Work");
+                    console.log("\n The clone Work");
 
                     if (DirectoryObjectclone) {
 
@@ -55,25 +55,25 @@ if (DirectoryObject) {
 
                         var VectorIdGroup = DirectoryObjectclone.GetGroupwrapID();
 
-                        console.log("Testes Belongto");
+                        console.log("\n Testes Belongto");
 
-                        console.log("Testes des appartenance de user a tous les group ID");
+                        console.log("\n Testes des appartenance de user a tous les group ID");
                         for (Iterator in VectorIdGroup) {
 
-                            console.log("Group [" + Iterator + "]: ID :" + VectorIdGroup[Iterator]);
-                            console.log("Username :" + UserWrap.GetName() + " Etat :" + UserWrap.BelongsToGroupwrap(VectorIdGroup[Iterator]));
+                            console.log("\n Group [" + Iterator + "]: ID :" + VectorIdGroup[Iterator]);
+                            console.log("\n Username :" + UserWrap.GetName() + " Etat :" + UserWrap.BelongsToGroupwrap(VectorIdGroup[Iterator]));
                         }
 
-                        console.log("Testes des appartenance de user a tous les groupwrap");
+                        console.log("\n Testes des appartenance de user a tous les groupwrap");
 
                         for (Iterator in VectorIdGroup) {
 
                             var GroupwrapObject = DirectoryObjectclone.GetGroupwrap(VectorIdGroup[Iterator]);
 
                             if (GroupwrapObject) {
-                                console.log("Name: " + GroupwrapObject.GetName());
+                                console.log("\n Name: " + GroupwrapObject.GetName());
 
-                                console.log("Username :" + UserWrap.GetName() + " Etat :" + UserWrap.BelongsToGroupwrap(GroupwrapObject));
+                                console.log("\n Username :" + UserWrap.GetName() + " Etat :" + UserWrap.BelongsToGroupwrap(GroupwrapObject));
 
                             }
 
@@ -115,14 +115,14 @@ if (DirectoryObject) {
 
                 var Subgroup = GroupWrapobject1.GetSubGroupwrapName();
 
-                console.log("SubGroup");
+                console.log("\n SubGroup");
 
                 if (Subgroup)
                 {
 
                     for (Iterator1 in Subgroup)
                     {
-                        console.log("Subgroup[" + Iterator1 + "] :" + Subgroup[Iterator1] + "\n");
+                        console.log("\n Subgroup[" + Iterator1 + "] :" + Subgroup[Iterator1] + "\n");
                     }
 
 
@@ -135,7 +135,7 @@ if (DirectoryObject) {
 
         }
 
-        console.log("Test GetDirectory ");
+        console.log("\n Test GetDirectory ");
         var GroupWrapObject2 = DirectoryObject.GetGroupwrap("609AEC500800264DA73D02932FF3648F");
         var DirectoryGroupclone = GroupWrapobject1.GetDirectorywrap();
         if (DirectoryGroupclone == DirectoryObject) {
@@ -154,7 +154,7 @@ if (DirectoryObject) {
 
     console.log("\n \n End Test Group \n");
     
-    console.log("Begin Session Test \n");
+    console.log("\n Begin Session Test \n");
 
     if(DirectoryObject)
     {
@@ -175,7 +175,7 @@ if (DirectoryObject) {
 
                 if (UserObjectSession)
                 {
-                    console.log("Username :" + UserObjectSession.GetName());
+                    console.log("\n Username :" + UserObjectSession.GetName());
                 }
 
                 console.log("\n Logout :" + SessionObject3.LogOut());
@@ -190,7 +190,7 @@ if (DirectoryObject) {
 
     console.log("\n \n End Test Session \n");
 
-    console.log("Begin Directory Test \n");
+    console.log("\n Begin Directory Test \n");
 
     if (DirectoryObject)
     {
@@ -239,10 +239,10 @@ if (DirectoryObject) {
 
                     console.log("\n WSID clone :"+SessionDirLogclone.GetWASID())
 
-                    console.log("Etat Valid  clone before logout:" + SessionDirLog.IsValid());
+                    console.log("\n Etat Valid  clone before logout:" + SessionDirLog.IsValid());
                     DirectoryObject.LogOut(SessionDirLog);
 
-                    console.log("Etat Valid  clone after logout:" + SessionDirLog.IsValid());
+                    console.log("\n Etat Valid  clone after logout:" + SessionDirLog.IsValid());
                 }
 
                 console.log("\n Session valid after logout:" + SessionDirLog.IsValid());
@@ -307,6 +307,7 @@ if (DirectoryObject) {
             console.log("\n Wsid :" + SessionObject4.GetWASID()+"\n");
 
         for (IteratorVec in VectorGroupIdDir) {
+
             var GroupObjectDirectory = DirectoryObject.GetGroupwrap(VectorGroupIdDir[IteratorVec]);
 
 
