@@ -170,7 +170,7 @@ void DirectorywrapAsynchro::LogInAsynchroWorkComplete(uv_work_t  *request, int s
 
 	Work *work = (Work *)(request->data);
 
-	Session *PtSession = work->Intra_Data[0].Argument.PtSession;
+	ISession *PtSession = work->Intra_Data[0].Argument.PtSession;
 
 	Local<Object> ObjectSessionwrapAsynchro = SessionwrapAsynchro::CreateSessionwrapAsynchro(isolate, PtSession);
 
@@ -306,7 +306,7 @@ void DirectorywrapAsynchro::GetGroupwrapAsynchroWorkComplete(uv_work_t  *request
 
 	Work *work = (Work *)(request->data);
 
-	Group *PtGroup = work->Intra_Data[0].Argument.PtGroup;
+	IGroup *PtGroup = work->Intra_Data[0].Argument.PtGroup;
 
 	Local<Object> ObjectGroupwrapAsynchro = GroupwrapAsynchro::CreateGroupwrapAsynchro(isolate, PtGroup);
 
@@ -367,7 +367,7 @@ void DirectorywrapAsynchro::GetUserwrapAsynchroWork(uv_work_t  *request){
 
 	Thread_Data Pt_UserWrapAsynchro_Intra;
 
-	Pt_UserWrapAsynchro_Intra.Argument.Ptuser = work->Intra_Data[0].Argument.PtDirectorywrapAsynchro->ptdirectory->GetUser(UserId,"");
+	Pt_UserWrapAsynchro_Intra.Argument.Ptuser = work->Intra_Data[0].Argument.PtDirectorywrapAsynchro->ptdirectory->GetUser(UserId, "");
 
 	work->Intra_Data.push_back(Pt_UserWrapAsynchro_Intra);
 
@@ -380,7 +380,7 @@ void DirectorywrapAsynchro::GetUserwrapAsynchroWorkComplete(uv_work_t  *request,
 
 	Work *work = (Work *)(request->data);
 
-	User *PtUser = work->Intra_Data[0].Argument.Ptuser;
+	IUser *PtUser = work->Intra_Data[0].Argument.Ptuser;
 
 	Local<Object> ObjectUserwrapAsynchro = UserwrapAsynchro::CreateUserwrapAsynchro(isolate, PtUser);
 
@@ -450,7 +450,7 @@ void DirectorywrapAsynchro::GetSessionwrapAsynchroWorkComplete(uv_work_t  *reque
 
 	Work *work = (Work *)(request->data);
 
-	Session *PtSession = work->Intra_Data[0].Argument.PtSession;
+	ISession *PtSession = work->Intra_Data[0].Argument.PtSession;
 
 	Local<Object> ObjectSessionwrapAsynchro = SessionwrapAsynchro::CreateSessionwrapAsynchro(isolate, PtSession);
 

@@ -18,11 +18,11 @@ private :
 public:
 ControleGroup();
 ~ControleGroup();
-bool ControleGet(const v8::FunctionCallbackInfo<v8::Value>& args, Group* PtDirectory, std::string &Message);
-bool ControlePtGroup(Group* PtGroup, std::string &Message);
+bool ControleGet(const v8::FunctionCallbackInfo<v8::Value>& args, IGroup* PtDirectory, std::string &Message);
+bool ControlePtGroup(IGroup* PtGroup, std::string &Message);
 bool ControleGetLenght(const v8::FunctionCallbackInfo<v8::Value>& args,  std::string &Message, int Number);
 bool ControleGetType(const v8::FunctionCallbackInfo<v8::Value>& args,  std::string &Message, int Number);
-bool GetUserwrapByName(const v8::FunctionCallbackInfo<v8::Value>& args,Group *ptgroup, std::string &Message, int Number);
+bool GetUserwrapByName(const v8::FunctionCallbackInfo<v8::Value>& args,IGroup *ptgroup, std::string &Message, int Number);
 };
 
 

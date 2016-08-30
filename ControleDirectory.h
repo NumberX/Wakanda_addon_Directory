@@ -18,19 +18,19 @@ private :
 public:
 ControleDirectory();
 ~ControleDirectory();
-bool ControleGet(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &Message, int Number);
+bool ControleGet(const v8::FunctionCallbackInfo<v8::Value>& args, IDirectory* PtDirectory, std::string &Message, int Number);
 
 bool ControleGetLenght(const v8::FunctionCallbackInfo<v8::Value>& args, std::string &Message, int Number);
 
 bool ControleGetType(const v8::FunctionCallbackInfo<v8::Value>& args,  std::string &Message, int Number);
 
-bool ControleGetPtDirectory(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &Message, int Number);
+bool ControleGetPtDirectory(const v8::FunctionCallbackInfo<v8::Value>& args, IDirectory* PtDirectory, std::string &Message, int Number);
 
-bool ControleLogIn(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &error);
-bool ControleGetGroupwrapNames(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &Message);
-bool ControleGetGroupwrap(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &Message);
-bool ControleGetUserwrap(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &Message);
-bool ControleGetSessionwrap(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &Message);
+bool ControleLogIn(const v8::FunctionCallbackInfo<v8::Value>& args, IDirectory* PtDirectory, std::string &error);
+bool ControleGetGroupwrapNames(const v8::FunctionCallbackInfo<v8::Value>& args, IDirectory* PtDirectory, std::string &Message);
+bool ControleGetGroupwrap(const v8::FunctionCallbackInfo<v8::Value>& args, IDirectory* PtDirectory, std::string &Message);
+bool ControleGetUserwrap(const v8::FunctionCallbackInfo<v8::Value>& args, IDirectory* PtDirectory, std::string &Message);
+bool ControleGetSessionwrap(const v8::FunctionCallbackInfo<v8::Value>& args, IDirectory* PtDirectory, std::string &Message);
 
 };
 

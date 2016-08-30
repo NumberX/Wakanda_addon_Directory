@@ -36,9 +36,9 @@ class Groupwrap : public node::ObjectWrap {
 
 
 
-  static      Local<Object> CreateGroupWrap(Isolate* isolate, Group* PtGroup, Directorywrap* PtDirectoryWrap);
+  static      Local<Object> CreateGroupWrap(Isolate* isolate, IGroup* PtGroup, Directorywrap* PtDirectoryWrap);
 
-  Group *ptgroup=NULL;
+  IGroup *ptgroup=NULL;
 
 
 

@@ -21,22 +21,22 @@ namespace WaDirectory
 	class Directory;
 	class User;
 
-	class Group
+	class Group:public IGroup
 	{
-		Directory* Pt_Directory = NULL;
+		
 	public:
-		string Idgroup, Namegroup;
+		
 		Group();
-		~Group();
+		 ~Group();
 		Group(string id);
-		void   GetName(std::string& outName);
+		 void   GetName(std::string& outName);
 
-		User* GetUserByName(const std::string& inUserName, const std::string& Password);
+		 IUser* GetUserByName(const std::string& inUserName, const std::string& Password);
 
-		void GetSubGroupName(std::vector<std::string>& ouSubGroupNames) ;
+		 void GetSubGroupName(std::vector<std::string>& ouSubGroupNames);
 		    
-		Directory* GetDirectory() const ;
-		void Set_Directory(Directory* Pt_Directory);
+		 IDirectory* GetDirectory() ;
+		 void Set_Directory(IDirectory* Pt_Directory);
 
 
 	};

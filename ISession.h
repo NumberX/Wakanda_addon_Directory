@@ -26,17 +26,21 @@ namespace WaDirectory
     {
             public:
 
-                virtual    IUser*  GetUser()                    =0;
+				virtual    IUser*  GetUser()     = 0;
                 
-                virtual     void GetWASID( std::string& outWASID) const           =0;
+                virtual     void GetWASID( std::string& outWASID)            =0;
 
-                virtual     IDirectory* GetDirectory() const        =0;
+                virtual     IDirectory* GetDirectory()        =0;
 
-                virtual     bool    IsValid()                       =0;
+				virtual     bool    IsValid()  = 0;
 
-                virtual     void LogOut()                                =0;
-				virtual ~ISession(){};
-				ISession(){};
+				virtual     void LogOut()    = 0;
+
+				string wsid, cookies; 
+
+				virtual void Set_Directory(IDirectory* Pt_Directory)    = 0;
+				
+				IDirectory *Pt_Directory = NULL;
 
 
 

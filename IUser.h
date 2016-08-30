@@ -21,19 +21,29 @@ namespace WaDirectory
 
     class IUser
     {
-        public:
+	private:
+
+		
+
+	public:
+		string Username, FullName, Id, Password;
     
-            virtual  IDirectory* GetDirectory()   const              =0;
+            virtual  IDirectory* GetDirectory()             =0;
             
-            virtual void    GetName(std::string& outName)          =0;
+			virtual void    GetName(std::string& outName)   = 0;
 
-            virtual bool    BelongsToGroup(const std::string& inGroupName) =0;
+			virtual bool    BelongsToGroup(const std::string& inGroupName) = 0;
 
-            virtual bool    BelongsToGroup(const IGroup* inGroupName) =0;
+			virtual bool    BelongsToGroup(const IGroup* inGroupName)  = 0;
 
-            virtual bool    IsLoggedIn( const ISession* inSession)   =0;
-			virtual ~IUser(){};
-			IUser(){};
+			virtual bool    IsLoggedIn(const ISession* inSession) = 0;
+
+
+			virtual void Set_Directory(IDirectory* Pt_Directory) = 0;
+
+			IDirectory *Pt_Directory = NULL;
+
+			
 
     };
     

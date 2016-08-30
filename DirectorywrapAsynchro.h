@@ -58,7 +58,7 @@ namespace WaDirectorywrapAsynchro_data_v8 {
 
   static v8::Persistent<v8::Function> constructor;
 
-  Directory *ptdirectory;
+  IDirectory *ptdirectory;
 
 
 

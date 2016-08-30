@@ -53,7 +53,7 @@ Userwrap::Userwrap() : ptuser() {
 
 Userwrap::~Userwrap() {
 }
-Local<Object> Userwrap::CreateUserWrap(Isolate* isolate, User* PtUser,Directorywrap* PtDirectoryWrap)
+Local<Object> Userwrap::CreateUserWrap(Isolate* isolate, IUser* PtUser,Directorywrap* PtDirectoryWrap)
 {
 
 	EscapableHandleScope scope(isolate);

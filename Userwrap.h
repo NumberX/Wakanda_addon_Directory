@@ -21,7 +21,7 @@ class Userwrap : public node::ObjectWrap {
   explicit Userwrap();
   ~Userwrap();
 
-  static      Local<Object> CreateUserWrap(Isolate* isolate, User* PtUser, Directorywrap* PtDirectoryWrap);
+  static      Local<Object> CreateUserWrap(Isolate* isolate, IUser* PtUser, Directorywrap* PtDirectoryWrap);
   
   static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
   
@@ -39,7 +39,7 @@ class Userwrap : public node::ObjectWrap {
 
   static v8::Persistent<v8::Value> prototype_User_Synchrone;
 
-  User *ptuser;
+  IUser *ptuser;
   
 
   Directorywrap *Pt_DirectoryWrap = NULL;

@@ -22,12 +22,12 @@ namespace WaDirectory
 	{
 	}
 
-	void  Session::Set_Directory(Directory* Pt_Directory)
+	void  Session::Set_Directory(IDirectory* Pt_Directory)
 	{
 		this->Pt_Directory = Pt_Directory;
 	
 	}
-	User* Session::GetUser()
+	IUser* Session::GetUser()
 	{
 		
 		
@@ -78,13 +78,13 @@ namespace WaDirectory
 	}
 
 
-	Directory* Session::GetDirectory() const
+	IDirectory* Session::GetDirectory() 
 	{
 		return this->Pt_Directory;
 	}
 
 
-	void Session::GetWASID(std::string& outWASID) const
+	void Session::GetWASID(std::string& outWASID) 
 	{
 		outWASID = this->cookies;
 	}

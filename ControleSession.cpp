@@ -16,7 +16,7 @@ ControleSession::~ControleSession()
 
 }
 
-bool ControleSession::ControlePtSession(Session* PtSession, std::string &Message)
+bool ControleSession::ControlePtSession(ISession* PtSession, std::string &Message)
 {
 	if (PtSession != NULL)
 	{

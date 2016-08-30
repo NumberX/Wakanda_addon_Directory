@@ -45,7 +45,7 @@ bool ControleUser::ControleGetType(const v8::FunctionCallbackInfo<v8::Value>& ar
 
 }
 
-bool ControleUser::ControleGetPtUser(const v8::FunctionCallbackInfo<v8::Value>& args, User* PtUser, std::string &Message)
+bool ControleUser::ControleGetPtUser(const v8::FunctionCallbackInfo<v8::Value>& args, IUser* PtUser, std::string &Message)
 {
 	if (PtUser != NULL)
 	{

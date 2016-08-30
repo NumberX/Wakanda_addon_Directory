@@ -24,7 +24,7 @@ bool ControleGetLenght(const v8::FunctionCallbackInfo<v8::Value>& args,std::stri
 
 bool ControleGetType(const v8::FunctionCallbackInfo<v8::Value>& args, std::string &Message, int Number);
 
-bool ControleGetPtUser(const v8::FunctionCallbackInfo<v8::Value>& args, User* PtUser, std::string &Message);
+bool ControleGetPtUser(const v8::FunctionCallbackInfo<v8::Value>& args, IUser* PtUser, std::string &Message);
 
 };
 

@@ -25,17 +25,22 @@ namespace WaDirectory
 
     class IGroup
     {
-        public:
+		
+	public:
+		string Idgroup, Namegroup;
 
-            virtual  void   GetName(std::string& outName)                               =0;
+		virtual  void   GetName(std::string& outName)  = 0;
 
-            virtual  IUser* GetUserByName ( const std::string& inUserName)              =0;
+		virtual  IUser* GetUserByName(const std::string& inUserName, const std::string& Password)  = 0;
 
-            virtual  void GetSubGroupNames(std::vector<std::string>& ouSubGroupNames)   =0;
+		virtual  void GetSubGroupName(std::vector<std::string>& ouSubGroupNames) = 0;
             
-            virtual  IDirectory* GetDirectory() const                                   =0;  
-			virtual ~IGroup(){};
-			IGroup(){};
+        virtual  IDirectory* GetDirectory()                                   =0;
+
+		virtual void Set_Directory(IDirectory* Pt_Directory)				= 0;
+		
+		IDirectory* Pt_Directory = NULL;
+	
     };
 
 

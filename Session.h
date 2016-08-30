@@ -17,28 +17,28 @@ namespace WaDirectory
 	class Directory;
 	class User;
 
-	class Session 
+	class Session :public ISession
 	{
-		Directory* Pt_Directory = NULL;
+		
 
 	public:
 		Session();
 		Session(string cookies);
 
 		~Session();
-		User*  GetUser() ;
+		 IUser*  GetUser();
 
-		void GetWASID(std::string& outWASID) const ;
+		 void GetWASID(std::string& outWASID) ;
 
-		Directory* GetDirectory() const ;
+		 IDirectory* GetDirectory() ;
 
-		bool    IsValid() ;
+		 bool    IsValid();
 
-		void LogOut() ;
+		 void LogOut();
 		
-		string wsid, cookies;
+		
 
-		void Set_Directory(Directory* Pt_Directory);
+		 void Set_Directory(IDirectory* Pt_Directory);
 
 	};
 

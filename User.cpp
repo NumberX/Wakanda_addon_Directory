@@ -23,7 +23,7 @@ namespace WaDirectory
 		this->Id = Id;
 		this->Password = Password;
 	}
-	void User::Set_Directory(Directory* Pt_Directory)
+	void User::Set_Directory(IDirectory* Pt_Directory)
 	{
 	
 		this->Pt_Directory = Pt_Directory;
@@ -34,7 +34,7 @@ namespace WaDirectory
 	}
 
 
-	Directory* User::GetDirectory() const
+	IDirectory* User::GetDirectory() 
 	{
 		return this->Pt_Directory;
 	}
@@ -68,7 +68,7 @@ namespace WaDirectory
 	}
 
 
-	bool User::BelongsToGroup(const Group* inGroupName)
+	bool User::BelongsToGroup(const IGroup* inGroupName)
 	{
 
 		bool resultat = false;
@@ -92,7 +92,7 @@ namespace WaDirectory
 	}
 
 
-	bool User::IsLoggedIn(const Session* inSession)
+	bool User::IsLoggedIn(const ISession* inSession)
 	{
 
 

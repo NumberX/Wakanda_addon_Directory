@@ -36,12 +36,12 @@ namespace WaDirectorywrapAsynchro_data_v8{
   char *cookies;
   static v8::Persistent<v8::Function> constructor;
   static v8::Persistent<v8::Value> prototype_Session_Synchrone;
-  Session *ptsession;
+  ISession *ptsession;
  private:
 	 explicit SessionwrapAsynchro();
   ~SessionwrapAsynchro();
  // static  Local<Value> NewInstance();
-  static      Local<Object> CreateSessionwrapAsynchro(Isolate* isolate, Session* PtSession);
+  static      Local<Object> CreateSessionwrapAsynchro(Isolate* isolate, ISession* PtSession);
   static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void GetUserwrapAsynchro(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void GetUserwrapAsynchroWork(uv_work_t  *request);

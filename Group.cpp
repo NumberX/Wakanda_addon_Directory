@@ -6,7 +6,7 @@ using namespace std;
 using namespace WaDirectory_data;
 namespace WaDirectory
 {
-	Directory* Group::GetDirectory() const
+	IDirectory* Group::GetDirectory() 
 	{
 		return this->Pt_Directory;
 
@@ -23,7 +23,7 @@ namespace WaDirectory
 	Group::~Group()
 	{
 	}
-	void  Group::Set_Directory(Directory* Pt_Directory)
+	void  Group::Set_Directory(IDirectory* Pt_Directory)
 	{
 		this->Pt_Directory = Pt_Directory;
 
@@ -38,7 +38,7 @@ namespace WaDirectory
 	}
 
 
-	User* Group::GetUserByName(const std::string&  Username, const std::string& Password)
+	IUser* Group::GetUserByName(const std::string&  Username, const std::string& Password)
 	{
 		XMLparser *PtparseurXml;
 		PtparseurXml = new XMLparser(this->Pt_Directory->Get_Url_Directory());

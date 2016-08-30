@@ -17,28 +17,28 @@ namespace WaDirectory
 	class Directory;
 	class Session;
 	class Group;
-	class User 
+	class User :public IUser
 	{
 	private :
 		
-		Directory *Pt_Directory = NULL;
+		
 
 	public:
-		string Username, FullName, Id,Password;
+		
 		User();
 		User(string Username, string FullName, string Id,string Password);
-		User::~User();
-		Directory* GetDirectory()   const ;
+		 ~User();
+		 IDirectory* GetDirectory()   ;
 
-		void GetName(std::string& outName) ;
+		 void GetName(std::string& outName) ;
 
-		bool BelongsToGroup(const std::string& inGroupName) ;
+		 bool BelongsToGroup(const std::string& inGroupName);
 
-		bool    BelongsToGroup(const Group* inGroupName)  ;
+		 bool    BelongsToGroup(const IGroup* inGroupName);
 
-		bool    IsLoggedIn(const Session* inSession) ;
+		 bool    IsLoggedIn(const ISession* inSession);
 		
-		void Set_Directory(Directory* Pt_Directory);
+		 void Set_Directory(IDirectory* Pt_Directory);
 
 
 

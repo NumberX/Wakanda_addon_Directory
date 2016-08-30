@@ -39,7 +39,7 @@ namespace WaDirectorywrap_data_v8 {
 
 	}
 
-	Session* Sessionwrap::GetSession() {
+	ISession* Sessionwrap::GetSession() {
 		return this->ptsession;
 	}
 	Local<Boolean> Sessionwrap::ControleSessionUnwrap(Local<Object> handle, Isolate* isolate)
@@ -62,7 +62,7 @@ namespace WaDirectorywrap_data_v8 {
 		Local<Boolean> Resultat = Boolean::New(isolate, false);
 		return scope.Escape(Resultat);
 	}
-	Local<Object> Sessionwrap::CreateSessionWrap(Isolate* isolate, Session* PtSession, Directorywrap* PtDirectoryWrap)
+	Local<Object> Sessionwrap::CreateSessionWrap(Isolate* isolate, ISession* PtSession, Directorywrap* PtDirectoryWrap)
 	{
 		EscapableHandleScope scope(isolate);
 
@@ -170,7 +170,7 @@ namespace WaDirectorywrap_data_v8 {
 			{
 				if (PtSessionWrap->ptsession->IsValid())
 				{ 
-				User *PtUser = PtSessionWrap->ptsession->GetUser();
+				IUser *PtUser = PtSessionWrap->ptsession->GetUser();
 
 				Local<Context> context = isolate->GetCurrentContext();
 

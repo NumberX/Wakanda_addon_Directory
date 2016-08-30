@@ -57,7 +57,7 @@ Groupwrap::Groupwrap() : ptgroup() {
 Groupwrap::~Groupwrap() {
 }
 
-Local<Object> Groupwrap::CreateGroupWrap(Isolate* isolate, Group* PtGroup,Directorywrap* PtDirectoryWrap)
+Local<Object> Groupwrap::CreateGroupWrap(Isolate* isolate, IGroup* PtGroup,Directorywrap* PtDirectoryWrap)
 {
 
 	EscapableHandleScope scope(isolate);
@@ -203,7 +203,7 @@ void Groupwrap::GetUserwrapByName(const FunctionCallbackInfo<Value>& args) {
 			
 			Utility util;
 
-			User *PtUser=NULL;
+			IUser *PtUser=NULL;
 			
 			string  user = util.V8Utf8ValueToStdString(args[0]);
 

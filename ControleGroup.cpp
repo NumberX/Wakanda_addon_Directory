@@ -33,7 +33,7 @@ bool ControleGroup::ControleGetLenght(const v8::FunctionCallbackInfo<v8::Value>&
 	
 
 }
-bool ControleGroup::GetUserwrapByName(const v8::FunctionCallbackInfo<v8::Value>& args, Group *ptgroup, std::string &Message, int Number)
+bool ControleGroup::GetUserwrapByName(const v8::FunctionCallbackInfo<v8::Value>& args, IGroup *ptgroup, std::string &Message, int Number)
 {
 	bool Resultat = ControlePtGroup(ptgroup, Message);
 
@@ -59,7 +59,7 @@ bool ControleGroup::ControleGetType(const v8::FunctionCallbackInfo<v8::Value>& a
 	return false;
 
 }
-bool ControleGroup::ControleGet(const v8::FunctionCallbackInfo<v8::Value>& args, Group* PtGroup, std::string &Message)
+bool ControleGroup::ControleGet(const v8::FunctionCallbackInfo<v8::Value>& args, IGroup* PtGroup, std::string &Message)
 {
 	Isolate* isolate = args.GetIsolate();
 
@@ -95,7 +95,7 @@ bool ControleGroup::ControleGet(const v8::FunctionCallbackInfo<v8::Value>& args,
 	return false;
 
 }
-bool ControleGroup::ControlePtGroup(Group* PtGroup, std::string &Message)
+bool ControleGroup::ControlePtGroup(IGroup* PtGroup, std::string &Message)
 {
 	if (PtGroup != NULL)
 	{

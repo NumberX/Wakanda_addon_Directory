@@ -18,7 +18,7 @@ private :
 public:
 ControleSession();
 ~ControleSession();
-bool ControlePtSession(Session* PtSession, std::string &Message);
+bool ControlePtSession(ISession* PtSession, std::string &Message);
 bool ControleGetLenght(const v8::FunctionCallbackInfo<v8::Value>& args, std::string &Message, int Number);
 
 };

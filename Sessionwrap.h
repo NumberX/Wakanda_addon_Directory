@@ -36,13 +36,13 @@ class Sessionwrap : public node::ObjectWrap {
 
   static v8::Persistent<v8::Value> prototype_Session_Synchrone;
 
-  Session *ptsession;
+  ISession *ptsession;
 
 private:
 	 explicit Sessionwrap();
   ~Sessionwrap();
 
-  static      Local<Object> CreateSessionWrap(Isolate* isolate, Session* PtSession,Directorywrap* PtDirectoryWrap);
+  static      Local<Object> CreateSessionWrap(Isolate* isolate, ISession* PtSession,Directorywrap* PtDirectoryWrap);
   static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void GetUserwrap(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void GetWASID(const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -52,7 +52,7 @@ private:
   Directorywrap *Pt_DirectoryWrap = NULL;
   static Local<Boolean> ControleSessionUnwrap(Local<Object> handle, Isolate* isolate);
 
-  Session* GetSession();
+  ISession* GetSession();
 
 };
 

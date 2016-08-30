@@ -49,7 +49,7 @@ bool ControleDirectory::ControleGetType(const v8::FunctionCallbackInfo<v8::Value
 		return false;
 
 }
-bool ControleDirectory::ControleGetPtDirectory(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &Message, int Number)
+bool ControleDirectory::ControleGetPtDirectory(const v8::FunctionCallbackInfo<v8::Value>& args, IDirectory* PtDirectory, std::string &Message, int Number)
 {
 	if (PtDirectory != NULL)
 	{
@@ -60,7 +60,7 @@ bool ControleDirectory::ControleGetPtDirectory(const v8::FunctionCallbackInfo<v8
 
 	return false;
 }
-bool ControleDirectory::ControleLogIn(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &Message)
+bool ControleDirectory::ControleLogIn(const v8::FunctionCallbackInfo<v8::Value>& args, IDirectory* PtDirectory, std::string &Message)
 {
 	Isolate* isolate = args.GetIsolate();
 	
@@ -68,7 +68,7 @@ bool ControleDirectory::ControleLogIn(const v8::FunctionCallbackInfo<v8::Value>&
 
 }
 
-bool ControleDirectory::ControleGetGroupwrapNames(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &Message)
+bool ControleDirectory::ControleGetGroupwrapNames(const v8::FunctionCallbackInfo<v8::Value>& args, IDirectory* PtDirectory, std::string &Message)
 {
 	Isolate* isolate = args.GetIsolate();
 
@@ -77,7 +77,7 @@ bool ControleDirectory::ControleGetGroupwrapNames(const v8::FunctionCallbackInfo
 }
 
 
-bool ControleDirectory::ControleGet(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &Message,int Number)
+bool ControleDirectory::ControleGet(const v8::FunctionCallbackInfo<v8::Value>& args, IDirectory* PtDirectory, std::string &Message,int Number)
 {
 	Isolate* isolate = args.GetIsolate();
 
@@ -117,17 +117,17 @@ bool ControleDirectory::ControleGet(const v8::FunctionCallbackInfo<v8::Value>& a
 	return false;
 
 }
-bool ControleDirectory::ControleGetGroupwrap(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &Message)
+bool ControleDirectory::ControleGetGroupwrap(const v8::FunctionCallbackInfo<v8::Value>& args, IDirectory* PtDirectory, std::string &Message)
 {
 
 	return (this->ControleGet(args, PtDirectory, Message,1));
 }
-bool ControleDirectory::ControleGetUserwrap(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &Message)
+bool ControleDirectory::ControleGetUserwrap(const v8::FunctionCallbackInfo<v8::Value>& args, IDirectory* PtDirectory, std::string &Message)
 {
 	return (this->ControleGet(args, PtDirectory, Message,2));
 
 }
-bool ControleDirectory::ControleGetSessionwrap(const v8::FunctionCallbackInfo<v8::Value>& args, Directory* PtDirectory, std::string &Message)
+bool ControleDirectory::ControleGetSessionwrap(const v8::FunctionCallbackInfo<v8::Value>& args, IDirectory* PtDirectory, std::string &Message)
 {
 	return (this->ControleGet(args, PtDirectory, Message,1));
 }

@@ -54,7 +54,7 @@ Local<Boolean> UserwrapAsynchro::ControleUserUnwrap(Local<Object> handle, Isolat
 
 UserwrapAsynchro::~UserwrapAsynchro() {
 }
-Local<Object> UserwrapAsynchro::CreateUserwrapAsynchro(Isolate* isolate, User* PtUser)
+Local<Object> UserwrapAsynchro::CreateUserwrapAsynchro(Isolate* isolate, IUser* PtUser)
 {
 
 	EscapableHandleScope scope(isolate);

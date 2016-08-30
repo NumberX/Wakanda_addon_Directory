@@ -7,6 +7,7 @@
 #include"Sessionwrap.h"
 #include"Groupwrap.h"
 #include"Directory.h"
+#include"IDirectory.h"
 using namespace WaDirectory;
 using namespace v8;
 namespace WaDirectorywrap_data_v8 {
@@ -24,7 +25,7 @@ class Directorywrap : public node::ObjectWrap {
 
 	
   static void Init(v8::Local<v8::Object> exports);
-  Directory* GetDirectory();
+  IDirectory* GetDirectory();
 
  private:
 	
@@ -45,7 +46,7 @@ class Directorywrap : public node::ObjectWrap {
   
   static v8::Persistent<v8::Function> constructor;
 
-  Directory *ptdirectory = NULL;
+  IDirectory *ptdirectory = NULL;
 
 public:
 

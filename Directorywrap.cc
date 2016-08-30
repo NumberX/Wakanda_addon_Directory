@@ -59,7 +59,7 @@ Directorywrap::Directorywrap() :ptdirectory() {
 
 Directorywrap::~Directorywrap() {
 }
-Directory* Directorywrap::GetDirectory()
+IDirectory* Directorywrap::GetDirectory()
 {
 	return this->ptdirectory;
 }
@@ -190,7 +190,7 @@ void Directorywrap::LogIn(const FunctionCallbackInfo<Value>& args) {
 		
 	if (Resultat == true)
 	{
-
+		
 		if (Userwrap::ControleUserUnwrap(args[0]->ToObject(), isolate)->BooleanValue() == true)
 		{ 
 		Userwrap* PtUserWrap = ObjectWrap::Unwrap<Userwrap>(args[0]->ToObject());
@@ -200,12 +200,12 @@ void Directorywrap::LogIn(const FunctionCallbackInfo<Value>& args) {
 		string user = PtUserWrap->ptuser->Username; 
 
 		string password = PtUserWrap->ptuser->Password;
-
 		
-		Session *PtSession = PtDirectoryWrap->ptdirectory->LogIn(user, password);
+		ISession *PtSession = PtDirectoryWrap->ptdirectory->LogIn(user, password);
 
 		if (PtSession !=NULL)
 		{ 
+			
 		Local<Object> ObjectSessionWrap = Sessionwrap::CreateSessionWrap(isolate, PtSession,PtDirectoryWrap);
 
 		args.GetReturnValue().Set(ObjectSessionWrap);
@@ -355,7 +355,7 @@ void Directorywrap::GetGroupwrap(const FunctionCallbackInfo<Value>& args) {
 
 			string GroupId = util.V8Utf8ValueToStdString(args[0]);
 
-			Group* PtGroup = PtDirectoryWrap->ptdirectory->GetGroup(GroupId);
+			IGroup* PtGroup = PtDirectoryWrap->ptdirectory->GetGroup(GroupId);
 
 			if (PtGroup != NULL)
 			{ 
@@ -409,15 +409,16 @@ void Directorywrap::GetUserwrap(const FunctionCallbackInfo<Value>& args) {
 			string Password = util.V8Utf8ValueToStdString(args[1]);
 			
 			bool resultat=false;
+
 			resultat= PtDirectoryWrap->ptdirectory->Existbyname(UserId);
 	        
 			resultat = PtDirectoryWrap->ptdirectory->Isvalid(UserId, Password);
 			
 			
-			User* PtUser = NULL;
+			IUser* PtUser = NULL;
 			if (resultat)
 			{ 
-			PtUser = PtDirectoryWrap->ptdirectory->GetUser(UserId,Password);
+				PtUser =  PtDirectoryWrap->ptdirectory->GetUser(UserId, Password);
 
 			
 			}
@@ -470,7 +471,7 @@ void Directorywrap::GetSessionwrap(const FunctionCallbackInfo<Value>& args) {
 
 			string SessionId = util.V8Utf8ValueToStdString(args[0]);
 
-			Session* PtSession = PtDirectoryWrap->ptdirectory->GetSession(SessionId);
+			ISession* PtSession = PtDirectoryWrap->ptdirectory->GetSession(SessionId);
 
 			Local<Object> ObjectUserWrap = Sessionwrap::CreateSessionWrap(isolate, PtSession, PtDirectoryWrap);
 

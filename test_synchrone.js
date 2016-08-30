@@ -11,17 +11,20 @@ if (DirectoryObject) {
     //create User
 
     var UserWrap = DirectoryObject.GetUserwrap("Mohammed", "12345678");
+	
+	
 
     if (UserWrap != null) {
         //Test Functionaliter of UserWrap
 
+		
 
         var SessionObject = DirectoryObject.LogIn(UserWrap);
 
 
         if (SessionObject) {
             //Obtain Session from login withn argument User
-
+           
             //test User.IsLoggedIn(const v8::FunctionCallbackInfo<v8::Value>& args);
 
 
@@ -264,11 +267,14 @@ if (DirectoryObject) {
         for (IteratorVec in VectorGroupIdDir) {
             var ObjectDirectory = DirectoryObject.GetGroupwrap(VectorGroupIdDir[IteratorVec]);
 
-           
+            
+			 
             if (UsrDireObject)
             {
+				
                 var Resultat = DirectoryObject.UserwrapBelongTo(UsrDireObject, VectorGroupIdDir[IteratorVec]);
 
+				
                 console.log("\n Vect[" + IteratorVec + "] : ID :" + VectorGroupIdDir[IteratorVec] + " : Name :" + ObjectDirectory.GetName());
 
                 console.log("\n User Name: " + UsrDireObject.GetName() + " Belong to :" + Resultat + "\n");

@@ -54,7 +54,7 @@ namespace WaDirectorywrapAsynchro_data_v8 {
 
 	GroupwrapAsynchro::~GroupwrapAsynchro() {
 	}
-	Local<Object> GroupwrapAsynchro::CreateGroupwrapAsynchro(Isolate* isolate, Group* PtGroup)
+	Local<Object> GroupwrapAsynchro::CreateGroupwrapAsynchro(Isolate* isolate, IGroup* PtGroup)
 	{
 
 		EscapableHandleScope scope(isolate);
@@ -301,7 +301,7 @@ namespace WaDirectorywrapAsynchro_data_v8 {
 
 		Thread_Data Pt_UserWrapAsynchro_Intra;
 		
-		User *Pt_User = work->Intra_Data[0].Argument.PtGroupWrapAsynchro->ptgroup->GetUserByName(user, password);
+		IUser *Pt_User = work->Intra_Data[0].Argument.PtGroupWrapAsynchro->ptgroup->GetUserByName(user, password);
 
 		Pt_UserWrapAsynchro_Intra.Argument.Ptuser = Pt_User;
 			
@@ -320,7 +320,7 @@ namespace WaDirectorywrapAsynchro_data_v8 {
 
 		char *Resultat_string = work->Intra_Data[0].Argument.Resultat_string;
 
-		User *Pt_User = work->Intra_Data[0].Argument.Ptuser;
+		IUser *Pt_User = work->Intra_Data[0].Argument.Ptuser;
 
 		Local<Object> ObjectUserwrapAsynchro = UserwrapAsynchro::CreateUserwrapAsynchro(isolate, Pt_User);
 

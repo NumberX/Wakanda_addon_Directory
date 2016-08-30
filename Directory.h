@@ -17,7 +17,7 @@ namespace WaDirectory
 	class User;
 	class Session;
 
-	class Directory
+	class Directory:public IDirectory
 	{
 	public:
 
@@ -25,42 +25,42 @@ namespace WaDirectory
 
 		Directory(std::string Url_Wakanda, std::string Url_Directory);
 
-		~Directory();
+		 ~Directory();
 
-		Session*    LogIn(const std::string& inUser, const std::string& inPassword); 
+		 ISession*    LogIn(const std::string& inUser, const std::string& inPassword);
 
-		void         GetGroupNames(std::vector<std::string>& outGroupName) ;
+		 void         GetGroupNames(std::vector<std::string>& outGroupName);
 		
-		void        GetGroupId(std::vector<std::string>& outGroupName);
+		 void        GetGroupId(std::vector<std::string>& outGroupName);
 
-		Group*      GetGroup(const std::string& inGroupName) ;
+		 IGroup*      GetGroup(const std::string& inGroupName);
 
-		User*       GetUser(const std::string& inUserName, const std::string& Password);
+		 IUser*       GetUser(const std::string& inUserName, const std::string& Password);
 
-		bool         LogOut(const Session* inSession);
+		 bool         LogOut(const ISession* inSession);
 
-		Session*    GetSession(const std::string& inSessionID) ;
+		 ISession*    GetSession(const std::string& inSessionID);
 
-		bool         UserBelongTo(const Session* inSession, const std::string& inGroupID) ;
+		 bool         UserBelongTo(const ISession* inSession, const std::string& inGroupID);
 
-		bool         UserBelongTo(const User* inUser, const std::string& inGroupID) ;
+		 bool         UserBelongTo(const IUser* inUser, const std::string& inGroupID);
 
-		bool         UserBelongTo(const User* inUser, const Group* inGroupID) ;
+		 bool         UserBelongTo(const IUser* inUser, const IGroup* inGroupID);
 		
-		std::string	 Get_Url_Wakanda();
+		 std::string	 Get_Url_Wakanda();
 
-		std::string  Get_Url_Directory();
+		 std::string  Get_Url_Directory();
 		
-		void		 Set_Url_Wakanda(std::string Url_Wakanda);
+	     void		 Set_Url_Wakanda(std::string Url_Wakanda);
 		
-		void		 Set_Url_Directory(std::string Url_Directory);
+		 void		 Set_Url_Directory(std::string Url_Directory);
 
-		bool         Existbyname(string name);
+		 bool         Existbyname(string name);
 
-		bool         Isvalid(string Username, string Password);
+		 bool         Isvalid(string Username, string Password);
 	
 	private :
-		std::string Url_Wakanda, Url_Directory;
+		
 
 	};
 }

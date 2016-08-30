@@ -35,11 +35,11 @@ namespace WaDirectorywrapAsynchro_data_v8 {
 
 		GroupwrapAsynchro* PtGroupWrapAsynchro;
 		
-		Session *PtSession;
+		ISession *PtSession;
 
-		Group *PtGroup;
+		IGroup *PtGroup;
 
-		User *Ptuser;
+		IUser *Ptuser;
 
 		bool Resultat;
 

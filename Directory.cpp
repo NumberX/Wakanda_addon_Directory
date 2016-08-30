@@ -61,7 +61,7 @@ namespace WaDirectory
 	
 		return false;
 	}
-	Session*    Directory::LogIn(const std::string& inUser, const std::string& inPassword)
+	ISession*    Directory::LogIn(const std::string& inUser, const std::string& inPassword)
 	{
 		Session* session=NULL;
 
@@ -139,13 +139,13 @@ namespace WaDirectory
 
 	}
 
-	Group*      Directory::GetGroup(const std::string& inGroupName){ 
+	IGroup*      Directory::GetGroup(const std::string& inGroupName){ 
 		
 		XMLparser *PtparseurXml;
 
 		PtparseurXml = new XMLparser(this->Get_Url_Directory());
 
-		Group *PtGroup=NULL;
+		IGroup *PtGroup=NULL;
 		
 		if (PtparseurXml->NameGrouoById(inGroupName).length()>0)
 		
@@ -157,7 +157,7 @@ namespace WaDirectory
 	
 	}
 
-	User*       Directory::GetUser(const std::string& inUserName, const std::string& Password){
+	IUser*       Directory::GetUser(const std::string& inUserName, const std::string& Password){
 
 		XMLparser *PtparseurXml;
 
@@ -175,7 +175,7 @@ namespace WaDirectory
 
 	}
 
-	bool         Directory::LogOut(const Session* inSession){
+	bool         Directory::LogOut(const ISession* inSession){
 
 		Jsonparser *Jspar;
 		Jspar = new Jsonparser(this->Url_Wakanda, this->Url_Directory);
@@ -188,7 +188,7 @@ namespace WaDirectory
 	
 	}
 
-	Session*    Directory::GetSession(const std::string& inSessionID){ 
+	ISession*    Directory::GetSession(const std::string& inSessionID){ 
 
 		    Session* session;
 		
@@ -200,7 +200,7 @@ namespace WaDirectory
 		
 		 }
 
-	bool         Directory::UserBelongTo(const Session* inSession, const std::string& inGroupID){
+	bool         Directory::UserBelongTo(const ISession* inSession, const std::string& inGroupID){
 		
 		Jsonparser* Jspar;
 		Jspar = new Jsonparser(this->Url_Wakanda, this->Url_Directory);
@@ -217,7 +217,7 @@ namespace WaDirectory
 	
 	}
 
-	bool         Directory::UserBelongTo(const User* inUser, const std::string& inGroupID)
+	bool         Directory::UserBelongTo(const IUser* inUser, const std::string& inGroupID)
 	{ 
 		XMLparser *PtparseurXml;
 
@@ -225,7 +225,7 @@ namespace WaDirectory
 
 		PTJasper = new Jsonparser(this->Url_Wakanda, this->Url_Directory);
 		
-		Session*PtSession=this->LogIn(inUser->Username, inUser->Password);
+		ISession*PtSession=this->LogIn(inUser->Username, inUser->Password);
 
 		PtSession->GetWASID(PTJasper->cookie);
 
@@ -234,7 +234,7 @@ namespace WaDirectory
 	
 	}
 
-	bool         Directory::UserBelongTo(const User* inUser, const Group* inGroupID){ 
+	bool         Directory::UserBelongTo(const IUser* inUser, const IGroup* inGroupID){ 
 		
 		XMLparser PtparseurXml(this->Get_Url_Directory());
 		

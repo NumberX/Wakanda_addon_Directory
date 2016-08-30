@@ -59,7 +59,7 @@ SessionwrapAsynchro::SessionwrapAsynchro():ptsession()  {
 SessionwrapAsynchro::~SessionwrapAsynchro() {
 
 }
-Local<Object> SessionwrapAsynchro::CreateSessionwrapAsynchro(Isolate* isolate, Session* PtSession)
+Local<Object> SessionwrapAsynchro::CreateSessionwrapAsynchro(Isolate* isolate, ISession* PtSession)
 {
 	EscapableHandleScope scope(isolate);
 
@@ -220,7 +220,7 @@ void SessionwrapAsynchro::GetUserwrapAsynchroWorkComplete(uv_work_t  *request, i
 
 	Work *work = (Work *)(request->data);
 
-	User *PtUser = work->Intra_Data[0].Argument.Ptuser;
+	IUser *PtUser = work->Intra_Data[0].Argument.Ptuser;
 
 	Local<Object> ObjectUserwrapAsynchro = UserwrapAsynchro::CreateUserwrapAsynchro(isolate, PtUser);
 
