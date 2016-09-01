@@ -56,6 +56,10 @@ namespace WaDirectorywrapAsynchro_data_v8 {
 
 		~Thread_Data(){};
 
+		string resultat;
+
+		bool resultatvalid;
+
 		Data Argument;
 
 		Local<Object> ObjectDirectoryWrap;

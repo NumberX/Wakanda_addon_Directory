@@ -1,11 +1,13 @@
 #include "SessionwrapAsynchro.h"
 #include "UserwrapAsynchro.h"
-#include"Thread_Data.h"
+#include"GroupwrapAsynchro.h"
+#include"DirectorywrapAsynchro.h"
 #include"ControleSession.h"
 #include"Work.h"
+#include"Thread_Data.h"
+#include"Utility.h"
 #include<string>
 #include<iostream>
-#include"Session.h"
 using v8::Context;
 using v8::Function;
 using v8::FunctionCallbackInfo;
@@ -18,12 +20,9 @@ using v8::Persistent;
 using v8::String;
 using v8::Value;
 using v8::Boolean;
-using v8::Handle;
-using v8::HandleScope;
 using namespace v8;
-using namespace WaDirectory;
-using namespace std;
 using namespace Controle;
+using namespace std;
 
 namespace WaDirectorywrapAsynchro_data_v8 {
 
@@ -59,23 +58,27 @@ SessionwrapAsynchro::SessionwrapAsynchro():ptsession()  {
 SessionwrapAsynchro::~SessionwrapAsynchro() {
 
 }
-Local<Object> SessionwrapAsynchro::CreateSessionwrapAsynchro(Isolate* isolate, ISession* PtSession)
+Local<Object> SessionwrapAsynchro::CreateSessionwrapAsynchro(Isolate* isolate, ISession* PtSession, DirectorywrapAsynchro* PtDirectoryWrap)
 {
 	EscapableHandleScope scope(isolate);
 
 	Local<Value> argv[] = { Boolean::New(isolate, true) };
-	
+
 	Local<Context> context = isolate->GetCurrentContext();
-	
+
 	Local<Function> LocalFunct = Local<Function>::New(isolate, SessionwrapAsynchro::constructor);
-	
-	Local<Object> ObjectSessionwrapAsynchro = LocalFunct->NewInstance(context, 1, argv).ToLocalChecked();
-	
-	SessionwrapAsynchro* PtSessionwrapAsynchro = SessionwrapAsynchro::Unwrap<SessionwrapAsynchro>(ObjectSessionwrapAsynchro);
 
-	PtSessionwrapAsynchro->ptsession = PtSession;
+	Local<Object> ObjectSessionWrap = LocalFunct->NewInstance(context, 1, argv).ToLocalChecked();
 
-	return scope.Escape(ObjectSessionwrapAsynchro);
+	SessionwrapAsynchro* PtSessionWrap = SessionwrapAsynchro::Unwrap<SessionwrapAsynchro>(ObjectSessionWrap);
+
+	PtSessionWrap->ptsession = PtSession; 
+
+	PtSessionWrap->ptsession->Set_Directory(PtDirectoryWrap->ptdirectory);
+
+	PtSessionWrap->Pt_DirectorywrapAsynchro = PtDirectoryWrap;
+
+	return scope.Escape(ObjectSessionWrap);
 
 
 
@@ -92,13 +95,13 @@ void SessionwrapAsynchro::Init(Local<Object> exports) {
   
   NODE_SET_PROTOTYPE_METHOD(tpl, "GetUserwrapAsynchro", GetUserwrapAsynchro);
   
-  NODE_SET_PROTOTYPE_METHOD(tpl, "GetWASID", GetWASIDAsynchro);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "GetWASIDAsynchro", GetWASIDAsynchro);
   
   NODE_SET_PROTOTYPE_METHOD(tpl, "GetDirectorywrapAsynchro", GetDirectorywrapAsynchro);
   
-  NODE_SET_PROTOTYPE_METHOD(tpl, "IsValid", IsValidAsynchro);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "IsValidAsynchro", IsValidAsynchro);
   
-  NODE_SET_PROTOTYPE_METHOD(tpl, "LogOut", LogOutAsynchro);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "LogOutAsynchro", LogOutAsynchro);
 
   constructor.Reset(isolate, tpl->GetFunction());
   
@@ -220,9 +223,9 @@ void SessionwrapAsynchro::GetUserwrapAsynchroWorkComplete(uv_work_t  *request, i
 
 	Work *work = (Work *)(request->data);
 
-	IUser *PtUser = work->Intra_Data[0].Argument.Ptuser;
+	IUser *PtUser = work->Intra_Data[1].Argument.Ptuser;
 
-	Local<Object> ObjectUserwrapAsynchro = UserwrapAsynchro::CreateUserwrapAsynchro(isolate, PtUser);
+	Local<Object> ObjectUserwrapAsynchro = UserwrapAsynchro::CreateUserWrapAsynchro(isolate, PtUser, work->Intra_Data[0].Argument.ptSessionwrapAsynchro->Pt_DirectorywrapAsynchro);
 
 	Handle<Value> args[] = { Null(isolate), ObjectUserwrapAsynchro };
 
@@ -237,6 +240,7 @@ void SessionwrapAsynchro::GetWASIDAsynchro(const v8::FunctionCallbackInfo<v8::Va
 
 
 	Isolate* isolate = args.GetIsolate();
+
 
 	if (ControleSessionUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
 	{
@@ -253,7 +257,6 @@ void SessionwrapAsynchro::GetWASIDAsynchro(const v8::FunctionCallbackInfo<v8::Va
 		SessionwrapAsynchro* PtSessionWrapAsynchro = ObjectWrap::Unwrap<SessionwrapAsynchro>(args.Holder());
 
 		string Message = "";
-
 		ControleSession PtcontroleSession;
 		if (PtcontroleSession.ControlePtSession(PtSessionWrapAsynchro->ptsession, Message) == true)
 		{
@@ -304,7 +307,7 @@ void SessionwrapAsynchro::GetWASIDAsynchroWorkComplete(uv_work_t  *request, int 
 
 	Work *work = (Work *)(request->data);
 
-	char *Resultat_string = work->Intra_Data[0].Argument.Resultat_string;
+	char *Resultat_string = work->Intra_Data[1].Argument.Resultat_string;
 
 	Local<String> Resultat_string_v = String::NewFromUtf8(isolate, Resultat_string);
 
@@ -364,17 +367,7 @@ void SessionwrapAsynchro::GetDirectorywrapAsynchro(const v8::FunctionCallbackInf
 void SessionwrapAsynchro::GetDirectorywrapAsynchroWork(uv_work_t  *request){
 	Work *work = (Work*)(request->data);
 
-	bool Resultat = "";
-
-	Local<Object> ObjectDirectoryWrap = work->Intra_Data[0].Argument.ptSessionwrapAsynchro->Pt_DirectorywrapAsynchro->handle();
-
-
-	Thread_Data Resultat_data;
-
-	Resultat_data.ObjectDirectoryWrap = ObjectDirectoryWrap;
-
-	work->Intra_Data.push_back(Resultat_data);
-
+	
 }
 void SessionwrapAsynchro::GetDirectorywrapAsynchroWorkComplete(uv_work_t  *request, int status){
 
@@ -384,7 +377,9 @@ void SessionwrapAsynchro::GetDirectorywrapAsynchroWorkComplete(uv_work_t  *reque
 
 	Work *work = (Work *)(request->data);
 
-	Handle<Value> args[] = { Null(isolate), work->Intra_Data[0].ObjectDirectoryWrap };
+	Local<Object> ObjectDirectoryWrap = work->Intra_Data[0].Argument.ptSessionwrapAsynchro->Pt_DirectorywrapAsynchro->handle();
+
+	Handle<Value> args[] = { Null(isolate), ObjectDirectoryWrap };
 
 	Local<Function>::New(isolate, work->callback)->Call(isolate->GetCurrentContext()->Global(), 2, args);
 
@@ -440,7 +435,7 @@ void SessionwrapAsynchro::IsValidAsynchro(const v8::FunctionCallbackInfo<v8::Val
 void SessionwrapAsynchro::IsValidAsynchroWork(uv_work_t  *request){
 	Work *work = (Work*)(request->data);
 
-	bool Resultat = "";
+	bool Resultat = false;
 
 	Resultat=work->Intra_Data[0].Argument.ptSessionwrapAsynchro->ptsession->IsValid();
 
@@ -457,7 +452,7 @@ void SessionwrapAsynchro::IsValidAsynchroWorkComplete(uv_work_t  *request, int s
 
 	Work *work = (Work *)(request->data);
 
-	bool Resultat = work->Intra_Data[0].Argument.Resultat;
+	bool Resultat = work->Intra_Data[1].Argument.Resultat;
 
 	Local<Boolean> Resultat_v8= Boolean::New(isolate, Resultat);
 
@@ -522,6 +517,8 @@ void SessionwrapAsynchro::LogOutAsynchroWork(uv_work_t  *request){
 
 	work->Intra_Data[0].Argument.ptSessionwrapAsynchro->ptsession->LogOut();
 
+	
+
 };
 void SessionwrapAsynchro::LogOutAsynchroWorkComplete(uv_work_t  *request, int status){
 
@@ -530,6 +527,10 @@ void SessionwrapAsynchro::LogOutAsynchroWorkComplete(uv_work_t  *request, int st
 	HandleScope scoop(isolate);
 
 	Work *work = (Work *)(request->data);
+
+	work->Intra_Data[0].Argument.ptSessionwrapAsynchro->ptsession->cookies = "";
+
+	//work->Intra_Data[0].Argument.ptSessionwrapAsynchro->ptsession->cookies = "";
 
 	Handle<Value> args[] = { Null(isolate)};
 
@@ -540,7 +541,7 @@ void SessionwrapAsynchro::LogOutAsynchroWorkComplete(uv_work_t  *request, int st
 	delete work;
 
 
-};
+}
 
 }
 

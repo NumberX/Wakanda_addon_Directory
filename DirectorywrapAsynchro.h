@@ -7,6 +7,7 @@
 #include"SessionwrapAsynchro.h"
 #include"GroupwrapAsynchro.h"
 #include"Directory.h"
+#include"IDirectory.h"
 #include"Utility.h"
 using namespace WaDirectorywrap_data_v8;
 using namespace WaDirectory;
@@ -19,6 +20,8 @@ namespace WaDirectorywrapAsynchro_data_v8 {
 	class DirectorywrapAsynchro : public node::ObjectWrap {
 
 	friend class UserwrapAsynchro;
+	friend class SessionwrapAsynchro;
+	friend class GroupwrapAsynchro;
  public:
   static void Init(v8::Local<v8::Object> exports);
 
@@ -26,7 +29,8 @@ namespace WaDirectorywrapAsynchro_data_v8 {
 	
   explicit DirectorywrapAsynchro();
   ~DirectorywrapAsynchro();
-
+  static Local<Boolean> ControleDirectoryUnwrap(Local<Object> handle, Isolate* isolate);
+  static v8::Persistent<v8::Value> prototype_Directory_Synchrone;
   static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void LogInAsynchro(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void LogInAsynchroWork(uv_work_t  *request);
@@ -43,19 +47,25 @@ namespace WaDirectorywrapAsynchro_data_v8 {
   static void GetSessionwrapAsynchro(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void GetSessionwrapAsynchroWork(uv_work_t  *request);
   static void GetSessionwrapAsynchroWorkComplete(uv_work_t  *request, int status);
-  static void UserwrapBelongAsynchroTo_1(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void UserwrapBelongAsynchroWorkTo_1(uv_work_t  *request);
   static void UserwrapBelongAsynchroWorkCompleteTo_1(uv_work_t  *request, int status);
-  static void UserwrapBelongAsynchroTo_2(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void UserwrapBelongAsynchroWorkTo_2(uv_work_t  *request);
   static void UserwrapBelongAsynchroWorkCompleteTo_2(uv_work_t  *request, int status);
-  static void UserwrapBelongAsynchroTo_3(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void UserwrapBelongAsynchroWorkTo_3(uv_work_t  *request);
   static void UserwrapBelongAsynchroWorkCompleteTo_3(uv_work_t  *request, int status);
+ 
   static void LogOutAsynchro(const v8::FunctionCallbackInfo<v8::Value>& args);
+ 
   static void LogOutAsynchroWork(uv_work_t  *request);
+ 
   static void LogOutAsynchroWorkComplete(uv_work_t  *request, int status);
 
+  static void UserwrapBelongToAsynchro(const FunctionCallbackInfo<Value>& args);
+
+  static void GetGroupwrapIDAsynchro(const FunctionCallbackInfo<Value>& args);
+  static void GetGroupwrapIDAsynchroWork(uv_work_t  *request);
+  static void GetGroupwrapIDAsynchroWorkComplete(uv_work_t  *request, int status);
+  
   static v8::Persistent<v8::Function> constructor;
 
   IDirectory *ptdirectory;

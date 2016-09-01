@@ -32,6 +32,7 @@ namespace WaDirectory
 	void Group::GetName(string& ouName)
 	{
 		XMLparser *PtparseurXml;
+
 		PtparseurXml=new XMLparser(this->Pt_Directory->Get_Url_Directory());
 	
 		ouName = PtparseurXml->NameGrouoById(this->Idgroup);

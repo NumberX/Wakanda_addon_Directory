@@ -52,9 +52,11 @@ namespace WaDirectorywrapAsynchro_data_v8 {
 
   static v8::Persistent<v8::Value> prototype_Group_Synchrone;
 
-  static      Local<Object> CreateGroupwrapAsynchro(Isolate* isolate, IGroup* PtGroup);
+  static      Local<Object> CreateGroupwrapAsynchro(Isolate* isolate, IGroup* PtGroup, DirectorywrapAsynchro* PtDirectoryWrap);
 
   IGroup *ptgroup;
+  DirectorywrapAsynchro* PtDirectoryWrapAsynchro;
+
 };
 
 }  // namespace demo

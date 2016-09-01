@@ -51,6 +51,7 @@ namespace WaDirectory
 		Jspar = new Jsonparser(this->Url_Wakanda, this->Url_Directory);
 		string wsid = Jspar->login(Username, Password);
 
+		Jspar->Logout();
 
 		if (wsid.length() > 0)
 		{
@@ -210,16 +211,11 @@ namespace WaDirectory
 		bool resultat = Jspar->currentUserBelongsTo(inGroupID,"");
 
 		return resultat;
-
-
-		
-	
 	
 	}
 
 	bool         Directory::UserBelongTo(const IUser* inUser, const std::string& inGroupID)
 	{ 
-		XMLparser *PtparseurXml;
 
 		Jsonparser*PTJasper;
 
@@ -229,8 +225,11 @@ namespace WaDirectory
 
 		PtSession->GetWASID(PTJasper->cookie);
 
-		return  PTJasper->currentUserBelongsTo(inGroupID, "");
-
+		bool resultat=PTJasper->currentUserBelongsTo(inGroupID, "");
+		
+		PTJasper->Logout();
+		
+		return resultat;
 	
 	}
 

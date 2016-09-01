@@ -1,30 +1,17 @@
 #ifndef SessionwrapAsynchro_H
 #define SessionwrapAsynchro_H
-#include<uv.h>
 #include <node.h>
-#include<v8.h>
 #include <node_object_wrap.h>
-#include"Work.h"
-#include"Thread_Data.h"
-#include"Work.h"
-#include"Session.h"
+#include<string>
+#include"ISession.h"
 #include"Utility.h"
+#include<uv.h>
+
 using namespace WaDirectorywrap_data_v8;
 using namespace WaDirectory;
 using namespace v8;
 namespace WaDirectorywrapAsynchro_data_v8{
-	using v8::Context;
-	using v8::Function;
-	using v8::FunctionCallbackInfo;
-	using v8::FunctionTemplate;
-	using v8::Isolate;
-	using v8::Local;
-	using v8::Number;
-	using v8::Object;
-	using v8::Persistent;
-	using v8::String;
-	using v8::Value;
-	using v8::Array;
+
 
 	class SessionwrapAsynchro : public node::ObjectWrap {
 
@@ -41,7 +28,7 @@ namespace WaDirectorywrapAsynchro_data_v8{
 	 explicit SessionwrapAsynchro();
   ~SessionwrapAsynchro();
  // static  Local<Value> NewInstance();
-  static      Local<Object> CreateSessionwrapAsynchro(Isolate* isolate, ISession* PtSession);
+
   static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void GetUserwrapAsynchro(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void GetUserwrapAsynchroWork(uv_work_t  *request);
@@ -60,6 +47,7 @@ namespace WaDirectorywrapAsynchro_data_v8{
   static void LogOutAsynchroWorkComplete(uv_work_t  *request, int status);
   static Local<Boolean> ControleSessionUnwrap(Local<Object> handle, Isolate* isolate);
   DirectorywrapAsynchro *Pt_DirectorywrapAsynchro = NULL;
+  static       Local<Object> CreateSessionwrapAsynchro(Isolate* isolate, ISession* PtSession, DirectorywrapAsynchro* PtDirectoryWrap);
 };
 
 }  // namespace demo

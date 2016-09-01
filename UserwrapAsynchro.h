@@ -25,7 +25,7 @@ namespace WaDirectorywrapAsynchro_data_v8 {
   explicit UserwrapAsynchro();
   ~UserwrapAsynchro();
 
-  static      Local<Object> CreateUserwrapAsynchro(Isolate* isolate, IUser* PtUser);
+  static      Local<Object> CreateUserWrapAsynchro(Isolate* isolate, IUser* PtUser, DirectorywrapAsynchro* PtDirectoryWrap);
   
   static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
   

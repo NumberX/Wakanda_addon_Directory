@@ -138,7 +138,7 @@ if ((args.Length() == 2) || (args.Length() == 1) )
 
 				  Directorywrap* Obj_Directory_Wrap = new Directorywrap();
 
-				  Directory *Pt_Directory = new Directory(Url_Wakanda, Url_Directory);
+				  IDirectory *Pt_Directory = new Directory(Url_Wakanda, Url_Directory);
 
 				  Obj_Directory_Wrap->ptdirectory = Pt_Directory;
 
@@ -600,7 +600,7 @@ void Directorywrap::UserwrapBelongTo(const FunctionCallbackInfo<Value>& args) {
 		else
 		{
 
-			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Directory object")));
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a Directory object")));
 
 			args.GetReturnValue().SetUndefined();
 		}
