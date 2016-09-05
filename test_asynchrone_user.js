@@ -1,6 +1,6 @@
 const addon = require('./build/Release/addon');
 
-var DirectoryObject = new addon.DirectorywrapAsynchro("http://localhost:8081", "C:/Users/user/Documents/Wakanda/Untitled/Untitled Solution/directory.waDirectory");
+var DirectoryObject = new addon.DirectorywrapAsynchro("http://localhost:8081","C:/Users/Laghzaoui/Documents/Wakanda/Untitled/Untitled Solution/directory.waDirectory");
 
 if (DirectoryObject) {
 	
@@ -184,6 +184,7 @@ if (DirectoryObject) {
 																	console.log("\n Testes des appartenance de user a tous les group ID");
 																	for (Iterator in VectorNameGroup) {
 																		
+																		
 																		UserWrap.BelongsToGroupwrapAsynchro(VectorIdGroup[Iterator],function (err, response)
 																		{
 																			if(err)
@@ -209,6 +210,7 @@ if (DirectoryObject) {
 																		    else{
 																				
 																				var GroupwrapObject=response;
+																				
 																				if(GroupwrapObject)
 																				{
 																					GroupwrapObject.GetNameAsynchro(function (err, response){

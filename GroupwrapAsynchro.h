@@ -13,6 +13,7 @@ namespace WaDirectorywrapAsynchro_data_v8 {
 	class GroupwrapAsynchro : public node::ObjectWrap {
 	friend class DirectorywrapAsynchro;
 	friend class UserwrapAsynchro;
+	friend class ControleBaseAsynchro;
  public:
   static void Init(v8::Local<v8::Object> exports);
 

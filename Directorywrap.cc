@@ -4,7 +4,7 @@
 #include"Work.h"
 #include"Session.h"
 #include"Utility.h"
-#include"ControleDirectory.h"
+#include"ControleDirectorysynchro.h"
 #include<vector>
 #include<string>
 #include<iostream>
@@ -22,7 +22,6 @@ using v8::String;
 using v8::Value;
 using v8::Boolean;
 using v8::Array;
-using namespace Controle;
 using namespace v8;
 using namespace WaDirectory;
 using namespace std;
@@ -99,11 +98,7 @@ void Directorywrap::Init(Local<Object> exports) {
 
 void Directorywrap::New(const FunctionCallbackInfo<Value>& args) {
   
-
-	
   Isolate* isolate = args.GetIsolate();
-
-  ControleDirectory* PtControleDirectory = new ControleDirectory();
   
   std::string Message;
   
@@ -171,70 +166,57 @@ void Directorywrap::LogIn(const FunctionCallbackInfo<Value>& args) {
 
 	Isolate* isolate = args.GetIsolate();
 
-	string Message;
-	
-	ControleDirectory* ContDirectory = new ControleDirectory();
+	ControleDirectorysynchro *PtControleDirectorysynchro = new ControleDirectorysynchro();
 
-	
-	if (ControleDirectoryUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false) {
+	bool controle = false;
 
-		
-		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate,"this is not a Directory object")));
-	    args.GetReturnValue().SetUndefined();
-	}
-	else
-	{ 
-		Directorywrap* PtDirectoryWrap = ObjectWrap::Unwrap<Directorywrap>(args.Holder());
-		
-		bool Resultat = ContDirectory->ControleGetLenght(args, Message, 1);
-		
-	if (Resultat == true)
+	std::string Message;
+
+	vector<DataControlesyn>* Pt_Vector = PtControleDirectorysynchro->ControleLogInsynchro(args, controle, Message);
+	if (controle == true)
 	{
-		
-		if (Userwrap::ControleUserUnwrap(args[0]->ToObject(), isolate)->BooleanValue() == true)
-		{ 
-		Userwrap* PtUserWrap = ObjectWrap::Unwrap<Userwrap>(args[0]->ToObject());
+		DataControlesyn Directorydata = Pt_Vector->at(0);
+
+		Directorywrap* PtDirectoryWrap = Directorydata.Output.PtDirectorywrap;
+
+		DataControlesyn Userdata = Pt_Vector->at(1);
+
+		Userwrap* PtUserWrap = Userdata.Output.PtUserwrap;
 
 		Utility util;
 
-		string user = PtUserWrap->ptuser->Username; 
+		string user = PtUserWrap->ptuser->Username;
 
 		string password = PtUserWrap->ptuser->Password;
-		
+
 		ISession *PtSession = PtDirectoryWrap->ptdirectory->LogIn(user, password);
 
-		if (PtSession !=NULL)
-		{ 
-			
-		Local<Object> ObjectSessionWrap = Sessionwrap::CreateSessionWrap(isolate, PtSession,PtDirectoryWrap);
+		if (PtSession != NULL)
+		{
 
-		args.GetReturnValue().Set(ObjectSessionWrap);
+			Local<Object> ObjectSessionWrap = Sessionwrap::CreateSessionWrap(isolate, PtSession, PtDirectoryWrap);
+
+			args.GetReturnValue().Set(ObjectSessionWrap);
 		}
 
-	
+
 		else
 		{
 
-		args.GetReturnValue().SetNull();
-		}
-		}
-		else
-		{
-			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "the argument need to be Userobject")));
-			args.GetReturnValue().SetUndefined();
-
+			args.GetReturnValue().SetNull();
 		}
 
-	
 	}
+	
+
 	else
 	{
 
 		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
-		args.GetReturnValue().SetUndefined();
+		args.GetReturnValue().SetNull();
 
 	}
-	}
+	
 
 
 }
@@ -243,374 +225,288 @@ void Directorywrap::GetGroupwrapID(const v8::FunctionCallbackInfo<v8::Value>& ar
 
 	Isolate* isolate = args.GetIsolate();
 
-	ControleDirectory* ContDirectory = new ControleDirectory();
+	ControleDirectorysynchro *PtControleDirectorysynchro = new ControleDirectorysynchro();
 
-	if (ControleDirectoryUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false) {
+	bool controle = false;
 
+	std::string Message;
 
-		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a Directory object")));
-		args.GetReturnValue().SetUndefined();
-	}
-	else
+	vector<DataControlesyn>* Pt_Vector = PtControleDirectorysynchro->ControleGetGroupwrapIDsynchro(args, controle, Message);
+	if (controle == true)
 	{
-		Directorywrap* PtDirectoryWrap = ObjectWrap::Unwrap<Directorywrap>(args.Holder());
+		DataControlesyn Directorydata = Pt_Vector->at(0);
 
+		Directorywrap* PtDirectoryWrap = Directorydata.Output.PtDirectorywrap;
 
-		string Message;
+		std::vector<std::string> Vector;
 
-		bool Resultat = ContDirectory->ControleGetGroupwrapNames(args, PtDirectoryWrap->GetDirectory(), Message);
+		PtDirectoryWrap->ptdirectory->GetGroupId(Vector);
 
-		if (Resultat == true)
+		Utility util;
+
+		Local<Array> Resulat = util.StdVectorToV8Array(isolate, Vector);
+
+		args.GetReturnValue().Set(Resulat);
+	}
+
+	else
 		{
-
-			std::vector<std::string> Vector;
-
-			PtDirectoryWrap->ptdirectory->GetGroupId(Vector);
-
-			Utility util;
-
-			Local<Array> Resulat = util.StdVectorToV8Array(isolate, Vector);
-
-			args.GetReturnValue().Set(Resulat);
-
-
-		}
-		else
-		{
-			//isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
 			args.GetReturnValue().SetNull();
 
 		}
-	}
+	
 }
 void Directorywrap::GetGroupwrapNames(const FunctionCallbackInfo<Value>& args) {
 
 	Isolate* isolate = args.GetIsolate();
 
-	ControleDirectory* ContDirectory = new ControleDirectory();
+	ControleDirectorysynchro *PtControleDirectorysynchro = new ControleDirectorysynchro();
 
-	if (ControleDirectoryUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false) {
+	bool controle = false;
 
+	std::string Message;
 
-		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a Directory object")));
-		args.GetReturnValue().SetUndefined();
-	}
-	else
+	vector<DataControlesyn>* Pt_Vector = PtControleDirectorysynchro->ControleGetGroupwrapNamessynchro(args, controle, Message);
+	if (controle == true)
 	{
-		Directorywrap* PtDirectoryWrap = ObjectWrap::Unwrap<Directorywrap>(args.Holder());
+		DataControlesyn Directorydata = Pt_Vector->at(0);
 
+		Directorywrap* PtDirectoryWrap = Directorydata.Output.PtDirectorywrap;
 
-		string Message;
+		std::vector<std::string> Vector;
 
-		bool Resultat = ContDirectory->ControleGetGroupwrapNames(args, PtDirectoryWrap->GetDirectory(), Message);
+		PtDirectoryWrap->ptdirectory->GetGroupNames(Vector);
 
-		if (Resultat == true)
+		Utility util;
+
+		Local<Array> Resulat = util.StdVectorToV8Array(isolate, Vector);
+
+		args.GetReturnValue().Set(Resulat);
+	}
+
+	else
 		{
-
-			std::vector<std::string> Vector;
-
-			PtDirectoryWrap->ptdirectory->GetGroupNames(Vector);
-
-			Utility util;
-
-			Local<Array> Resulat = util.StdVectorToV8Array(isolate, Vector);
-
-			args.GetReturnValue().Set(Resulat);
-
-
-		}
-		else
-		{
-			//isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
 			args.GetReturnValue().SetNull();
 
 		}
-	}
+	
 }
 void Directorywrap::GetGroupwrap(const FunctionCallbackInfo<Value>& args) {
 	
 	Isolate* isolate = args.GetIsolate();
-	
-	ControleDirectory* ContDirectory = new ControleDirectory();
 
-	if (ControleDirectoryUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false) {
+	ControleDirectorysynchro *PtControleDirectorysynchro = new ControleDirectorysynchro();
 
+	bool controle = false;
 
-		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a Directory object")));
-		args.GetReturnValue().SetUndefined();
-	}
-	else
+	std::string Message;
+
+	vector<DataControlesyn>* Pt_Vector = PtControleDirectorysynchro->ControleGetGroupwrapsynchro(args, controle, Message);
+	if (controle == true)
 	{
-		Directorywrap* PtDirectoryWrap = ObjectWrap::Unwrap<Directorywrap>(args.Holder());
+		DataControlesyn Directorydata = Pt_Vector->at(0);
 
-		string Message;
+		Directorywrap* PtDirectoryWrap = Directorydata.Output.PtDirectorywrap;
 
+		DataControlesyn GroupIddata = Pt_Vector->at(1);
 
-		bool Resultat = ContDirectory->ControleGetGroupwrap(args, PtDirectoryWrap->GetDirectory(), Message);
+		string GroupId = GroupIddata.Output.GroupId;
 
-		if (Resultat == true)
+		IGroup* PtGroup = PtDirectoryWrap->ptdirectory->GetGroup(GroupId);
+
+		if (PtGroup != NULL)
 		{
-
-			Utility util;
-
-			string GroupId = util.V8Utf8ValueToStdString(args[0]);
-
-			IGroup* PtGroup = PtDirectoryWrap->ptdirectory->GetGroup(GroupId);
-
-			if (PtGroup != NULL)
-			{ 
 
 			Local<Object> ObjectGroupWrap = Groupwrap::CreateGroupWrap(isolate, PtGroup, PtDirectoryWrap);
 
 			args.GetReturnValue().Set(ObjectGroupWrap);
-			}
-			else
-			{
-		//		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a GroupId")));
-				args.GetReturnValue().SetNull();
-			}
 		}
-		else{
+		else
+		{
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a GroupId")));
+			args.GetReturnValue().SetNull();
+		}
+	}
+
+	else{
 
 			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
 
 			args.GetReturnValue().SetUndefined();
 		}
-	}
+	
 	
 }
 void Directorywrap::GetUserwrap(const FunctionCallbackInfo<Value>& args) {
 
 	Isolate* isolate = args.GetIsolate();
 
-	ControleDirectory* ContDirectory = new ControleDirectory();
+	ControleDirectorysynchro *PtControleDirectorysynchro = new ControleDirectorysynchro();
 
-	if (ControleDirectoryUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false) {
+	bool controle = false;
 
+	std::string Message;
 
-		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a Directory object")));
-		args.GetReturnValue().SetUndefined();
-	}
-	else
+	vector<DataControlesyn>* Pt_Vector = PtControleDirectorysynchro->ControleGetUserwrapsynchro(args, controle, Message);
+	if (controle == true)
 	{
-		Directorywrap* PtDirectoryWrap = ObjectWrap::Unwrap<Directorywrap>(args.Holder());
+		DataControlesyn Directorydata = Pt_Vector->at(0);
 
-		string Message;
+		Directorywrap* PtDirectoryWrap = Directorydata.Output.PtDirectorywrap;
 
-		bool Resultat =  ContDirectory->ControleGetUserwrap(args, PtDirectoryWrap->GetDirectory(), Message);
+		DataControlesyn UserIddata = Pt_Vector->at(1);
 
-		if (Resultat == true)
+		string UserId = UserIddata.Output.UserId;
+
+		DataControlesyn Passworddata = Pt_Vector->at(2);
+
+		string Password = Passworddata.Output.Password;
+
+		bool resultat = false;
+
+		resultat = PtDirectoryWrap->ptdirectory->Existbyname(UserId);
+
+		resultat = PtDirectoryWrap->ptdirectory->Isvalid(UserId, Password);
+
+
+		IUser* PtUser = NULL;
+		if (resultat)
 		{
+			PtUser = PtDirectoryWrap->ptdirectory->GetUser(UserId, Password);
 
-			Utility util;
-
-			string UserId = util.V8Utf8ValueToStdString(args[0]);
-			
-			string Password = util.V8Utf8ValueToStdString(args[1]);
-			
-			bool resultat=false;
-
-			resultat= PtDirectoryWrap->ptdirectory->Existbyname(UserId);
-	        
-			resultat = PtDirectoryWrap->ptdirectory->Isvalid(UserId, Password);
-			
-			
-			IUser* PtUser = NULL;
-			if (resultat)
-			{ 
-				PtUser =  PtDirectoryWrap->ptdirectory->GetUser(UserId, Password);
-
-			
-			}
-			if (PtUser)
-			{
-				
-				Local<Object> ObjectUserWrap = Userwrap::CreateUserWrap(isolate, PtUser, PtDirectoryWrap);
-
-				
-				args.GetReturnValue().Set(ObjectUserWrap);
-			}
-			else
-			{
-			//	isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a UserId")));
-				args.GetReturnValue().SetNull();
-			}
 
 		}
+		if (PtUser)
+		{
 
+			Local<Object> ObjectUserWrap = Userwrap::CreateUserWrap(isolate, PtUser, PtDirectoryWrap);
+
+
+			args.GetReturnValue().Set(ObjectUserWrap);
+		}
 		else
+		{
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a UserId")));
+			args.GetReturnValue().SetNull();
+		}
+	}
+
+	else
 		{
 			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
 			args.GetReturnValue().SetUndefined();
 		}
-	}
+	
 }
 void Directorywrap::GetSessionwrap(const FunctionCallbackInfo<Value>& args) {
 
 	Isolate* isolate = args.GetIsolate();
 
-	ControleDirectory* ContDirectory = new ControleDirectory();
+	ControleDirectorysynchro *PtControleDirectorysynchro = new ControleDirectorysynchro();
 
-	if (ControleDirectoryUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false) {
+	bool controle = false;
 
+	std::string Message;
 
-		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a Directory object")));
-		args.GetReturnValue().SetUndefined();
-	}
-	else
+	vector<DataControlesyn>* Pt_Vector = PtControleDirectorysynchro->ControleGetSessionwrapsynchro(args, controle, Message);
+	if (controle == true)
 	{
-		Directorywrap* PtDirectoryWrap = ObjectWrap::Unwrap<Directorywrap>(args.Holder());
-		string Message;
+		DataControlesyn Directorydata = Pt_Vector->at(0);
 
+		Directorywrap* PtDirectoryWrap = Directorydata.Output.PtDirectorywrap;
 
-		bool Resultat = ContDirectory->ControleGetSessionwrap(args, PtDirectoryWrap->GetDirectory(), Message);
+		DataControlesyn SessionIddata = Pt_Vector->at(1);
 
-		if (Resultat == true)
-		{
-			Utility util;
+		string SessionId = SessionIddata.Output.SessionId;
 
-			string SessionId = util.V8Utf8ValueToStdString(args[0]);
+		ISession* PtSession = PtDirectoryWrap->ptdirectory->GetSession(SessionId);
 
-			ISession* PtSession = PtDirectoryWrap->ptdirectory->GetSession(SessionId);
+		Local<Object> ObjectUserWrap = Sessionwrap::CreateSessionWrap(isolate, PtSession, PtDirectoryWrap);
 
-			Local<Object> ObjectUserWrap = Sessionwrap::CreateSessionWrap(isolate, PtSession, PtDirectoryWrap);
+		args.GetReturnValue().Set(ObjectUserWrap);
+	}
+else{
 
-			args.GetReturnValue().Set(ObjectUserWrap);
-
-		}
-
-		else{
-
-			//isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
 			args.GetReturnValue().SetNull();
 
 		}
-	}
+	
 	
 }
 void Directorywrap::UserwrapBelongTo(const FunctionCallbackInfo<Value>& args) {
 
-	bool Resultat = false;
 
-	ControleDirectory *ConDirec;
+	Isolate* isolate = args.GetIsolate();
 
-	ConDirec = new ControleDirectory();
+	ControleDirectorysynchro *PtControleDirectorysynchro = new ControleDirectorysynchro();
+
+	bool controle = false;
 
 	std::string Message;
 
-	Isolate* isolate = args.GetIsolate();
-	if (args.Length()==2)
-	{ 
+	int Methode = 0;
 
-		if (ControleDirectoryUnwrap(args.Holder(), isolate)->BooleanValue() == true)
-
-		{ 
+	vector<DataControlesyn>* Pt_Vector = PtControleDirectorysynchro->ControleUserwrapBelongTosynchro(args, controle, Message,Methode);
 	
-			Directorywrap* PtDirectoryWrap = ObjectWrap::Unwrap<Directorywrap>(args.Holder());
-	
-			if ((Userwrap::ControleUserUnwrap(args[0]->ToObject(), isolate)->BooleanValue() == true) || (Sessionwrap::ControleSessionUnwrap(args[0]->ToObject(), isolate)->BooleanValue() == true))
-	
-			{ 
-	
-	
-				if (Userwrap::ControleUserUnwrap(args[0]->ToObject(), isolate)->BooleanValue() == true)
-	
-				{ 
-					
-		
-					if (ConDirec->ControleGetType(args,Message,1))
-					{
-			
-						
+	if (controle == true)
+	{
+		DataControlesyn Directorydata = Pt_Vector->at(0);
 
-						Utility util;
-			
-						string inGroupID = util.V8Utf8ValueToStdString(args[1]);
+		Directorywrap* PtDirectoryWrap = Directorydata.Output.PtDirectorywrap;
 
-						Userwrap* PtUserWrap = ObjectWrap::Unwrap<Userwrap>(args[0]->ToObject());
+		bool Resultat = false;
 
-						Resultat = PtDirectoryWrap->ptdirectory->UserBelongTo(PtUserWrap->ptuser, inGroupID);
-					
-						args.GetReturnValue().Set(Boolean::New(isolate, Resultat));
-		
-					}
-			
-					else if (Groupwrap::ControleGroupUnwrap(args[1]->ToObject(), isolate)->BooleanValue() == true)
-					{
-		
-						Groupwrap* PtGroupWrap = ObjectWrap::Unwrap<Groupwrap>(args[1]->ToObject());
-
-						Userwrap* PtUserWrap = ObjectWrap::Unwrap<Userwrap>(args[0]->ToObject());
-
-						Resultat = PtDirectoryWrap->ptdirectory->UserBelongTo(PtUserWrap->ptuser, PtGroupWrap->ptgroup);
-
-						args.GetReturnValue().Set(Boolean::New(isolate, Resultat));
-
-					}
-					else
-					{
-						isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong argument ")));
-
-						args.GetReturnValue().SetUndefined();
-					}
-	
-				}
-				if (Sessionwrap::ControleSessionUnwrap(args[0]->ToObject(), isolate)->BooleanValue() == true)
-	
-				{
-					if (ConDirec->ControleGetType(args,  Message, 1))
-					{
-
-						Utility util;
-
-						string inGroupID = util.V8Utf8ValueToStdString(args[1]);
-
-						Sessionwrap* PtSessionWrap = ObjectWrap::Unwrap<Sessionwrap>(args[0]->ToObject());
-
-						Resultat = PtDirectoryWrap->ptdirectory->UserBelongTo(PtSessionWrap->GetSession(), inGroupID);
-
-						args.GetReturnValue().Set(Boolean::New(isolate, Resultat));
-	
-					}
-
-					else
-
-					{
-
-						//isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong argument arg[1] groupId string with Session object ")));
-
-						args.GetReturnValue().SetNull();
-					}
-
-				}
-
-			}
-
-			else
-
-			{
-	
-				isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong argument args[0] Session object or User object")));
-
-				args.GetReturnValue().SetUndefined();
-			}
-
-		}
-	
-		else
+		if (Methode == 1)
 		{
+			DataControlesyn Userdata = Pt_Vector->at(1);
 
-			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a Directory object")));
+			Userwrap* PtUserWrap = Userdata.Output.PtUserwrap;
 
-			args.GetReturnValue().SetUndefined();
+			DataControlesyn GroupIddata = Pt_Vector->at(2);
+
+			string inGroupID = GroupIddata.Output.GroupId;
+
+			Resultat = PtDirectoryWrap->ptdirectory->UserBelongTo(PtUserWrap->ptuser, inGroupID);
+
+			args.GetReturnValue().Set(Boolean::New(isolate, Resultat));
 		}
+		if (Methode == 2)
+		{
+			DataControlesyn Userdata = Pt_Vector->at(1);
 
-		
+			Userwrap* PtUserWrap = Userdata.Output.PtUserwrap;
+
+			DataControlesyn Groupdata = Pt_Vector->at(2);
+
+			Groupwrap* PtGroupWrap = Userdata.Output.PtGroupwrap;
+
+			Resultat = PtDirectoryWrap->ptdirectory->UserBelongTo(PtUserWrap->ptuser, PtGroupWrap->ptgroup);
+
+			args.GetReturnValue().Set(Boolean::New(isolate, Resultat));
+
+		}
+		if (Methode == 3)
+		{
+			DataControlesyn Sessiondata = Pt_Vector->at(1);
+
+			Sessionwrap* PtSessionWrap = Sessiondata.Output.PtSessionwrap;
+
+			DataControlesyn GroupIddata = Pt_Vector->at(2);
+
+			string inGroupID = GroupIddata.Output.GroupId;
+
+			Resultat = PtDirectoryWrap->ptdirectory->UserBelongTo(PtSessionWrap->GetSession(), inGroupID);
+
+			args.GetReturnValue().Set(Boolean::New(isolate, Resultat));
+		}
 	}
 
 	else
 	{
-		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong number of argument")));
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
 
 		args.GetReturnValue().SetUndefined();
 	}
@@ -619,45 +515,36 @@ void Directorywrap::LogOut(const FunctionCallbackInfo<Value>& args) {
 
 	Isolate* isolate = args.GetIsolate();
 
-	ControleDirectory* ContDirectory = new ControleDirectory();
+	ControleDirectorysynchro *PtControleDirectorysynchro = new ControleDirectorysynchro();
 
-	
+	bool controle = false;
 
 	std::string Message;
 
-	if (ControleDirectoryUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false) {
-
-
-		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a Directory object")));
-		args.GetReturnValue().SetUndefined();
-	}
-	else
+	vector<DataControlesyn>* Pt_Vector = PtControleDirectorysynchro->ControleLogOutsynchro1(args, controle, Message);
+	if (controle == true)
 	{
-		Directorywrap* PtDirectoryWrap = ObjectWrap::Unwrap<Directorywrap>(args.Holder());
+		DataControlesyn Directorydata = Pt_Vector->at(0);
 
-		
+		Directorywrap* PtDirectoryWrap = Directorydata.Output.PtDirectorywrap;
 
-		if (ContDirectory->ControleGetPtDirectory(args, PtDirectoryWrap ->GetDirectory(),Message,1))
-		{
+		DataControlesyn Sessiondata = Pt_Vector->at(1);
 
-			Utility util;
+		Sessionwrap* PtSessionWrap = Sessiondata.Output.PtSessionwrap;
 
-			Sessionwrap* PtSessionWrap = ObjectWrap::Unwrap<Sessionwrap>(args[0]->ToObject());
+		bool resultat = PtDirectoryWrap->ptdirectory->LogOut(PtSessionWrap->ptsession);
 
-			bool resultat = PtDirectoryWrap->ptdirectory->LogOut(PtSessionWrap->ptsession);
+		args.GetReturnValue().Set(Boolean::New(isolate, resultat));
 
-			args.GetReturnValue().Set(Boolean::New(isolate, resultat));
-
-		}
-
-		else
+	}
+else
 		{
 			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
 
 			args.GetReturnValue().SetUndefined();
 		}
 
-	}
+	
 }
 
 

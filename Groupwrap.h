@@ -11,6 +11,7 @@ namespace WaDirectorywrap_data_v8 {
 class Groupwrap : public node::ObjectWrap {
 	friend class Directorywrap;
 	friend class Userwrap;
+	friend class ControleBasesynchro;
  public:
   static void Init(v8::Local<v8::Object> exports);
 

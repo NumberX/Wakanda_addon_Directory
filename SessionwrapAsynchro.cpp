@@ -3,6 +3,8 @@
 #include"GroupwrapAsynchro.h"
 #include"DirectorywrapAsynchro.h"
 #include"ControleSession.h"
+#include"ControleSessionAsynchro.h"
+#include"DataControle.h"
 #include"Work.h"
 #include"Thread_Data.h"
 #include"Utility.h"
@@ -153,56 +155,59 @@ void SessionwrapAsynchro::GetUserwrapAsynchro(const v8::FunctionCallbackInfo<v8:
 	
 	
 	Isolate* isolate = args.GetIsolate();
-	
-	if (ControleSessionUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
-	{
-		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Group object")));
 
-		args.GetReturnValue().SetUndefined();
-	}
-	else{
+
+	ControleSessionAsynchro* PtControleSessionAsynchro = new ControleSessionAsynchro();
+
+	bool controle = false;
+
+	std::string Message;
+
+	vector<DataControle>* Pt_Vector = PtControleSessionAsynchro->ControleGetUserwrapAsynchro(args, controle, Message);
+
+	if (controle == true)
+	{
+
+		DataControle Sessiondata = Pt_Vector->at(0);
+
 		Work *work = new Work();
 
 		work->request.data = work;
 
-		SessionwrapAsynchro* PtSessionWrapAsynchro = ObjectWrap::Unwrap<SessionwrapAsynchro>(args.Holder());
+		SessionwrapAsynchro* PtSessionWrapAsynchro = Sessiondata.Output.PtSessionwrapAsynchro;
 
 		Thread_Data Pt_SessionWrapAsynchro_Intra;
 
-		
-		string Message = "";
+//		ControleSession PtcontroleSession;
 
-		ControleSession PtcontroleSession;
-
-		if (PtcontroleSession.ControlePtSession(PtSessionWrapAsynchro->ptsession, Message) == true)
+		if (PtSessionWrapAsynchro->ptsession->IsValid())
 		{
-			if (PtSessionWrapAsynchro->ptsession->IsValid())
-			{
-				Pt_SessionWrapAsynchro_Intra.Argument.ptSessionwrapAsynchro = PtSessionWrapAsynchro;
+			Pt_SessionWrapAsynchro_Intra.Argument.ptSessionwrapAsynchro = PtSessionWrapAsynchro;
 
-				work->Intra_Data.push_back(Pt_SessionWrapAsynchro_Intra);
+			work->Intra_Data.push_back(Pt_SessionWrapAsynchro_Intra);
 
-				Local<Function> commeback = Local<Function>::Cast(args[0]);
+			Local<Function> commeback = Local<Function>::Cast(args[0]);
 
-				work->callback.Reset(isolate, commeback);
+			work->callback.Reset(isolate, commeback);
 
-				uv_queue_work(uv_default_loop(), &work->request, GetUserwrapAsynchroWork, GetUserwrapAsynchroWorkComplete);
+			uv_queue_work(uv_default_loop(), &work->request, GetUserwrapAsynchroWork, GetUserwrapAsynchroWorkComplete);
 
-				args.GetReturnValue().Set(Undefined(isolate));
-			}
-			else
-			{
-				args.GetReturnValue().SetNull();
-
-			}
+			args.GetReturnValue().Set(Undefined(isolate));
 		}
+		else
+		{
+			args.GetReturnValue().SetNull();
+
+		}
+	}
+	
 		else
 		{
 			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
 
 			args.GetReturnValue().SetUndefined();
 		}
-	}
+	
 
 }
 void SessionwrapAsynchro::GetUserwrapAsynchroWork(uv_work_t  *request){
@@ -242,45 +247,49 @@ void SessionwrapAsynchro::GetWASIDAsynchro(const v8::FunctionCallbackInfo<v8::Va
 	Isolate* isolate = args.GetIsolate();
 
 
-	if (ControleSessionUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
-	{
-		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a Group object")));
 
-		args.GetReturnValue().SetUndefined();
-	}
-	else{
+	ControleSessionAsynchro* PtControleSessionAsynchro = new ControleSessionAsynchro();
+
+	bool controle = false;
+
+	std::string Message;
+
+	vector<DataControle>* Pt_Vector = PtControleSessionAsynchro->ControleGetWASIDAsynchro(args, controle, Message);
+
+	if (controle == true)
+	{
+
+		DataControle Sessiondata = Pt_Vector->at(0);
 
 		Work *work = new Work();
 
 		work->request.data = work;
 
-		SessionwrapAsynchro* PtSessionWrapAsynchro = ObjectWrap::Unwrap<SessionwrapAsynchro>(args.Holder());
+		SessionwrapAsynchro* PtSessionWrapAsynchro = Sessiondata.Output.PtSessionwrapAsynchro;
 
-		string Message = "";
-		ControleSession PtcontroleSession;
-		if (PtcontroleSession.ControlePtSession(PtSessionWrapAsynchro->ptsession, Message) == true)
-		{
-			Thread_Data Pt_SessionWrapAsynchro_Intra;
+		Thread_Data Pt_SessionWrapAsynchro_Intra;
 
-			Pt_SessionWrapAsynchro_Intra.Argument.ptSessionwrapAsynchro = PtSessionWrapAsynchro;
+		Pt_SessionWrapAsynchro_Intra.Argument.ptSessionwrapAsynchro = PtSessionWrapAsynchro;
 
-			work->Intra_Data.push_back(Pt_SessionWrapAsynchro_Intra);
+		work->Intra_Data.push_back(Pt_SessionWrapAsynchro_Intra);
 
-			Local<Function> commeback = Local<Function>::Cast(args[0]);
+		Local<Function> commeback = Local<Function>::Cast(args[0]);
 
-			work->callback.Reset(isolate, commeback);
+		work->callback.Reset(isolate, commeback);
 
-			uv_queue_work(uv_default_loop(), &work->request, GetWASIDAsynchroWork, GetWASIDAsynchroWorkComplete);
+		uv_queue_work(uv_default_loop(), &work->request, GetWASIDAsynchroWork, GetWASIDAsynchroWorkComplete);
 
-			args.GetReturnValue().Set(Undefined(isolate));
-		}
+		args.GetReturnValue().Set(Undefined(isolate));
+
+	}
+
 		else
 		{
 			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
 
 			args.GetReturnValue().SetNull();
 		}
-	}
+	
 
 
 };
@@ -325,24 +334,30 @@ void SessionwrapAsynchro::GetDirectorywrapAsynchro(const v8::FunctionCallbackInf
 
 	Isolate *isolate = Isolate::GetCurrent();
 
-	if (ControleSessionUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
-	{
-		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a Session object")));
+	ControleSessionAsynchro* PtControleSessionAsynchro = new ControleSessionAsynchro();
 
-		args.GetReturnValue().SetUndefined();
-	}
-	else{
+	bool controle = false;
+
+	std::string Message;
+
+	vector<DataControle>* Pt_Vector = PtControleSessionAsynchro->ControleGetDirectorywrapAsynchro(args, controle, Message);
+
+	if (controle == true)
+	{
+
+		DataControle Sessiondata = Pt_Vector->at(0);
+
 		Work *work = new Work();
 
 		work->request.data = work;
 
-		SessionwrapAsynchro* PtSessionWrapAsynchro = ObjectWrap::Unwrap<SessionwrapAsynchro>(args.Holder());
-		string Message;
+		SessionwrapAsynchro* PtSessionWrapAsynchro = Sessiondata.Output.PtSessionwrapAsynchro;
+
+		Thread_Data Pt_SessionWrapAsynchro_Intra;
 
 		ControleSession PtcontroleSession;
 		if (PtcontroleSession.ControlePtSession(PtSessionWrapAsynchro->ptsession, Message) == true)
 		{
-			Thread_Data Pt_SessionWrapAsynchro_Intra;
 
 			Pt_SessionWrapAsynchro_Intra.Argument.ptSessionwrapAsynchro = PtSessionWrapAsynchro;
 
@@ -356,13 +371,15 @@ void SessionwrapAsynchro::GetDirectorywrapAsynchro(const v8::FunctionCallbackInf
 
 			args.GetReturnValue().Set(Undefined(isolate));
 		}
+	}
+
 		else
 		{
 			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
 
 			args.GetReturnValue().SetNull();
 		}
-	}
+	
 }
 void SessionwrapAsynchro::GetDirectorywrapAsynchroWork(uv_work_t  *request){
 	Work *work = (Work*)(request->data);
@@ -392,24 +409,32 @@ void SessionwrapAsynchro::IsValidAsynchro(const v8::FunctionCallbackInfo<v8::Val
 
 	Isolate* isolate = args.GetIsolate();
 
-	if (ControleSessionUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
-	{
-		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a Session object")));
 
-		args.GetReturnValue().SetUndefined();
-	}
-	else{
+
+	ControleSessionAsynchro* PtControleSessionAsynchro = new ControleSessionAsynchro();
+
+	bool controle = false;
+
+	std::string Message;
+
+	vector<DataControle>* Pt_Vector = PtControleSessionAsynchro->ControleIsValidAsynchro(args, controle, Message);
+
+	if (controle == true)
+	{
+
+		DataControle Sessiondata = Pt_Vector->at(0);
+
 		Work *work = new Work();
 
 		work->request.data = work;
 
-		SessionwrapAsynchro* PtSessionWrapAsynchro = ObjectWrap::Unwrap<SessionwrapAsynchro>(args.Holder());
-		string Message;
+		SessionwrapAsynchro* PtSessionWrapAsynchro = Sessiondata.Output.PtSessionwrapAsynchro;
+
+		Thread_Data Pt_SessionWrapAsynchro_Intra;
 
 		ControleSession PtcontroleSession;
 		if (PtcontroleSession.ControlePtSession(PtSessionWrapAsynchro->ptsession, Message) == true)
 		{
-			Thread_Data Pt_SessionWrapAsynchro_Intra;
 
 			Pt_SessionWrapAsynchro_Intra.Argument.ptSessionwrapAsynchro = PtSessionWrapAsynchro;
 
@@ -423,13 +448,15 @@ void SessionwrapAsynchro::IsValidAsynchro(const v8::FunctionCallbackInfo<v8::Val
 
 			args.GetReturnValue().Set(Undefined(isolate));
 		}
-		else
-		{
-			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
-
-			args.GetReturnValue().SetNull();
-		}
 	}
+
+	else
+	{
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
+
+		args.GetReturnValue().SetNull();
+	}
+
 
 }
 void SessionwrapAsynchro::IsValidAsynchroWork(uv_work_t  *request){
@@ -468,27 +495,32 @@ void SessionwrapAsynchro::IsValidAsynchroWorkComplete(uv_work_t  *request, int s
 void SessionwrapAsynchro::LogOutAsynchro(const v8::FunctionCallbackInfo<v8::Value>& args){
 	Isolate* isolate = args.GetIsolate();
 
-	if (ControleSessionUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
-	{
-		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a Session object")));
 
-		args.GetReturnValue().SetUndefined();
-	}
-	else{
+
+	ControleSessionAsynchro* PtControleSessionAsynchro = new ControleSessionAsynchro();
+
+	bool controle = false;
+
+	std::string Message;
+
+	vector<DataControle>* Pt_Vector = PtControleSessionAsynchro->ControleLogOutAsynchro(args, controle, Message);
+
+	if (controle == true)
+	{
+
+		DataControle Sessiondata = Pt_Vector->at(0);
 
 		Work *work = new Work();
 
 		work->request.data = work;
 
-		SessionwrapAsynchro* PtSessionWrapAsynchro = ObjectWrap::Unwrap<SessionwrapAsynchro>(args.Holder());
+		SessionwrapAsynchro* PtSessionWrapAsynchro = Sessiondata.Output.PtSessionwrapAsynchro;
 
-		string Message = "";
+		Thread_Data Pt_SessionWrapAsynchro_Intra;
 
 		ControleSession PtcontroleSession;
 		if (PtcontroleSession.ControlePtSession(PtSessionWrapAsynchro->ptsession, Message) == true)
 		{
-
-			Thread_Data Pt_SessionWrapAsynchro_Intra;
 
 			Pt_SessionWrapAsynchro_Intra.Argument.ptSessionwrapAsynchro = PtSessionWrapAsynchro;
 
@@ -502,13 +534,16 @@ void SessionwrapAsynchro::LogOutAsynchro(const v8::FunctionCallbackInfo<v8::Valu
 
 			args.GetReturnValue().Set(Undefined(isolate));
 		}
-		else
-		{
-			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
-
-			args.GetReturnValue().SetNull();
-		}
 	}
+
+	else
+	{
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
+
+		args.GetReturnValue().SetNull();
+	}
+
+	
 
 };
 void SessionwrapAsynchro::LogOutAsynchroWork(uv_work_t  *request){

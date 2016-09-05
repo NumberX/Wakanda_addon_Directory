@@ -1,6 +1,6 @@
 const addon = require('./build/Release/addon');
 
-var DirectoryObject = new addon.DirectorywrapAsynchro("http://localhost:8081", "C:/Users/user/Documents/Wakanda/Untitled/Untitled Solution/directory.waDirectory");
+var DirectoryObject = new addon.DirectorywrapAsynchro("http://localhost:8081","C:/Users/Laghzaoui/Documents/Wakanda/Untitled/Untitled Solution/directory.waDirectory");
 
 if (DirectoryObject) {
 	

@@ -17,6 +17,7 @@ namespace WaDirectorywrapAsynchro_data_v8 {
 	friend class DirectorywrapAsynchro;
 	friend class SessionwrapAsynchro;
 	friend class GroupwrapAsynchro;
+	friend class ControleBaseAsynchro;
  public:
   static void Init(v8::Local<v8::Object> exports);
 

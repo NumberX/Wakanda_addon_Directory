@@ -12,6 +12,7 @@
 using namespace WaDirectorywrap_data_v8;
 using namespace WaDirectory;
 using namespace v8;
+
 namespace WaDirectorywrapAsynchro_data_v8 {
 	
 	class SessionwrapAsynchro;
@@ -19,17 +20,19 @@ namespace WaDirectorywrapAsynchro_data_v8 {
 	class GroupwrapAsynchro;
 	class DirectorywrapAsynchro : public node::ObjectWrap {
 
+	friend class ControleBaseAsynchro;
 	friend class UserwrapAsynchro;
 	friend class SessionwrapAsynchro;
 	friend class GroupwrapAsynchro;
  public:
   static void Init(v8::Local<v8::Object> exports);
+  static Local<Boolean> ControleDirectoryUnwrap(Local<Object> handle, Isolate* isolate);
 
  private:
 	
   explicit DirectorywrapAsynchro();
   ~DirectorywrapAsynchro();
-  static Local<Boolean> ControleDirectoryUnwrap(Local<Object> handle, Isolate* isolate);
+
   static v8::Persistent<v8::Value> prototype_Directory_Synchrone;
   static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void LogInAsynchro(const v8::FunctionCallbackInfo<v8::Value>& args);

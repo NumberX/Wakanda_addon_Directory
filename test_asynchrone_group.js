@@ -1,6 +1,6 @@
 const addon = require('./build/Release/addon');
 
-var DirectoryObject = new addon.DirectorywrapAsynchro("http://localhost:8081", "C:/Users/user/Documents/Wakanda/Untitled/Untitled Solution/directory.waDirectory");
+var DirectoryObject = new addon.DirectorywrapAsynchro("http://localhost:8081","C:/Users/Laghzaoui/Documents/Wakanda/Untitled/Untitled Solution/directory.waDirectory");
 
 if (DirectoryObject) {
 	
@@ -12,8 +12,11 @@ if (DirectoryObject) {
 		{ console.console(err); }
 		else
 		{
+			
 			var VectorNameGroup=response;
-													
+			
+				console.log("test");
+				
 			DirectoryObject.GetGroupwrapIDAsynchro(function (err, response)
 			{
 				if (err)
@@ -82,7 +85,7 @@ if (DirectoryObject) {
 		}
 	});
 	
-	DirectoryObject.GetGroupwrapAsynchro("609AEC500800264DA73D02932FF3648F",function (err, response){
+	DirectoryObject.GetGroupwrapAsynchro("04AE851D785A2043AF2AFC0B209A3316",function (err, response){
 		
 		if(err)
 		{console.log(err)}

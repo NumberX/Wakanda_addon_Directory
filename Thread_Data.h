@@ -27,8 +27,6 @@ namespace WaDirectorywrapAsynchro_data_v8 {
 
 		DirectorywrapAsynchro* PtDirectorywrapAsynchro;
 		
-		Directorywrap* PtDirectorywrap;
-
 		UserwrapAsynchro* PtUserwrapAsynchro;
 
 		SessionwrapAsynchro* ptSessionwrapAsynchro;
@@ -62,7 +60,6 @@ namespace WaDirectorywrapAsynchro_data_v8 {
 
 		Data Argument;
 
-		Local<Object> ObjectDirectoryWrap;
 	};
 	}
 #endif

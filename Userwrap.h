@@ -13,6 +13,7 @@ class Userwrap : public node::ObjectWrap {
 	friend class Directorywrap;
 	friend class Sessionwrap;
 	friend class Groupwrap;
+	friend class ControleBasesynchro;
  public:
   static void Init(v8::Local<v8::Object> exports);
 

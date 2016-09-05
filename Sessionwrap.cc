@@ -1,5 +1,7 @@
 #include "Sessionwrap.h"
 #include"ControleSession.h"
+#include"ControleSessionsynchro.h"
+#include"DataControlesyn.h"
 #include "Userwrap.h"
 #include"Utility.h"
 #include<string>
@@ -156,6 +158,7 @@ namespace WaDirectorywrap_data_v8 {
 
 		Isolate* isolate = args.GetIsolate();
 
+
 		if (ControleSessionUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
 		{
 			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Group object")));
@@ -163,7 +166,7 @@ namespace WaDirectorywrap_data_v8 {
 			args.GetReturnValue().SetUndefined();
 		}
 		else{
-			Sessionwrap* PtSessionWrap = ObjectWrap::Unwrap<Sessionwrap>(args.This());
+			Sessionwrap* PtSessionWrap = ObjectWrap::Unwrap<Sessionwrap>(args.Holder());
 			string Message = "";
 			ControleSession PtcontroleSession;
 			if (PtcontroleSession.ControlePtSession(PtSessionWrap->ptsession, Message) == true)

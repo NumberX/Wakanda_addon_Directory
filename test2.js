@@ -11,20 +11,17 @@ if (DirectoryObject) {
     //create User
 
     var UserWrap = DirectoryObject.GetUserwrap("Mohammed", "12345678");
-	
-	
 
     if (UserWrap != null) {
         //Test Functionaliter of UserWrap
 
-		
 
         var SessionObject = DirectoryObject.LogIn(UserWrap);
 
 
         if (SessionObject) {
             //Obtain Session from login withn argument User
-           
+
             //test User.IsLoggedIn(const v8::FunctionCallbackInfo<v8::Value>& args);
 
 
@@ -139,7 +136,7 @@ if (DirectoryObject) {
         }
 
         console.log("\n Test GetDirectory ");
-        var GroupWrapObject2 = DirectoryObject.GetGroupwrap("04AE851D785A2043AF2AFC0B209A3316");
+        /*var GroupWrapObject2 = DirectoryObject.GetGroupwrap("609AEC500800264DA73D02932FF3648F");
         var DirectoryGroupclone = GroupWrapobject1.GetDirectorywrap();
         if (DirectoryGroupclone == DirectoryObject) {
             console.log(" \n Test GetDirectory True ");
@@ -152,7 +149,7 @@ if (DirectoryObject) {
         if (UserGroupObject) {
             console.log("\n Create User");
             console.log("\n Name :" + UserGroupObject.GetName());
-        }
+        }*/
     }
 
     console.log("\n \n End Test Group \n");
@@ -267,14 +264,11 @@ if (DirectoryObject) {
         for (IteratorVec in VectorGroupIdDir) {
             var ObjectDirectory = DirectoryObject.GetGroupwrap(VectorGroupIdDir[IteratorVec]);
 
-            
-			 
+           
             if (UsrDireObject)
             {
-				
                 var Resultat = DirectoryObject.UserwrapBelongTo(UsrDireObject, VectorGroupIdDir[IteratorVec]);
 
-				
                 console.log("\n Vect[" + IteratorVec + "] : ID :" + VectorGroupIdDir[IteratorVec] + " : Name :" + ObjectDirectory.GetName());
 
                 console.log("\n User Name: " + UsrDireObject.GetName() + " Belong to :" + Resultat + "\n");
