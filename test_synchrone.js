@@ -12,12 +12,10 @@ if (DirectoryObject) {
 
     var UserWrap = DirectoryObject.GetUserwrap("Mohammed", "12345678");
 	
-	
 
     if (UserWrap != null) {
         //Test Functionaliter of UserWrap
 
-		
 
         var SessionObject = DirectoryObject.LogIn(UserWrap);
 

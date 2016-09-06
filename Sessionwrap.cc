@@ -4,6 +4,8 @@
 #include"DataControlesyn.h"
 #include "Userwrap.h"
 #include"Utility.h"
+#include"ControleUsersynchro.h"
+#include"DataControlesyn.h"
 #include<string>
 #include<iostream>
 #include"Session.h"
@@ -80,7 +82,7 @@ namespace WaDirectorywrap_data_v8 {
 
 		PtSessionWrap->ptsession = PtSession;
 
-		PtSessionWrap->ptsession->Set_Directory(PtDirectoryWrap->GetDirectory());
+		PtSessionWrap->ptsession->Pt_Directory=PtDirectoryWrap->ptdirectory;
 
 		PtSessionWrap->Pt_DirectoryWrap = PtDirectoryWrap;
 
@@ -158,21 +160,23 @@ namespace WaDirectorywrap_data_v8 {
 
 		Isolate* isolate = args.GetIsolate();
 
+		ControleSessionsynchro *PtControleSessionsynchro = new ControleSessionsynchro();
 
-		if (ControleSessionUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
+		bool Controle = false;
+
+		string Message;
+
+		vector<DataControlesyn>* Pt_Vector = PtControleSessionsynchro->ControleGetUserwrapsynchro(args, Controle, Message);
+
+		if (Controle == true)
 		{
-			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a Group object")));
+			DataControlesyn Sessiondata = Pt_Vector->at(0);
 
-			args.GetReturnValue().SetUndefined();
-		}
-		else{
-			Sessionwrap* PtSessionWrap = ObjectWrap::Unwrap<Sessionwrap>(args.Holder());
-			string Message = "";
-			ControleSession PtcontroleSession;
-			if (PtcontroleSession.ControlePtSession(PtSessionWrap->ptsession, Message) == true)
+			Sessionwrap* PtSessionWrap = Sessiondata.Output.PtSessionwrap;
+
+			if (PtSessionWrap->ptsession->IsValid())
 			{
-				if (PtSessionWrap->ptsession->IsValid())
-				{ 
+
 				IUser *PtUser = PtSessionWrap->ptsession->GetUser();
 
 				Local<Context> context = isolate->GetCurrentContext();
@@ -181,90 +185,116 @@ namespace WaDirectorywrap_data_v8 {
 				Local<Object> ObjectUserWrap = Userwrap::CreateUserWrap(isolate, PtUser, PtSessionWrap->Pt_DirectoryWrap);
 
 				args.GetReturnValue().Set(ObjectUserWrap);
-				}
-				else
-				{
-					args.GetReturnValue().SetNull();
-
-				}
 			}
 			else
 			{
-				isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
+				args.GetReturnValue().SetNull();
 
-				args.GetReturnValue().SetUndefined();
 			}
 		}
+		else
+		{
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
+
+			args.GetReturnValue().SetUndefined();
+		}
+
+	
+		
+		
 	}
 
 	void Sessionwrap::GetWASID(const FunctionCallbackInfo<Value>& args) {
 
 		Isolate* isolate = args.GetIsolate();
 
-		if (ControleSessionUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
+
+		ControleSessionsynchro *PtControleSessionsynchro = new ControleSessionsynchro();
+
+		bool Controle = false;
+
+		string Message;
+
+		vector<DataControlesyn>* Pt_Vector = PtControleSessionsynchro->ControleGetWASIDsynchro(args, Controle, Message);
+
+		if (Controle == true)
 		{
-			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a Group object")));
+			DataControlesyn Sessiondata = Pt_Vector->at(0);
 
-			args.GetReturnValue().SetUndefined();
-		}
-		else{
-			Sessionwrap* PtSessionWrap = ObjectWrap::Unwrap<Sessionwrap>(args.Holder());
-
-			string Message = "";
+			Sessionwrap* PtSessionWrap = Sessiondata.Output.PtSessionwrap;
 
 			ControleSession PtcontroleSession;
+
 			if (PtcontroleSession.ControlePtSession(PtSessionWrap->ptsession, Message) == true)
 			{
 				std::string resultat = PtSessionWrap->ptsession->cookies;
 
 				args.GetReturnValue().Set(String::NewFromUtf8(isolate, resultat.c_str()));
 			}
-			else
-			{
-				isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
-
-				args.GetReturnValue().SetNull();
-			}
+		
 		}
+		else
+		{
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
+
+			args.GetReturnValue().SetNull();
+		}
+
 	}
 
 	void Sessionwrap::GetDirectorywrap(const FunctionCallbackInfo<Value>& args) {
 
 		Isolate* isolate = args.GetIsolate();
 
-		if (ControleSessionUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
+		ControleSessionsynchro *PtControleSessionsynchro = new ControleSessionsynchro();
+
+		bool Controle = false;
+
+		string Message;
+
+		vector<DataControlesyn>* Pt_Vector = PtControleSessionsynchro->ControleGetDirectorywrapsynchro(args, Controle, Message);
+
+		if (Controle == true)
 		{
-			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a Group object")));
+			DataControlesyn Sessiondata = Pt_Vector->at(0);
+
+			Sessionwrap* PtSessionWrap = Sessiondata.Output.PtSessionwrap;
+
+			Local<Object> ObjectDirectoryWrap = PtSessionWrap->Pt_DirectoryWrap->handle();
+
+			args.GetReturnValue().Set(ObjectDirectoryWrap);
+
+		}
+
+		else
+		{
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
 
 			args.GetReturnValue().SetNull();
 		}
-		else{
-			Sessionwrap* PtSessionWrap = ObjectWrap::Unwrap<Sessionwrap>(args.Holder());
-
-			Local<Object> ObjectDirectoryWrap = PtSessionWrap->Pt_DirectoryWrap->handle();
-			
-			args.GetReturnValue().Set(ObjectDirectoryWrap);
-
-
-		}
+	
 	}
 
 	void Sessionwrap::IsValid(const FunctionCallbackInfo<Value>& args) {
 
 		Isolate* isolate = args.GetIsolate();
 
-		if (ControleSessionUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
+		ControleSessionsynchro *PtControleSessionsynchro = new ControleSessionsynchro();
+
+		bool Controle = false;
+
+		string Message;
+
+		vector<DataControlesyn>* Pt_Vector = PtControleSessionsynchro->ControleIsValidsynchro(args, Controle, Message);
+
+		if (Controle == true)
 		{
-			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a Session object")));
+			DataControlesyn Sessiondata = Pt_Vector->at(0);
 
-			args.GetReturnValue().SetUndefined();
-		}
-		else{
-			Sessionwrap* PtSessionWrap = ObjectWrap::Unwrap<Sessionwrap>(args.Holder());
-
-			string Message = "";
+			Sessionwrap* PtSessionWrap = Sessiondata.Output.PtSessionwrap;
 
 			ControleSession PtcontroleSession;
+			
 			if (PtcontroleSession.ControlePtSession(PtSessionWrap->ptsession, Message) == true)
 			{
 				args.GetReturnValue().Set(Boolean::New(isolate, PtSessionWrap->ptsession->IsValid()));
@@ -276,30 +306,42 @@ namespace WaDirectorywrap_data_v8 {
 				args.GetReturnValue().SetNull();
 			}
 		}
+
+		else
+			{
+				isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
+
+				args.GetReturnValue().SetNull();
+			}
+		
 	}
 
 	void Sessionwrap::LogOut(const FunctionCallbackInfo<Value>& args) {
 
 		Isolate* isolate = args.GetIsolate();
 
-		if (ControleSessionUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
+		ControleSessionsynchro *PtControleSessionsynchro = new ControleSessionsynchro();
+
+		bool Controle = false;
+
+		string Message;
+
+		vector<DataControlesyn>* Pt_Vector = PtControleSessionsynchro->ControleIsValidsynchro(args, Controle, Message);
+
+		if (Controle == true)
 		{
-			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a Session object")));
+			DataControlesyn Sessiondata = Pt_Vector->at(0);
 
-			args.GetReturnValue().SetUndefined();
-		}
-		else{
-			Sessionwrap* PtSessionWrap = ObjectWrap::Unwrap<Sessionwrap>(args.Holder());
-
-			string Message = "";
+			Sessionwrap* PtSessionWrap = Sessiondata.Output.PtSessionwrap;
 
 			ControleSession PtcontroleSession;
+
 			if (PtcontroleSession.ControlePtSession(PtSessionWrap->ptsession, Message) == true)
 			{
 
 				PtSessionWrap->ptsession->LogOut();
 				PtSessionWrap->ptsession->cookies = "";
-	
+
 				args.GetReturnValue().SetUndefined();
 			}
 			else
@@ -309,6 +351,13 @@ namespace WaDirectorywrap_data_v8 {
 				args.GetReturnValue().SetNull();
 			}
 		}
+		else
+		{
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
+
+			args.GetReturnValue().SetNull();
+		}
+
 	}
 
 

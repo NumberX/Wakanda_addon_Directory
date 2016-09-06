@@ -75,6 +75,13 @@ namespace WaDirectory
 		json->cookie = this->cookies;
 		
 		json->Logout();
+
+
+		this->Pt_Directory->List.RemoveBycookies(this->cookies);
+
+		std::cout << "List After Logout" << endl;
+
+		this->Pt_Directory->List.Affiche();
 	}
 
 

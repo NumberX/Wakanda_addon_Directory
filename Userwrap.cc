@@ -3,6 +3,8 @@
 #include"Directorywrap.h"
 #include"Utility.h"
 #include"ControleUser.h"
+#include"ControleUsersynchro.h"
+#include"DataControlesyn.h"
 #include<string>
 #include<iostream>
 using v8::Context;
@@ -148,59 +150,71 @@ void Userwrap::GetDirectorywrap(const FunctionCallbackInfo<Value>& args) {
 
 	Isolate* isolate = args.GetIsolate();
 
-	if (ControleUserUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
+
+	ControleUsersynchro *PtControleUsersynchro = new ControleUsersynchro();
+
+	bool Controle = false;
+
+	string Message;
+
+	vector<DataControlesyn>* Pt_Vector = PtControleUsersynchro->ControleGetDirectorywrapsynchro(args, Controle, Message);
+
+	if (Controle == true)
 	{
-		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a User object")));
 
-		args.GetReturnValue().SetNull();
-	}
-	else{
-		Userwrap* PtUserwrap = ObjectWrap::Unwrap<Userwrap>(args.Holder());
+		DataControlesyn dataUser = Pt_Vector->at(0);
 
-		Local<Object> ObjectDirectoryWrap = PtUserwrap->Pt_DirectoryWrap->handle();
+		Userwrap* PtUserWrap = dataUser.Output.PtUserwrap;
+
+		Local<Object> ObjectDirectoryWrap = PtUserWrap->Pt_DirectoryWrap->handle();
 
 		args.GetReturnValue().Set(ObjectDirectoryWrap);
+	}
+	else
+	{
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
 
+		args.GetReturnValue().SetNull();
 
 	}
+
 }
 
 void Userwrap::GetName(const FunctionCallbackInfo<Value>& args) {
 	
 	Isolate* isolate = args.GetIsolate();
 
+	ControleUsersynchro *PtControleUsersynchro = new ControleUsersynchro();
 
-	if (ControleUserUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
+	bool Controle = false;
+
+	string Message;
+
+	vector<DataControlesyn>* Pt_Vector = PtControleUsersynchro->ControleGetNamesynchro(args, Controle, Message);
+
+	if (Controle == true)
 	{
-		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a User object")));
-
-		args.GetReturnValue().SetNull();
-	}
-	else{
-		Userwrap* PtUserWrap = ObjectWrap::Unwrap<Userwrap>(args.Holder());
-
 		std::string resultat = "";
-		
-		std::string Message;
 
-		ControleUser* PtControleUser = new ControleUser();
+		DataControlesyn dataUser = Pt_Vector->at(0);
 
-		if (PtControleUser->ControleGetPtUser(args,PtUserWrap->ptuser,Message))
-		{ 
+		Userwrap* PtUserWrap = dataUser.Output.PtUserwrap;
+
 		PtUserWrap->ptuser->GetName(resultat);
 
 		std::string res = PtUserWrap->ptuser->Username;
 
 		args.GetReturnValue().Set(String::NewFromUtf8(isolate, res.c_str()));
-		}
-		else
-		{
-			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
 
-			args.GetReturnValue().SetNull();
-
-		}
 	}
+	else
+	{
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
+
+		args.GetReturnValue().SetNull();
+
+	}
+	
 }
 
 
@@ -211,95 +225,98 @@ void Userwrap::BelongsToGroupwrap(const FunctionCallbackInfo<Value>& args)
 
 	bool resultat = false;
 
-	ControleUser* PtControleUser = new ControleUser();
-	std::string Message;
+	ControleUsersynchro *PtControleUsersynchro = new ControleUsersynchro();
 
-	if (ControleUserUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
+	bool Controle = false;
+
+	string Message;
+
+	int Methode = 0;
+
+	vector<DataControlesyn>* Pt_Vector = PtControleUsersynchro->ControleBelongsToGroupwrapsynchro(args, Controle, Message,Methode);
+
+	if (Controle == true)
 	{
-		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this is not a User object")));
 
-		args.GetReturnValue().SetNull();
-	}
-	else{
-		Userwrap* PtUserWrap = ObjectWrap::Unwrap<Userwrap>(args.Holder());
-		if (PtControleUser->ControleGetLenght(args,Message,1))
-		{ 
-		if (Groupwrap::ControleGroupUnwrap(args[0]->ToObject(), isolate)->BooleanValue() == true)
+		DataControlesyn dataUser = Pt_Vector->at(0);
+
+		Userwrap* PtUserWrap = dataUser.Output.PtUserwrap;
+		if (Methode == 1)
 		{
+			DataControlesyn dataGroup = Pt_Vector->at(1);
 
-			Groupwrap* PtGroupWrap = ObjectWrap::Unwrap<Groupwrap>(args[0]->ToObject());
-			
+			Groupwrap* PtGroupWrap = dataGroup.Output.PtGroupwrap;
+
 			resultat = PtUserWrap->ptuser->BelongsToGroup(PtGroupWrap->ptgroup);
 
 			args.GetReturnValue().Set(Boolean::New(isolate, resultat));
 		}
-		else
+		if (Methode == 2)
 		{
-			if (PtControleUser->ControleGetType(args, Message, 0))
-			{
-				Utility util;
-				
-				string Idgroup = util.V8Utf8ValueToStdString(args[0]);
+			DataControlesyn dataGroup = Pt_Vector->at(1);
 
-				bool resultat1 ;resultat1 = PtUserWrap->ptuser->BelongsToGroup(Idgroup);
+			string Idgroup = dataGroup.Output.GroupId;
+
+			bool resultat1; 
 			
-				args.GetReturnValue().Set(Boolean::New(isolate, resultat1));
+			resultat1 = PtUserWrap->ptuser->BelongsToGroup(Idgroup);
 
-			}
-			else
-			{ 
-			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
-
-			args.GetReturnValue().SetNull();
-			}
-		}
-
+			args.GetReturnValue().Set(Boolean::New(isolate, resultat1));
 
 		}
-		else
+	}
+else
 		{
 			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
 
 			args.GetReturnValue().SetUndefined();
 
 		}
-	}
+	
 }
 
 
 
 void Userwrap::IsLoggedIn(const FunctionCallbackInfo<Value>& args) {
 
-	Isolate* isolate = args.GetIsolate();
-	
+
 	bool resultat = false;
 
-	if (ControleUserUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)
+	Isolate* isolate = args.GetIsolate();
+
+	ControleUsersynchro *PtControleUsersynchro = new ControleUsersynchro();
+
+	bool Controle = false;
+
+	string Message;
+
+	vector<DataControlesyn>* Pt_Vector = PtControleUsersynchro->ControleIsLoggedInsynchro(args, Controle, Message);
+
+	if (Controle == true)
 	{
-		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "this> is not a User object")));
 
-		args.GetReturnValue().SetUndefined();
+		DataControlesyn dataUser = Pt_Vector->at(0);
+
+		Userwrap* PtUserWrap = dataUser.Output.PtUserwrap;
+
+		DataControlesyn datasession = Pt_Vector->at(1);
+
+		Sessionwrap* PtSessionWrap = datasession.Output.PtSessionwrap;
+
+		if (PtSessionWrap->ptsession->IsValid())
+			resultat = PtUserWrap->ptuser->IsLoggedIn(PtSessionWrap->ptsession);
 	}
-	else{
-		Userwrap* PtUserWrap = ObjectWrap::Unwrap<Userwrap>(args.Holder());
-		if (Sessionwrap::ControleSessionUnwrap(args[0]->ToObject(), isolate)->BooleanValue() == true)
-		{
 
-				Sessionwrap* PtSessionWrap = ObjectWrap::Unwrap<Sessionwrap>(args[0]->ToObject());
-				if (PtSessionWrap->ptsession->IsValid())
-				resultat = PtUserWrap->ptuser->IsLoggedIn(PtSessionWrap->ptsession);
+	else
+	{
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
 
-		}
-		else
-		{
-			//isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong Session argument ")));
+		args.GetReturnValue().SetNull();
 
-			args.GetReturnValue().Set(Boolean::New(isolate, resultat));
-			//args.GetReturnValue().SetNull();
-		}
-
-		args.GetReturnValue().Set(Boolean::New(isolate, resultat));
 	}
+	args.GetReturnValue().Set(Boolean::New(isolate, resultat));
+
 }
+
 
 }

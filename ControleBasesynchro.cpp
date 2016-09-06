@@ -1,8 +1,12 @@
 #include "ControleBasesynchro.h"
 #include"Directorywrap.h"
+#include"Groupwrap.h"
+#include"Userwrap.h"
+#include"Sessionwrap.h"
 #include"Utility.h"
 #include <node.h>
 #include <node_object_wrap.h>
+#include<iostream>
 namespace WaDirectorywrap_data_v8 {
 	ControleBasesynchro::ControleBasesynchro()
 	{
@@ -12,6 +16,9 @@ namespace WaDirectorywrap_data_v8 {
 	ControleBasesynchro::~ControleBasesynchro()
 	{
 	}
+
+
+
 
 	bool ControleBasesynchro::ControleGetLenght(const v8::FunctionCallbackInfo<v8::Value>& args, std::string &Message, int Number)
 	{
@@ -34,6 +41,10 @@ namespace WaDirectorywrap_data_v8 {
 
 	bool ControleBasesynchro::ControleDirectoryUnwrap(const v8::FunctionCallbackInfo<v8::Value>& args, std::string &Message, int indice)
 	{
+		
+
+
+
 		Isolate* isolate = args.GetIsolate();
 		if (indice == 10)
 		{
@@ -45,7 +56,7 @@ namespace WaDirectorywrap_data_v8 {
 
 				return false;
 
-			}
+			}		
 			return true;
 		}
 		if (Directorywrap::ControleDirectoryUnwrap(args.Holder()->ToObject(), isolate)->BooleanValue() == false)

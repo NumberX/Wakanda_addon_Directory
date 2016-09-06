@@ -102,26 +102,11 @@ void Directorywrap::New(const FunctionCallbackInfo<Value>& args) {
   
   std::string Message;
   
-if ((args.Length() == 2) || (args.Length() == 1) )
+if (args.Length() == 2) 
   {
 
-		  /*
-		  Traitement du cas Directorywrap Dir=new Directorywrap(Url_Wakanda, Url_Directory) ;
-		  */
-	 
-	  if (args.Length() == 1) {
-
-
-		  Directorywrap* PtDirectoryWrap = new Directorywrap();
-
-		  PtDirectoryWrap->Wrap(args.This());
-
-		  prototype_Directory_Synchrone.Reset(isolate, args.This()->GetPrototype());
-
-		  args.GetReturnValue().Set(args.Holder());
-	 
-	  }
-		  else if ((args[0]->IsString())&&(args[1]->IsString()))
+	
+		  if ((args[0]->IsString())&&(args[1]->IsString()))
 		  { 
 
 			 

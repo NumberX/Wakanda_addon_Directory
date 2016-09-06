@@ -7,6 +7,7 @@
 #define IDirectory_H
 #include<string>
 #include<vector>
+#include"ManageSession.h"
 using namespace std;
 
 // namespace std
@@ -21,6 +22,7 @@ namespace WaDirectory
     class IGroup;
     class IUser;
     class ISession;
+	class ManageSession;
 
     class IDirectory 
     {
@@ -62,6 +64,8 @@ namespace WaDirectory
 
 	
 		std::string Url_Wakanda, Url_Directory;
+
+		ManageSession List;
 
     };
 }

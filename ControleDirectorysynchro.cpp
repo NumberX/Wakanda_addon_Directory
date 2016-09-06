@@ -183,22 +183,27 @@ namespace WaDirectorywrap_data_v8{
 
 		vector<DataControlesyn>* Output = NULL;
 
+
+
 		if (ControleGetLenght(args, Message, 2))
 		{
 			if (ControleDirectoryUnwrap(args, Message, 10) == true)
 			{
-
+				
 				if (Controlestring(args, Message, 0) == true)
 				{
+
 					if (Controlestring(args, Message, 1) == true)
 					{
+						
+
 						Output = new vector<DataControlesyn>();
 
-						Directorywrap* PtDirectorywrapAsynchro = ObjectWrap::Unwrap<Directorywrap>(args.Holder());
+						Directorywrap* PtDirectorywrap = ObjectWrap::Unwrap<Directorywrap>(args.Holder());
 
 						DataControlesyn dataptdirectory;
 
-						dataptdirectory.Output.PtDirectorywrap= PtDirectorywrapAsynchro;
+						dataptdirectory.Output.PtDirectorywrap= PtDirectorywrap;
 
 						Output->push_back(dataptdirectory);
 
@@ -223,7 +228,6 @@ namespace WaDirectorywrap_data_v8{
 						std::strcpy(dataPasswordId.Output.Password, PasswordId.c_str());
 
 						Output->push_back(dataPasswordId);
-
 
 						Controle = true;
 

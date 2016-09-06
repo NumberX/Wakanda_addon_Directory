@@ -21,6 +21,7 @@ namespace WaDirectorywrap_data_v8 {
 
 		static bool Controlestring(const v8::FunctionCallbackInfo<v8::Value>& args, std::string& Message, int number);
 
+		
 	};
 
 }

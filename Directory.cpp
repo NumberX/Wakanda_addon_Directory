@@ -20,6 +20,7 @@ namespace WaDirectory
 	{
 		this->Url_Wakanda = Url_Wakanda;
 		this->Url_Directory = Url_Directory;
+		
 
 	}
 
@@ -80,7 +81,25 @@ namespace WaDirectory
 			session->wsid = wsid;
 			
 			session->cookies = wsid;
+
+			IUser* UserId = GetUser(inUser, inPassword);
+
+			if (List.FindByUserId(UserId->Id) == true)
+			{
+				string cookies = List.Getcookies(UserId->Id);
+
+				List.Remove(UserId->Id);
+
+				ISession* inSession = new Session(cookies);
+
+				LogOut(inSession);
+			}
 			
+			List.Register(UserId->Id, wsid, UserId->Username);
+
+			std::cout << "List currents Users" << endl;
+
+			List.Affiche();
 
 		 }
 		return session;
@@ -183,6 +202,12 @@ namespace WaDirectory
 		Jspar->cookie = inSession->cookies;
 		
 		bool resultat = Jspar->Logout();
+
+		this->List.RemoveBycookies(inSession->cookies);
+
+		std::cout << "List After Logout" << endl;
+
+		this->List.Affiche();
 		
 		return resultat;
 		

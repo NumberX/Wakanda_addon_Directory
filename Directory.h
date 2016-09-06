@@ -6,6 +6,7 @@
 #ifndef Directory_H
 #define Directory_H
 #include"IDirectory.h"
+#include"ManageSession.h"
 #include<string>
 #include<vector>
 using namespace std;
@@ -20,6 +21,8 @@ namespace WaDirectory
 	class Directory:public IDirectory
 	{
 	public:
+
+
 
 		Directory();
 
