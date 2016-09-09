@@ -21,6 +21,7 @@ namespace WaDirectory_Controle{
 
 		static bool Controlestring(const v8::FunctionCallbackInfo<v8::Value>& args, std::string& Message, int number);
 
+		static bool ControleNew(const v8::FunctionCallbackInfo<v8::Value>& args);
 		
 	};
 

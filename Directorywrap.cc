@@ -147,6 +147,7 @@ void Directorywrap::LogIn(const FunctionCallbackInfo<Value>& args) {
 	std::string Message;
 
 	vector<DataControlesyn>* Pt_Vector = PtControleDirectorysynchro->ControleLogInsynchro(args, controle, Message);
+
 	if (controle == true)
 	{
 		Work *work = new Work();
@@ -206,7 +207,7 @@ void Directorywrap::LogIn(const FunctionCallbackInfo<Value>& args) {
 
 	}
 	
-
+	delete PtControleDirectorysynchro;
 
 }
 
@@ -281,6 +282,8 @@ void Directorywrap::GetGroupwrapID(const v8::FunctionCallbackInfo<v8::Value>& ar
 			args.GetReturnValue().SetNull();
 
 		}
+
+	delete PtControleDirectorysynchro;
 	
 }
 void Directorywrap::GetGroupwrapNames(const FunctionCallbackInfo<Value>& args) {
@@ -317,6 +320,8 @@ void Directorywrap::GetGroupwrapNames(const FunctionCallbackInfo<Value>& args) {
 			args.GetReturnValue().SetNull();
 
 		}
+
+	delete PtControleDirectorysynchro;
 	
 }
 void Directorywrap::GetGroupwrap(const FunctionCallbackInfo<Value>& args) {
@@ -363,7 +368,7 @@ void Directorywrap::GetGroupwrap(const FunctionCallbackInfo<Value>& args) {
 			args.GetReturnValue().SetUndefined();
 		}
 	
-	
+	delete PtControleDirectorysynchro;
 }
 void Directorywrap::GetUserwrap(const FunctionCallbackInfo<Value>& args) {
 
@@ -425,6 +430,7 @@ void Directorywrap::GetUserwrap(const FunctionCallbackInfo<Value>& args) {
 			args.GetReturnValue().SetUndefined();
 		}
 	
+	delete PtControleDirectorysynchro;
 }
 void Directorywrap::GetSessionwrap(const FunctionCallbackInfo<Value>& args) {
 
@@ -481,6 +487,8 @@ else{
 			args.GetReturnValue().SetNull();
 
 		}
+
+delete PtControleDirectorysynchro;
 	
 	
 }
@@ -651,6 +659,8 @@ void Directorywrap::UserwrapBelongTo(const FunctionCallbackInfo<Value>& args) {
 
 		args.GetReturnValue().SetUndefined();
 	}
+
+	delete PtControleDirectorysynchro;
 }
 
 void Directorywrap::UserwrapBelongToWork1(uv_work_t  *request)
@@ -789,7 +799,7 @@ else
 			args.GetReturnValue().SetUndefined();
 		}
 
-	
+	delete PtControleDirectorysynchro;
 }
 
 

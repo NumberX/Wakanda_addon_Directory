@@ -145,7 +145,33 @@ namespace WaDirectory_Controle {
 		return true;
 	}
 
+	bool ControleBasesynchro::ControleNew(const v8::FunctionCallbackInfo<v8::Value>& args)
+	{
+		Isolate* isolate = args.GetIsolate();
+		string Message = "";
+		if (ControleGetLenght(args, Message, 2))
+		{
 
+			if (args[1]->IsObject()) {
+
+
+				Local<Object> InvokeObject = args[1]->ToObject();
+
+				Local<String> InvokeName = String::NewFromUtf8(isolate, "Invoke");
+				if (InvokeObject->Get(InvokeName)->IsBoolean())
+				{
+					if (InvokeObject->Get(InvokeName)->ToBoolean()->IsTrue())
+					{
+						return true;
+					}
+				}
+			}
+			
+		}
+		
+		return false;
+
+	}
 	bool ControleBasesynchro::Controlestring(const v8::FunctionCallbackInfo<v8::Value>& args, std::string& Message, int number)
 	{
 		Isolate* isolate = args.GetIsolate();

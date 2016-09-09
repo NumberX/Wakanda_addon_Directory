@@ -108,21 +108,11 @@ void Userwrap::Init(Local<Object> exports) {
 void Userwrap::New(const FunctionCallbackInfo<Value>& args) {
 	Isolate* isolate = args.GetIsolate();
 
-	if (args.IsConstructCall()) {
 
+	ControleUsersynchro *PtControleUsersynchro = new ControleUsersynchro();
 
-
-		if (args.Length() == 1) {
-
-			Local<Object> InvokeObject = args[1]->ToObject();
-
-			Local<String> InvokeName = String::NewFromUtf8(isolate, "Invoke");
-
-			if (InvokeObject->Get(InvokeName)->IsBoolean())
-			{
-				if (InvokeObject->Get(InvokeName)->ToBoolean()->IsTrue())
-				{
-
+	if (PtControleUsersynchro->ControleNew(args))
+	{
 					Userwrap* PtUserWrap = new Userwrap();
 
 					PtUserWrap->Wrap(args.This());
@@ -130,17 +120,7 @@ void Userwrap::New(const FunctionCallbackInfo<Value>& args) {
 					prototype_User_Synchrone.Reset(isolate, args.This()->GetPrototype());
 
 					args.GetReturnValue().Set(args.This());
-				}
-			}
-		}
-		else
-		{
-
-			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "To create a object of User you need to pass from Directory object ")));
-
-			args.GetReturnValue().SetUndefined();
-
-		}
+			
 	}
 	else {
 
@@ -148,6 +128,8 @@ void Userwrap::New(const FunctionCallbackInfo<Value>& args) {
 
 		args.GetReturnValue().SetUndefined();
 	}
+
+	delete PtControleUsersynchro;
 }
 
 
@@ -184,6 +166,7 @@ void Userwrap::GetDirectorywrap(const FunctionCallbackInfo<Value>& args) {
 
 	}
 
+	delete PtControleUsersynchro;
 }
 
 void Userwrap::GetName(const FunctionCallbackInfo<Value>& args) {
@@ -220,6 +203,8 @@ void Userwrap::GetName(const FunctionCallbackInfo<Value>& args) {
 		args.GetReturnValue().SetNull();
 
 	}
+
+	delete PtControleUsersynchro;
 	
 }
 void Userwrap::BelongsToGroupwrapWork1(uv_work_t  *request)
@@ -374,7 +359,8 @@ else
 			args.GetReturnValue().SetUndefined();
 
 		}
-	
+
+	delete PtControleUsersynchro;
 }
 
 
@@ -437,6 +423,9 @@ void Userwrap::IsLoggedIn(const FunctionCallbackInfo<Value>& args) {
 		args.GetReturnValue().SetNull();
 
 	}
+
+	delete PtControleUsersynchro;
+
 	args.GetReturnValue().Set(Boolean::New(isolate, resultat));
 
 }

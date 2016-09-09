@@ -112,46 +112,33 @@ void Groupwrap::Init(Local<Object> exports) {
 void Groupwrap::New(const FunctionCallbackInfo<Value>& args) {
 	Isolate* isolate = args.GetIsolate();
 
-	if (args.IsConstructCall()) {
+	ControleGroupsynchro* PtControleGroupsynchro = new ControleGroupsynchro();
 
 
 
-		if (args.Length() == 1) {
+	if (PtControleGroupsynchro->ControleNew(args))
+	{
+		
+		Groupwrap* PtGroupWrap = new Groupwrap();
 
+		PtGroupWrap->Wrap(args.This());
 
-			Local<Object> InvokeObject = args[1]->ToObject();
+		prototype_Group_Synchrone.Reset(isolate, args.This()->GetPrototype());
 
-			Local<String> InvokeName = String::NewFromUtf8(isolate, "Invoke");
-			if (InvokeObject->Get(InvokeName)->IsBoolean())
-			{
-				if (InvokeObject->Get(InvokeName)->ToBoolean()->IsTrue())
-				{
-
-					Groupwrap* PtGroupWrap = new Groupwrap();
-
-					PtGroupWrap->Wrap(args.This());
-
-					prototype_Group_Synchrone.Reset(isolate, args.This()->GetPrototype());
-
-					args.GetReturnValue().Set(args.Holder());
-				}
-			}
-		}
-		else
-		{
-
-			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "To create a object of Group you need to pass from Directory object ")));
-
-			args.GetReturnValue().SetUndefined();
-
-		}
+		args.GetReturnValue().Set(args.Holder());
+			
+		
 	}
+	
+	
 	else {
 
 		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "To create a object of Group  you need to pass from Directory object ")));
 
 		args.GetReturnValue().SetUndefined();
 	}
+
+	delete PtControleGroupsynchro;
 }
 
 
@@ -186,7 +173,7 @@ else
 			args.GetReturnValue().SetNull();
 		}
 		
-	
+	delete PtControleGroupsynchro;
 }
 void Groupwrap::GetUserwrapByName(const FunctionCallbackInfo<Value>& args) {
 	
@@ -242,6 +229,7 @@ void Groupwrap::GetUserwrapByName(const FunctionCallbackInfo<Value>& args) {
 			args.GetReturnValue().SetNull();
 
 		}
+	delete PtControleGroupsynchro;
 	
 }
 void Groupwrap::GetSubGroupwrapName(const FunctionCallbackInfo<Value>& args) {
@@ -279,6 +267,7 @@ else
 
 			args.GetReturnValue().SetNull();
 		}
+	delete PtControleGroupsynchro;
 	
 }
 void Groupwrap::GetDirectorywrap(const FunctionCallbackInfo<Value>& args) {
@@ -312,6 +301,8 @@ void Groupwrap::GetDirectorywrap(const FunctionCallbackInfo<Value>& args) {
 
 		args.GetReturnValue().SetNull();
 	}
+
+	delete PtControleGroupsynchro;
 
 }
 

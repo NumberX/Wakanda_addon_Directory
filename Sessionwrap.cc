@@ -74,8 +74,6 @@ namespace WaDirectory_View {
 
 		Local<Object> obj = Object::New(isolate);
 
-		//obj->SetInternalField(1,;
-
 		Sessionwrap* PtSessionWrap = Sessionwrap::Unwrap<Sessionwrap>(ObjectSessionWrap);
 		
 		PtSessionWrap->ptsession = PtSession;
@@ -103,8 +101,6 @@ namespace WaDirectory_View {
 
 		tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
-		
-
 		NODE_SET_PROTOTYPE_METHOD(tpl, "GetUserwrap", GetUserwrap);
 
 		NODE_SET_PROTOTYPE_METHOD(tpl, "GetWASID", GetWASID);
@@ -128,38 +124,28 @@ namespace WaDirectory_View {
 
 		ControleSessionsynchro *PtControleSessionsynchro = new ControleSessionsynchro();
 
-		std::string Message;
+		if (PtControleSessionsynchro->ControleNew(args)) {
 
-		if (PtControleSessionsynchro->ControleGetLenght(args, Message, 1)) {
+			Sessionwrap* PtSessionWrap = new Sessionwrap();
 
-			Tools::Utility util;
+			PtSessionWrap->Wrap(args.This());
 
-			Local<Object> InvokeObject = args[1]->ToObject();
+			prototype_Session_Synchrone.Reset(isolate, args.This()->GetPrototype());
 
-			Local<String> InvokeName = String::NewFromUtf8(isolate, "Invoke");
+			args.GetReturnValue().Set(args.Holder());
 
-			if (InvokeObject->Get(InvokeName)->IsBoolean())
-			{
-				if (InvokeObject->Get(InvokeName)->ToBoolean()->IsTrue())
-				{ 
-				Sessionwrap* PtSessionWrap = new Sessionwrap();
-
-				PtSessionWrap->Wrap(args.This());
-
-				prototype_Session_Synchrone.Reset(isolate, args.This()->GetPrototype());
-
-				args.GetReturnValue().Set(args.Holder());
-				}
-			}
+			
+			
 		}
 		else
 		{
 
-			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "To create a object of Session  you need to pass from Directory object ")));
 
 			args.GetReturnValue().SetUndefined();
 
 		}
+		delete PtControleSessionsynchro;
 
 	}
 
@@ -217,7 +203,7 @@ namespace WaDirectory_View {
 			args.GetReturnValue().SetUndefined();
 		}
 
-	
+		delete PtControleSessionsynchro;
 		
 		
 	}
@@ -254,6 +240,8 @@ namespace WaDirectory_View {
 
 		delete work;
 
+		
+
 	}
 
 	void Sessionwrap::GetWASID(const FunctionCallbackInfo<Value>& args) {
@@ -288,6 +276,7 @@ namespace WaDirectory_View {
 			args.GetReturnValue().SetNull();
 		}
 
+		delete PtControleSessionsynchro;
 	}
 
 	void Sessionwrap::GetDirectorywrap(const FunctionCallbackInfo<Value>& args) {
@@ -320,6 +309,7 @@ namespace WaDirectory_View {
 
 			args.GetReturnValue().SetNull();
 		}
+		delete PtControleSessionsynchro;
 	
 	}
 
@@ -368,7 +358,8 @@ namespace WaDirectory_View {
 
 				args.GetReturnValue().SetNull();
 			}
-		
+
+		delete PtControleSessionsynchro;
 	}
 	void Sessionwrap::IsValidWork(uv_work_t  *request)
 	{
@@ -435,6 +426,7 @@ namespace WaDirectory_View {
 
 			args.GetReturnValue().SetNull();
 		}
+		delete PtControleSessionsynchro;
 
 	}
 
