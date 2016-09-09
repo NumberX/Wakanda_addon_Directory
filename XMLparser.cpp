@@ -4,7 +4,7 @@
 #include<sstream>
 #include<iostream>
 using namespace rapidxml;
-namespace WaDirectory_data
+namespace WaDirectory_Data
 {
 	XMLparser::XMLparser(string UrlDirectory)
 	{
@@ -289,7 +289,7 @@ namespace WaDirectory_data
 
 
 
-	bool WaDirectory_data::XMLparser::UserBelongGroup(string UserId, string groupId)
+	bool XMLparser::UserBelongGroup(string UserId, string groupId)
 	{
 
 

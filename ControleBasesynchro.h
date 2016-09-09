@@ -2,7 +2,7 @@
 #include <node.h>
 #include <node_object_wrap.h>
 #include"v8.h"
-namespace WaDirectorywrap_data_v8 {
+namespace WaDirectory_Controle{
 	class ControleBasesynchro:public node::ObjectWrap
 	{
 	public:

@@ -1,32 +1,18 @@
 #include "Directorywrap.h"
-#include"Sessionwrap.h"
-#include"Directory.h"
-#include"Work.h"
-#include"Session.h"
 #include"Utility.h"
 #include"ControleDirectorysynchro.h"
 #include<vector>
 #include<string>
 #include<iostream>
-using v8::Exception;
-using v8::Context;
-using v8::Function;
-using v8::FunctionCallbackInfo;
-using v8::FunctionTemplate;
-using v8::Isolate;
-using v8::Local;
-using v8::Number;
-using v8::Object;
-using v8::Persistent;
-using v8::String;
-using v8::Value;
-using v8::Boolean;
-using v8::Array;
+#include"v8.h"
+#include"Work.h"
+#include"Thread_Data.h"
 using namespace v8;
-using namespace WaDirectory;
+using namespace WaDirectory_Data;
 using namespace std;
-using namespace WaDirectorywrapAsynchro_data_v8;
-namespace WaDirectorywrap_data_v8 {
+using namespace WaDirectory_Controle;
+using namespace Tools;
+namespace WaDirectory_View {
 Persistent<Function> Directorywrap::constructor;
 
 Persistent<Value> Directorywrap::prototype_Directory_Synchrone;
@@ -39,7 +25,8 @@ Local<Boolean> Directorywrap::ControleDirectoryUnwrap(Local<Object> handle, Isol
 	if (!handle.IsEmpty() && handle->InternalFieldCount() == 1) {
 
 		Local<Value> Pt_Prototype = handle->GetPrototype();
-		Utility util;
+		
+		Tools::Utility util;
 
 		if (Pt_Prototype == prototype_Directory_Synchrone) {
 			Local<Boolean> Resultat = Boolean::New(isolate, true);
@@ -110,7 +97,7 @@ if (args.Length() == 2)
 		  { 
 
 			 
-				  Utility util;
+			      Tools::Utility util;
 
 				  std::string Url_Wakanda = util.V8Utf8ValueToStdString(args[0]);
 
@@ -152,7 +139,9 @@ void Directorywrap::LogIn(const FunctionCallbackInfo<Value>& args) {
 	Isolate* isolate = args.GetIsolate();
 
 	ControleDirectorysynchro *PtControleDirectorysynchro = new ControleDirectorysynchro();
-
+	
+	Local<Context> contexttest = isolate->GetCurrentContext();
+	
 	bool controle = false;
 
 	std::string Message;
@@ -160,36 +149,51 @@ void Directorywrap::LogIn(const FunctionCallbackInfo<Value>& args) {
 	vector<DataControlesyn>* Pt_Vector = PtControleDirectorysynchro->ControleLogInsynchro(args, controle, Message);
 	if (controle == true)
 	{
+		Work *work = new Work();
+
+		work->request.data = work;
+
 		DataControlesyn Directorydata = Pt_Vector->at(0);
 
-		Directorywrap* PtDirectoryWrap = Directorydata.Output.PtDirectorywrap;
+		Directorywrap* PtDirectorywrap = Directorydata.Output.PtDirectorywrap;
+
+		Thread_Data Pt_DirectoryWrap_Intra;
+
+		Pt_DirectoryWrap_Intra.Argument.PtDirectorywrap = PtDirectorywrap;
+
+		work->Intra_Data.push_back(Pt_DirectoryWrap_Intra);
 
 		DataControlesyn Userdata = Pt_Vector->at(1);
 
 		Userwrap* PtUserWrap = Userdata.Output.PtUserwrap;
 
-		Utility util;
-
 		string user = PtUserWrap->ptuser->Username;
 
 		string password = PtUserWrap->ptuser->Password;
 
-		ISession *PtSession = PtDirectoryWrap->ptdirectory->LogIn(user, password);
+		Thread_Data Pt_User;
 
-		if (PtSession != NULL)
-		{
+		Pt_User.Argument.user = new char[user.length() + 1];;
 
-			Local<Object> ObjectSessionWrap = Sessionwrap::CreateSessionWrap(isolate, PtSession, PtDirectoryWrap);
+		std::strcpy(Pt_User.Argument.user, user.c_str());
 
-			args.GetReturnValue().Set(ObjectSessionWrap);
-		}
+		work->Input_Data.push_back(Pt_User);
 
+		Thread_Data Pt_Password;
 
-		else
-		{
+		Pt_Password.Argument.password = new char[password.length() + 1];
 
-			args.GetReturnValue().SetNull();
-		}
+		std::strcpy(Pt_Password.Argument.password, password.c_str());
+
+		work->Input_Data.push_back(Pt_Password);
+
+		Local<Function> commeback = Local<Function>::Cast(args[1]);
+
+		work->callback.Reset(isolate, commeback);
+
+		uv_queue_work(uv_default_loop(), &work->request, LogInWork, LogInWorkComplete);
+
+		args.GetReturnValue().Set(Undefined(isolate));
 
 	}
 	
@@ -203,6 +207,43 @@ void Directorywrap::LogIn(const FunctionCallbackInfo<Value>& args) {
 	}
 	
 
+
+}
+
+void Directorywrap::LogInWork(uv_work_t  *request)
+{
+	Work *work = (Work*)(request->data);
+
+	string user = work->Input_Data[0].Argument.user;
+
+	string password = work->Input_Data[1].Argument.password;
+
+	Thread_Data Pt_SessionWrap_Intra;
+
+	Pt_SessionWrap_Intra.Argument.PtSession = work->Intra_Data[0].Argument.PtDirectorywrap->ptdirectory->LogIn(user, password);
+
+	work->Intra_Data.push_back(Pt_SessionWrap_Intra);
+
+}
+void Directorywrap::LogInWorkComplete(uv_work_t  *request, int status)
+{
+	Isolate *isolate = Isolate::GetCurrent();
+
+	HandleScope scoop(isolate);
+
+	Work *work = (Work *)(request->data);
+
+	ISession *PtSession = work->Intra_Data[1].Argument.PtSession;
+
+	Local<Object> ObjectSessionwrap = Sessionwrap::CreateSessionWrap(isolate, PtSession, work->Intra_Data[0].Argument.PtDirectorywrap);
+
+	Handle<Value> args[] = { Null(isolate), ObjectSessionwrap };
+
+	Local<Function>::New(isolate, work->callback)->Call(isolate->GetCurrentContext()->Global(), 2, args);
+
+	work->callback.Reset();
+
+	delete work;
 
 }
 void Directorywrap::GetGroupwrapID(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -227,7 +268,7 @@ void Directorywrap::GetGroupwrapID(const v8::FunctionCallbackInfo<v8::Value>& ar
 
 		PtDirectoryWrap->ptdirectory->GetGroupId(Vector);
 
-		Utility util;
+		Tools::Utility util;
 
 		Local<Array> Resulat = util.StdVectorToV8Array(isolate, Vector);
 
@@ -263,7 +304,7 @@ void Directorywrap::GetGroupwrapNames(const FunctionCallbackInfo<Value>& args) {
 
 		PtDirectoryWrap->ptdirectory->GetGroupNames(Vector);
 
-		Utility util;
+		Tools::Utility util;
 
 		Local<Array> Resulat = util.StdVectorToV8Array(isolate, Vector);
 
@@ -394,23 +435,45 @@ void Directorywrap::GetSessionwrap(const FunctionCallbackInfo<Value>& args) {
 	bool controle = false;
 
 	std::string Message;
+	
+	int Methode = 0;
 
-	vector<DataControlesyn>* Pt_Vector = PtControleDirectorysynchro->ControleGetSessionwrapsynchro(args, controle, Message);
+	vector<DataControlesyn>* Pt_Vector = PtControleDirectorysynchro->ControleGetSessionwrapsynchro(args, controle, Message,Methode);
 	if (controle == true)
 	{
+		if (Methode==1)
+		{ 
+		Work *work = new Work();
+
+		work->request.data = work;
+
 		DataControlesyn Directorydata = Pt_Vector->at(0);
 
-		Directorywrap* PtDirectoryWrap = Directorydata.Output.PtDirectorywrap;
+		Directorywrap* PtDirectorywrap = Directorydata.Output.PtDirectorywrap;
 
-		DataControlesyn SessionIddata = Pt_Vector->at(1);
+		Thread_Data Pt_DirectoryWrap_Intra;
 
-		string SessionId = SessionIddata.Output.SessionId;
+		Pt_DirectoryWrap_Intra.Argument.PtDirectorywrap = PtDirectorywrap;
 
-		ISession* PtSession = PtDirectoryWrap->ptdirectory->GetSession(SessionId);
+		work->Intra_Data.push_back(Pt_DirectoryWrap_Intra);
 
-		Local<Object> ObjectUserWrap = Sessionwrap::CreateSessionWrap(isolate, PtSession, PtDirectoryWrap);
+		DataControlesyn IdSessiondata = Pt_Vector->at(1);
 
-		args.GetReturnValue().Set(ObjectUserWrap);
+		Thread_Data Pt_SessionId;
+
+		Pt_SessionId.Argument.SessionId = IdSessiondata.Output.SessionId;
+
+		work->Input_Data.push_back(Pt_SessionId);
+
+		Local<Function> commeback = Local<Function>::Cast(args[1]);
+
+		work->callback.Reset(isolate, commeback);
+
+		uv_queue_work(uv_default_loop(), &work->request, GetSessionwrapWork1, GetSessionwrapWorkComplete1);
+
+		args.GetReturnValue().Set(Undefined(isolate));
+
+		}
 	}
 else{
 
@@ -420,6 +483,47 @@ else{
 		}
 	
 	
+}
+
+void Directorywrap::GetSessionwrapWork1(uv_work_t  *request)
+{
+	Work *work = (Work*)(request->data);
+
+	string SessionId = work->Input_Data[0].Argument.SessionId;
+
+	Thread_Data Pt_SessionWrap_Intra;
+
+	Pt_SessionWrap_Intra.Argument.PtSession = work->Intra_Data[0].Argument.PtDirectorywrap->ptdirectory->GetSession(SessionId);
+
+	work->Intra_Data.push_back(Pt_SessionWrap_Intra);
+}
+void Directorywrap::GetSessionwrapWorkComplete1(uv_work_t  *request, int status)
+{
+	Isolate *isolate = Isolate::GetCurrent();
+
+	HandleScope scoop(isolate);
+
+	Work *work = (Work *)(request->data);
+
+	ISession *PtSession = work->Intra_Data[1].Argument.PtSession;
+
+	Local<Object> ObjectSessionwrap = Sessionwrap::CreateSessionWrap(isolate, PtSession, work->Intra_Data[0].Argument.PtDirectorywrap);
+
+	Handle<Value> args[] = { Null(isolate), ObjectSessionwrap };
+
+	Local<Function>::New(isolate, work->callback)->Call(isolate->GetCurrentContext()->Global(), 2, args);
+
+	work->callback.Reset();
+
+	delete work;
+}
+void Directorywrap::GetSessionwrapWok2(uv_work_t  *request)
+{
+
+}
+void Directorywrap::GetSessionwrapWorkComplete2(uv_work_t  *request, int status)
+{
+
 }
 void Directorywrap::UserwrapBelongTo(const FunctionCallbackInfo<Value>& args) {
 
@@ -438,25 +542,47 @@ void Directorywrap::UserwrapBelongTo(const FunctionCallbackInfo<Value>& args) {
 	
 	if (controle == true)
 	{
+		Work *work = new Work();
+
+		work->request.data = work;
+
 		DataControlesyn Directorydata = Pt_Vector->at(0);
 
-		Directorywrap* PtDirectoryWrap = Directorydata.Output.PtDirectorywrap;
+		Directorywrap* PtDirectorywrap = Directorydata.Output.PtDirectorywrap;
 
-		bool Resultat = false;
+		Thread_Data Pt_DirectoryWrap_Intra;
 
+		Pt_DirectoryWrap_Intra.Argument.PtDirectorywrap = PtDirectorywrap;
+
+		work->Intra_Data.push_back(Pt_DirectoryWrap_Intra);
 		if (Methode == 1)
 		{
 			DataControlesyn Userdata = Pt_Vector->at(1);
 
 			Userwrap* PtUserWrap = Userdata.Output.PtUserwrap;
 
+			Thread_Data Pt_UserWrap_Intra;
+
+			Pt_UserWrap_Intra.Argument.PtUserwrap = PtUserWrap;
+
+			work->Intra_Data.push_back(Pt_UserWrap_Intra);
+
 			DataControlesyn GroupIddata = Pt_Vector->at(2);
 
-			string inGroupID = GroupIddata.Output.GroupId;
+			Thread_Data Pt_inGroupID;
 
-			Resultat = PtDirectoryWrap->ptdirectory->UserBelongTo(PtUserWrap->ptuser, inGroupID);
+			Pt_inGroupID.Argument.GroupId = GroupIddata.Output.GroupId;
 
-			args.GetReturnValue().Set(Boolean::New(isolate, Resultat));
+			work->Input_Data.push_back(Pt_inGroupID);
+
+			Local<Function> commeback = Local<Function>::Cast(args[2]);
+
+			work->callback.Reset(isolate, commeback);
+
+			uv_queue_work(uv_default_loop(), &work->request, UserwrapBelongToWork2, UserwrapBelongToWorkComplete2);
+
+			args.GetReturnValue().Set(Undefined(isolate));
+
 		}
 		if (Methode == 2)
 		{
@@ -464,14 +590,30 @@ void Directorywrap::UserwrapBelongTo(const FunctionCallbackInfo<Value>& args) {
 
 			Userwrap* PtUserWrap = Userdata.Output.PtUserwrap;
 
+			Thread_Data Pt_UserWrap_Intra;
+
+			Pt_UserWrap_Intra.Argument.PtUserwrap = PtUserWrap;
+
+			work->Intra_Data.push_back(Pt_UserWrap_Intra);
+
 			DataControlesyn Groupdata = Pt_Vector->at(2);
 
-			Groupwrap* PtGroupWrap = Userdata.Output.PtGroupwrap;
+			Groupwrap* PtGroupWrap = Groupdata.Output.PtGroupwrap;
 
-			Resultat = PtDirectoryWrap->ptdirectory->UserBelongTo(PtUserWrap->ptuser, PtGroupWrap->ptgroup);
+			Thread_Data Pt_GroupWrap_Intra;
 
-			args.GetReturnValue().Set(Boolean::New(isolate, Resultat));
+			Pt_GroupWrap_Intra.Argument.PtGroupWrap = PtGroupWrap;
 
+			work->Intra_Data.push_back(Pt_GroupWrap_Intra);
+
+
+			Local<Function> commeback = Local<Function>::Cast(args[2]);
+
+			work->callback.Reset(isolate, commeback);
+
+			uv_queue_work(uv_default_loop(), &work->request, UserwrapBelongToWork3, UserwrapBelongToWorkComplete3);
+
+			args.GetReturnValue().Set(Undefined(isolate));
 		}
 		if (Methode == 3)
 		{
@@ -479,13 +621,27 @@ void Directorywrap::UserwrapBelongTo(const FunctionCallbackInfo<Value>& args) {
 
 			Sessionwrap* PtSessionWrap = Sessiondata.Output.PtSessionwrap;
 
+			Thread_Data Pt_SessionWrap_Intra;
+
+			Pt_SessionWrap_Intra.Argument.ptSessionwrap = PtSessionWrap;
+
+			work->Intra_Data.push_back(Pt_SessionWrap_Intra);
+
 			DataControlesyn GroupIddata = Pt_Vector->at(2);
 
-			string inGroupID = GroupIddata.Output.GroupId;
+			Thread_Data Pt_inGroupID;
 
-			Resultat = PtDirectoryWrap->ptdirectory->UserBelongTo(PtSessionWrap->GetSession(), inGroupID);
+			Pt_inGroupID.Argument.GroupId = GroupIddata.Output.GroupId;
 
-			args.GetReturnValue().Set(Boolean::New(isolate, Resultat));
+			work->Input_Data.push_back(Pt_inGroupID);
+
+			Local<Function> commeback = Local<Function>::Cast(args[2]);
+
+			work->callback.Reset(isolate, commeback);
+
+			uv_queue_work(uv_default_loop(), &work->request, UserwrapBelongToWork1, UserwrapBelongToWorkComplete1);
+
+			args.GetReturnValue().Set(Undefined(isolate));
 		}
 	}
 
@@ -495,6 +651,110 @@ void Directorywrap::UserwrapBelongTo(const FunctionCallbackInfo<Value>& args) {
 
 		args.GetReturnValue().SetUndefined();
 	}
+}
+
+void Directorywrap::UserwrapBelongToWork1(uv_work_t  *request)
+{
+	Work *work = (Work*)(request->data);
+
+	string GroupId = work->Input_Data[0].Argument.GroupId;
+
+	Sessionwrap* PtSessionWrap = work->Intra_Data[1].Argument.ptSessionwrap;
+
+	Thread_Data Resultat_Intra;
+
+	Resultat_Intra.Argument.Resultat = work->Intra_Data[0].Argument.PtDirectorywrap->ptdirectory->UserBelongTo(PtSessionWrap->ptsession, GroupId);
+
+	work->Intra_Data.push_back(Resultat_Intra);
+}
+void Directorywrap::UserwrapBelongToWorkComplete1(uv_work_t  *request, int status)
+{
+	Isolate *isolate = Isolate::GetCurrent();
+
+	HandleScope scoop(isolate);
+
+	Work *work = (Work *)(request->data);
+
+	bool Resultat = work->Intra_Data[2].Argument.Resultat;
+
+	Local<Boolean> Resultat_v8 = Boolean::New(isolate, Resultat);
+
+	Handle<Value> args[] = { Null(isolate), Resultat_v8 };
+
+	Local<Function>::New(isolate, work->callback)->Call(isolate->GetCurrentContext()->Global(), 2, args);
+
+	work->callback.Reset();
+
+	delete work;
+}
+void Directorywrap::UserwrapBelongToWork2(uv_work_t  *request)
+{
+	Work *work = (Work*)(request->data);
+
+	string GroupId = work->Input_Data[0].Argument.GroupId;
+
+	Userwrap* PtUserWrap = work->Intra_Data[1].Argument.PtUserwrap;
+
+	Thread_Data Resultat_Intra;
+
+	Resultat_Intra.Argument.Resultat = work->Intra_Data[0].Argument.PtDirectorywrap->ptdirectory->UserBelongTo(PtUserWrap->ptuser, GroupId);
+
+	work->Intra_Data.push_back(Resultat_Intra);
+}
+void Directorywrap::UserwrapBelongToWorkComplete2(uv_work_t  *request, int status)
+{
+	Isolate *isolate = Isolate::GetCurrent();
+
+	HandleScope scoop(isolate);
+
+	Work *work = (Work *)(request->data);
+
+	bool Resultat = work->Intra_Data[2].Argument.Resultat;
+
+	Local<Boolean> Resultat_v8 = Boolean::New(isolate, Resultat);
+
+	Handle<Value> args[] = { Null(isolate), Resultat_v8 };
+
+	Local<Function>::New(isolate, work->callback)->Call(isolate->GetCurrentContext()->Global(), 2, args);
+
+	work->callback.Reset();
+
+	delete work;
+}
+void Directorywrap::UserwrapBelongToWork3(uv_work_t  *request)
+{
+	Work *work = (Work*)(request->data);
+
+	Groupwrap* PtGroupWrap = work->Intra_Data[2].Argument.PtGroupWrap;
+
+	Userwrap* PtUserWrap = work->Intra_Data[1].Argument.PtUserwrap;
+
+	Thread_Data Resultat_Intra;
+
+	Resultat_Intra.Argument.Resultat = work->Intra_Data[0].Argument.PtDirectorywrap->ptdirectory->UserBelongTo(PtUserWrap->ptuser, PtGroupWrap->ptgroup);
+
+	work->Intra_Data.push_back(Resultat_Intra);
+}
+void Directorywrap::UserwrapBelongToWorkComplete3(uv_work_t  *request, int status)
+{
+	Isolate *isolate = Isolate::GetCurrent();
+
+	HandleScope scoop(isolate);
+
+	Work *work = (Work *)(request->data);
+
+	bool Resultat = work->Intra_Data[3].Argument.Resultat;
+
+	Local<Boolean> Resultat_v8 = Boolean::New(isolate, Resultat);
+
+	Handle<Value> args[] = { Null(isolate), Resultat_v8 };
+
+	Local<Function>::New(isolate, work->callback)->Call(isolate->GetCurrentContext()->Global(), 2, args);
+
+	work->callback.Reset();
+
+	delete work;
+
 }
 void Directorywrap::LogOut(const FunctionCallbackInfo<Value>& args) {
 

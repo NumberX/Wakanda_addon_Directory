@@ -5,11 +5,16 @@
 #include <node_object_wrap.h>
 #include<string>
 #include"User.h"
-using namespace WaDirectory;
+#include"ControleBasesynchro.h"
+#include"ControleUsersynchro.h"
+#include"ControleUsersynchro.h"
+using namespace WaDirectory_Controle;
+using namespace WaDirectory_Data;
 using namespace v8;
-namespace WaDirectorywrap_data_v8 {
+namespace WaDirectory_View {
 
 class Userwrap : public node::ObjectWrap {
+
 	friend class Directorywrap;
 	friend class Sessionwrap;
 	friend class Groupwrap;
@@ -17,6 +22,7 @@ class Userwrap : public node::ObjectWrap {
  public:
   static void Init(v8::Local<v8::Object> exports);
 
+  IUser* GetUserData();
  private:
 	
   explicit Userwrap();
@@ -31,8 +37,20 @@ class Userwrap : public node::ObjectWrap {
   static void GetName(const v8::FunctionCallbackInfo<v8::Value>& args);
 
   static void BelongsToGroupwrap(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+  static void BelongsToGroupwrapWork1(uv_work_t  *request);
+
+  static void BelongsToGroupwrapWorkComplete1(uv_work_t  *request, int status);
+
+  static void BelongsToGroupwrapWork2(uv_work_t  *request);
+
+  static void BelongsToGroupwrapWorkComplete2(uv_work_t  *request, int status);
   
   static void IsLoggedIn(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+  static void IsLoggedInWork(uv_work_t  *request);
+
+  static void IsLoggedInWorkComplete(uv_work_t  *request, int status);
   
   static v8::Persistent<v8::Function> constructor;
  

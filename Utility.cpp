@@ -2,7 +2,7 @@
 #include<vector>
 using namespace std;
 using namespace v8;
-namespace WaDirectorywrap_data_v8 {
+namespace Tools {
 
 	Utility::Utility()
 	{
@@ -14,7 +14,7 @@ namespace WaDirectorywrap_data_v8 {
 	}
 
 
-Local<Array> WaDirectorywrap_data_v8::Utility::StdVectorToV8Array(Isolate*  isolate, std::vector<std::string>& Vector)
+Local<Array> Utility::StdVectorToV8Array(Isolate*  isolate, std::vector<std::string>& Vector)
 {
 	Local<Array> Resultat = Array::New(isolate);
 	int i = 0;
@@ -27,7 +27,7 @@ Local<Array> WaDirectorywrap_data_v8::Utility::StdVectorToV8Array(Isolate*  isol
 
 	return Resultat;
 }
-string WaDirectorywrap_data_v8::Utility::V8Utf8ValueToStdString(v8::Local<v8::Value>& arg)
+string Utility::V8Utf8ValueToStdString(v8::Local<v8::Value>& arg)
 {
 	String::Utf8Value Localv8string(arg);
 	

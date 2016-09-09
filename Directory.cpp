@@ -7,8 +7,7 @@
 #include"User.h"
 #include<iostream>
 using namespace std;
-using namespace WaDirectory_data;
-namespace WaDirectory
+namespace WaDirectory_Data
 {
 
 	Directory::Directory() 

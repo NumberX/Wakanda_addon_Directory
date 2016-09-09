@@ -3,24 +3,19 @@
 #include "Groupwrap.h"
 #include "Sessionwrap.h"
 #include "Directorywrap.h"
-#include "DirectorywrapAsynchro.h"
 
-using namespace WaDirectorywrapAsynchro_data_v8;
 
-namespace WaDirectorywrap_data_v8 {
+
+namespace Init {
 
 using v8::Local;
 using v8::Object;
-
+using namespace WaDirectory_View;
 void InitAll(Local<Object> exports) {
-  Userwrap::Init(exports);
-  Groupwrap::Init(exports);
-  Sessionwrap::Init(exports);
-  Directorywrap::Init(exports);
-  DirectorywrapAsynchro::Init(exports);
-  GroupwrapAsynchro::Init(exports);
-  UserwrapAsynchro::Init(exports);
-  SessionwrapAsynchro::Init(exports);  
+	WaDirectory_View::Userwrap::Init(exports);
+	WaDirectory_View::Groupwrap::Init(exports);
+	WaDirectory_View::Sessionwrap::Init(exports);
+	WaDirectory_View::Directorywrap::Init(exports);
 }
 
 NODE_MODULE(addon, InitAll)

@@ -6,7 +6,7 @@
 using namespace std;
 using namespace rapidjson;
 
-namespace WaDirectory_data
+namespace WaDirectory_Data
 {
 	Jsonparser::Jsonparser()
 	{

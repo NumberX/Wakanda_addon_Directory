@@ -1,6 +1,6 @@
 #include "ControleSessionsynchro.h"
 
-namespace WaDirectorywrap_data_v8{
+namespace WaDirectory_Controle{
 	ControleSessionsynchro::ControleSessionsynchro()
 	{
 	}
@@ -10,29 +10,43 @@ namespace WaDirectorywrap_data_v8{
 	{
 	}
 
+	bool ControleSessionsynchro::ControleValideSessionData(ISession *PtSession, string& Message)
+	{
+		if (PtSession == NULL)
+		{
+			Message = "PtSession is Null";
+			return false;
+		}
+		return true;
+
+	}
 	vector<DataControlesyn>*              ControleSessionsynchro::ControleGetUserwrapsynchro(const v8::FunctionCallbackInfo<v8::Value>& args, bool& Controle, string& Message)
 	{
 		Isolate* isolate = args.GetIsolate();
 
 		vector<DataControlesyn>* Output = NULL;
 
-		if (ControleGetLenght(args, Message, 0)){
+		if (ControleGetLenght(args, Message, 1)){
 			if (ControleSessionUnwrap(args, Message, 10) == true)
 			{
 
-				Output = new vector<DataControlesyn>();
+				
 
 				Sessionwrap* PtSessionwrap = ObjectWrap::Unwrap<Sessionwrap>(args.Holder());
+				if (ControleValideSessionData(PtSessionwrap->GetSessionData(), Message))
+				{
+					Output = new vector<DataControlesyn>();
 
-				DataControlesyn dataptsession;
+					DataControlesyn dataptsession;
 
-				dataptsession.Output.PtSessionwrap = PtSessionwrap;
+					dataptsession.Output.PtSessionwrap = PtSessionwrap;
 
-				Output->push_back(dataptsession);
+					Output->push_back(dataptsession);
 
-				Controle = true;
+					Controle = true;
 
-				return Output;
+					return Output;
+				}
 			}
 		}
 		return Output;

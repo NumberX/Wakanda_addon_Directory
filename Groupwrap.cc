@@ -1,5 +1,4 @@
 #include "Groupwrap.h"
-#include"ControleGroup.h"
 #include"Directorywrap.h"
 #include"ControleGroupsynchro.h"
 #include"DataControlesyn.h"
@@ -9,23 +8,13 @@
 #include"Group.h"
 #include"Userwrap.h"
 #include<iostream>
-using v8::Value;
-using v8::Context;
-using v8::Function;
-using v8::FunctionCallbackInfo;
-using v8::FunctionTemplate;
-using v8::Isolate;
-using v8::Local;
-using v8::Number;
-using v8::Object;
-using v8::Persistent;
-using v8::String;
+#include"v8.h"
 
 using namespace v8;
 using namespace std;
-using namespace WaDirectory;
-using namespace Controle;
-namespace WaDirectorywrap_data_v8 {
+using namespace WaDirectory_Controle;
+using namespace WaDirectory_Data;
+namespace WaDirectory_View {
 
 Persistent<Function> Groupwrap::constructor;
 
@@ -38,7 +27,8 @@ Local<Boolean> Groupwrap::ControleGroupUnwrap(Local<Object> handle, Isolate* iso
 	if (!handle.IsEmpty() && handle->InternalFieldCount() == 1) {
 
 		Local<Value> Pt_Prototype = handle->GetPrototype();
-		Utility util;
+		
+		Tools::Utility util;
 
 		if (Pt_Prototype == prototype_Group_Synchrone) {
 			Local<Boolean> Resultat = Boolean::New(isolate, true);
@@ -58,19 +48,29 @@ Groupwrap::Groupwrap() : ptgroup() {
 
 Groupwrap::~Groupwrap() {
 }
+IGroup* Groupwrap::GetGroupData()
+{
 
+	return this->ptgroup;
+}
 Local<Object> Groupwrap::CreateGroupWrap(Isolate* isolate, IGroup* PtGroup,Directorywrap* PtDirectoryWrap)
 {
 
 	EscapableHandleScope scope(isolate);
+	
+	Local<v8::Object> ObjectInvoke = Object::New(isolate);
 
-	Local<Value> argv[] = { Boolean::New(isolate, true) };
+	Local<Boolean> Invoke = Boolean::New(isolate, true);
+
+	ObjectInvoke->Set(String::NewFromUtf8(isolate, "Invoke"), Invoke);
+
+	Local<Value> argv[] = { Boolean::New(isolate, true), ObjectInvoke };
 	
 	Local<Context> context = isolate->GetCurrentContext();
 	
 	Local<Function> LocalFunction = Local<Function>::New(isolate, Groupwrap::constructor);
 	
-	Local<Object> ObjectGroupWrap = LocalFunction->NewInstance(context, 1, argv).ToLocalChecked();
+	Local<Object> ObjectGroupWrap = LocalFunction->NewInstance(context, 2, argv).ToLocalChecked();
 	
 	Groupwrap* PtGroupWrap = Groupwrap::Unwrap<Groupwrap>(ObjectGroupWrap);
 
@@ -119,13 +119,23 @@ void Groupwrap::New(const FunctionCallbackInfo<Value>& args) {
 		if (args.Length() == 1) {
 
 
-			Groupwrap* PtGroupWrap = new Groupwrap();
+			Local<Object> InvokeObject = args[1]->ToObject();
 
-			PtGroupWrap->Wrap(args.This());
+			Local<String> InvokeName = String::NewFromUtf8(isolate, "Invoke");
+			if (InvokeObject->Get(InvokeName)->IsBoolean())
+			{
+				if (InvokeObject->Get(InvokeName)->ToBoolean()->IsTrue())
+				{
 
-			prototype_Group_Synchrone.Reset(isolate, args.This()->GetPrototype());
+					Groupwrap* PtGroupWrap = new Groupwrap();
 
-			args.GetReturnValue().Set(args.Holder());
+					PtGroupWrap->Wrap(args.This());
+
+					prototype_Group_Synchrone.Reset(isolate, args.This()->GetPrototype());
+
+					args.GetReturnValue().Set(args.Holder());
+				}
+			}
 		}
 		else
 		{
@@ -198,7 +208,7 @@ void Groupwrap::GetUserwrapByName(const FunctionCallbackInfo<Value>& args) {
 
 		Groupwrap* PtGroupWrap = Groupdata.Output.PtGroupwrap;
 
-		Utility util;
+		Tools::Utility util;
 
 		IUser *PtUser = NULL;
 
@@ -257,7 +267,7 @@ void Groupwrap::GetSubGroupwrapName(const FunctionCallbackInfo<Value>& args) {
 
 		PtGroupWrap->ptgroup->GetSubGroupName(resultat);
 
-		Utility util;
+		Tools::Utility util;
 
 		Local<Array> result_list = util.StdVectorToV8Array(isolate, resultat);
 

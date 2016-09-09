@@ -1,7 +1,7 @@
 #pragma once
 #include"UnionUserSession.h"
 #include<vector>
-namespace WaDirectory
+namespace WaDirectory_Data
 {
 	class ManageSession
 	{

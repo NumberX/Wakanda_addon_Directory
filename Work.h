@@ -10,7 +10,7 @@
 #include <uv.h>
 using namespace v8;
 using namespace std;
-namespace WaDirectorywrapAsynchro_data_v8 {
+namespace WaDirectory_View {
 class Work {
 public:
   

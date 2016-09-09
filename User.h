@@ -11,7 +11,7 @@
 #include"IDirectory.h"
 using namespace std;
 
-namespace WaDirectory
+namespace WaDirectory_Data
 {
 
 	class Directory;

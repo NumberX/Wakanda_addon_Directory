@@ -3,7 +3,7 @@
 #include <fstream>
 #include<string>
 using namespace std;
-namespace WaDirectory_data
+namespace WaDirectory_Data
 { 
 class JsonData
 {

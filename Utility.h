@@ -3,7 +3,7 @@
 #include<vector>
 using namespace std;
 using namespace v8;
-namespace WaDirectorywrap_data_v8 {
+namespace Tools {
 	class Utility
 	{
 	public:

@@ -1,7 +1,7 @@
 #include "ControleUsersynchro.h"
 #include"Utility.h"
 
-namespace WaDirectorywrap_data_v8{
+namespace WaDirectory_Controle{
 	ControleUsersynchro::ControleUsersynchro()
 	{
 	}
@@ -9,6 +9,16 @@ namespace WaDirectorywrap_data_v8{
 
 	ControleUsersynchro::~ControleUsersynchro()
 	{
+	}
+	bool ControleUsersynchro::ControleValideUserData(IUser *PtUser, string& Message)
+	{
+		if (PtUser == NULL)
+		{
+			Message = "PtUser is Null";
+			return false;
+		}
+		return true;
+
 	}
 
 	vector<DataControlesyn>*              ControleUsersynchro::ControleGetNamesynchro(const v8::FunctionCallbackInfo<v8::Value>& args, bool& Controle, string& Message)
@@ -21,10 +31,12 @@ namespace WaDirectorywrap_data_v8{
 			if (ControleUserUnwrap(args, Message, 10) == true)
 			{
 
-				Output = new vector<DataControlesyn>();
-
 				Userwrap* PtUserwrap = ObjectWrap::Unwrap<Userwrap>(args.Holder());
-			
+
+				if (ControleValideUserData(PtUserwrap->GetUserData(), Message))
+				{ 
+					Output = new vector<DataControlesyn>();
+
 					DataControlesyn dataptUser;
 
 					dataptUser.Output.PtUserwrap = PtUserwrap;
@@ -34,6 +46,7 @@ namespace WaDirectorywrap_data_v8{
 					Controle = true;
 
 					return Output;
+				}
 				}
 			
 		}
@@ -46,55 +59,59 @@ namespace WaDirectorywrap_data_v8{
 
 	vector<DataControlesyn>* Output = NULL;
 
-	if (ControleGetLenght(args, Message, 1)){
+	if (ControleGetLenght(args, Message, 2)){
 		if (ControleUserUnwrap(args, Message, 10) == true)
 		{
-			Output = new vector<DataControlesyn>();
+
 
 			Userwrap* PtUserwrap = ObjectWrap::Unwrap<Userwrap>(args.Holder());
+			if (ControleValideUserData(PtUserwrap->GetUserData(), Message))
+			{
+				Output = new vector<DataControlesyn>();
 
-			DataControlesyn dataptUser;
+				DataControlesyn dataptUser;
 
-			dataptUser.Output.PtUserwrap = PtUserwrap;
+				dataptUser.Output.PtUserwrap = PtUserwrap;
 
-			Output->push_back(dataptUser);
+				Output->push_back(dataptUser);
 
-			if (ControleGroupUnwrap(args, Message, 0) == true){
+				if (ControleGroupUnwrap(args, Message, 0) == true){
 
-				Groupwrap* Ptgroupwrap = ObjectWrap::Unwrap<Groupwrap>(args[0]->ToObject());
+					Groupwrap* Ptgroupwrap = ObjectWrap::Unwrap<Groupwrap>(args[0]->ToObject());
 
-				DataControlesyn Ptgroupdata;
+					DataControlesyn Ptgroupdata;
 
-				Ptgroupdata.Output.PtGroupwrap = Ptgroupwrap;
+					Ptgroupdata.Output.PtGroupwrap = Ptgroupwrap;
 
-				Output->push_back(Ptgroupdata);
+					Output->push_back(Ptgroupdata);
 
-				Methode = 1;
+					Methode = 1;
 
-				Controle = true;
+					Controle = true;
 
-				return Output;
-			}
-			if (Controlestring(args, Message, 0) == true){
+					return Output;
+				}
+				if (Controlestring(args, Message, 0) == true){
 
-				Utility util;
+					Tools::Utility util;
 
-				string GroupId = util.V8Utf8ValueToStdString(args[0]);
+					string GroupId = util.V8Utf8ValueToStdString(args[0]);
 
-				DataControlesyn dataGroupId;
+					DataControlesyn dataGroupId;
 
-				dataGroupId.Output.GroupId = new char[GroupId.length() + 1];;
+					dataGroupId.Output.GroupId = new char[GroupId.length() + 1];;
 
-				std::strcpy(dataGroupId.Output.GroupId, GroupId.c_str());
+					std::strcpy(dataGroupId.Output.GroupId, GroupId.c_str());
 
-				Output->push_back(dataGroupId);
+					Output->push_back(dataGroupId);
 
-				Methode = 2;
+					Methode = 2;
 
-				Controle = true;
+					Controle = true;
 
-				return Output;
-			
+					return Output;
+
+				}
 			}
 		}
 	}
@@ -112,10 +129,12 @@ vector<DataControlesyn>* 			 ControleUsersynchro::ControleGetDirectorywrapsynchr
 		if (ControleUserUnwrap(args, Message, 10) == true)
 		{
 
-			Output = new vector<DataControlesyn>();
+			Userwrap* PtUserwrap = ObjectWrap::Unwrap<Userwrap>(args.Holder());
 			
+			if (ControleValideUserData(PtUserwrap->GetUserData(), Message))
+			{
+				Output = new vector<DataControlesyn>();
 
-				Userwrap* PtUserwrap = ObjectWrap::Unwrap<Userwrap>(args.Holder());
 
 				DataControlesyn dataptUser;
 
@@ -126,7 +145,7 @@ vector<DataControlesyn>* 			 ControleUsersynchro::ControleGetDirectorywrapsynchr
 				Controle = true;
 
 				return Output;
-			
+			}
 		}
 	}
 	return Output;
@@ -137,33 +156,36 @@ vector<DataControlesyn>*              ControleUsersynchro::ControleIsLoggedInsyn
 
 	vector<DataControlesyn>* Output = NULL;
 
-	if (ControleGetLenght(args, Message, 1)){
+	if (ControleGetLenght(args, Message, 2)){
 		if (ControleUserUnwrap(args, Message, 10) == true)
 		{
 			if (ControleSessionUnwrap(args, Message, 0) == true){
 
-			Output = new vector<DataControlesyn>();
+			
 
 			Userwrap* PtUserwrap = ObjectWrap::Unwrap<Userwrap>(args.Holder());
 
-			DataControlesyn dataptUser;
+			if (ControleValideUserData(PtUserwrap->GetUserData(), Message))
+			{
+				Output = new vector<DataControlesyn>();
+				DataControlesyn dataptUser;
 
-			dataptUser.Output.PtUserwrap = PtUserwrap;
+				dataptUser.Output.PtUserwrap = PtUserwrap;
 
-			Output->push_back(dataptUser);
+				Output->push_back(dataptUser);
 
-			Sessionwrap* PtSessionwrap = ObjectWrap::Unwrap<Sessionwrap>(args[0]->ToObject());
+				Sessionwrap* PtSessionwrap = ObjectWrap::Unwrap<Sessionwrap>(args[0]->ToObject());
 
-			DataControlesyn dataptSession;
+				DataControlesyn dataptSession;
 
-			dataptSession.Output.PtSessionwrap = PtSessionwrap;
+				dataptSession.Output.PtSessionwrap = PtSessionwrap;
 
-			Output->push_back(dataptSession);
+				Output->push_back(dataptSession);
 
-			Controle = true;
+				Controle = true;
 
-			return Output;
-			
+				return Output;
+			}
 			}
 		}
 	}

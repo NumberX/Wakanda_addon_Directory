@@ -5,10 +5,15 @@
 #include"v8.h"
 #include"DataControlesyn.h"
 #include<vector>
+#include"IGroup.h"
+using namespace WaDirectory_Data;
 using namespace std;
-namespace WaDirectorywrap_data_v8{
-	class ControleGroupsynchro: public WaDirectorywrap_data_v8::ControleBasesynchro
+namespace WaDirectory_Controle{
+	class DataControlesyn;
+	class ControleGroupsynchro : public ControleBasesynchro
 	{
+		static bool ControleValideGroupData(IGroup *PtGroup, string& Message);
+
 	public:
 		ControleGroupsynchro();
 

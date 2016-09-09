@@ -1,6 +1,6 @@
 #include "ControleGroupsynchro.h"
 #include"Utility.h"
-namespace WaDirectorywrap_data_v8{
+namespace WaDirectory_Controle{
 
 	ControleGroupsynchro::ControleGroupsynchro()
 	{
@@ -10,7 +10,16 @@ namespace WaDirectorywrap_data_v8{
 	ControleGroupsynchro::~ControleGroupsynchro()
 	{
 	}
+	bool ControleGroupsynchro::ControleValideGroupData(IGroup *PtGroup, string& Message)
+	{
+		if (PtGroup == NULL)
+		{
+			Message = "PtGroup is Null";
+			return false;
+		}
+		return true;
 
+	}
 	vector<DataControlesyn>* ControleGroupsynchro::ControleGetNamesynchro(const v8::FunctionCallbackInfo<v8::Value>& args, bool& Controle, string& Message)
 	{
 		Isolate* isolate = args.GetIsolate();
@@ -23,17 +32,18 @@ namespace WaDirectorywrap_data_v8{
 		{
 			if (ControleGroupUnwrap(args, Message, 10) == true)
 			{
-				Output = new vector<DataControlesyn>();
-
 				Groupwrap* PtGroupwrap = ObjectWrap::Unwrap<Groupwrap>(args.Holder());
+				if (ControleValideGroupData(PtGroupwrap->GetGroupData(), Message))
+				{
+					Output = new vector<DataControlesyn>();
+					DataControlesyn dataptgroup;
 
-				DataControlesyn dataptgroup;
+					dataptgroup.Output.PtGroupwrap = PtGroupwrap;
 
-				dataptgroup.Output.PtGroupwrap = PtGroupwrap;
+					Output->push_back(dataptgroup);
 
-				Output->push_back(dataptgroup);
-
-				Controle = true;
+					Controle = true;
+				}
 			}
 		}
 		return Output;
@@ -51,41 +61,47 @@ namespace WaDirectorywrap_data_v8{
 					if (Controlestring(args, Message, 1) == true)
 					{
 
-						Output = new vector<DataControlesyn>();
+						
 
 						Groupwrap* PtGroupwrap = ObjectWrap::Unwrap<Groupwrap>(args.Holder());
 
-						DataControlesyn dataptgroup;
+						if (ControleValideGroupData(PtGroupwrap->GetGroupData(), Message))
+						{
+							Output = new vector<DataControlesyn>();
 
-						dataptgroup.Output.PtGroupwrap = PtGroupwrap;
 
-						Output->push_back(dataptgroup);
+							DataControlesyn dataptgroup;
 
-						Utility util;
+							dataptgroup.Output.PtGroupwrap = PtGroupwrap;
 
-						string UserId = util.V8Utf8ValueToStdString(args[0]);
+							Output->push_back(dataptgroup);
 
-						DataControlesyn ddatauser;
+							Tools::Utility util;
 
-						ddatauser.Output.UserId = new char[UserId.length() + 1];;
+							string UserId = util.V8Utf8ValueToStdString(args[0]);
 
-						std::strcpy(ddatauser.Output.UserId, UserId.c_str());
+							DataControlesyn ddatauser;
 
-						Output->push_back(ddatauser);
+							ddatauser.Output.UserId = new char[UserId.length() + 1];;
 
-						string passwordId = util.V8Utf8ValueToStdString(args[1]);
+							std::strcpy(ddatauser.Output.UserId, UserId.c_str());
 
-						DataControlesyn ddatapassword;
+							Output->push_back(ddatauser);
 
-						ddatapassword.Output.Password = new char[passwordId.length() + 1];;
+							string passwordId = util.V8Utf8ValueToStdString(args[1]);
 
-						std::strcpy(ddatapassword.Output.Password, passwordId.c_str());
+							DataControlesyn ddatapassword;
 
-						Output->push_back(ddatapassword);
+							ddatapassword.Output.Password = new char[passwordId.length() + 1];;
 
-						Controle = true;
+							std::strcpy(ddatapassword.Output.Password, passwordId.c_str());
 
-						return Output;
+							Output->push_back(ddatapassword);
+
+							Controle = true;
+
+							return Output;
+						}
 					}
 				}
 			}
@@ -104,17 +120,22 @@ namespace WaDirectorywrap_data_v8{
 		{
 			if (ControleGroupUnwrap(args, Message, 10) == true)
 			{
-				Output = new vector<DataControlesyn>();
+				
 
 				Groupwrap* PtGroupwrap = ObjectWrap::Unwrap<Groupwrap>(args.Holder());
 
-				DataControlesyn dataptgroup;
+				if (ControleValideGroupData(PtGroupwrap->GetGroupData(), Message))
+				{
+					Output = new vector<DataControlesyn>();
 
-				dataptgroup.Output.PtGroupwrap = PtGroupwrap;
+					DataControlesyn dataptgroup;
 
-				Output->push_back(dataptgroup);
+					dataptgroup.Output.PtGroupwrap = PtGroupwrap;
 
-				Controle = true;
+					Output->push_back(dataptgroup);
+
+					Controle = true;
+				}
 			}
 		}
 		return Output;
@@ -131,17 +152,22 @@ namespace WaDirectorywrap_data_v8{
 		{
 			if (ControleGroupUnwrap(args, Message, 10) == true)
 			{
-				Output = new vector<DataControlesyn>();
+
 
 				Groupwrap* PtGroupwrap = ObjectWrap::Unwrap<Groupwrap>(args.Holder());
+			
+				if (ControleValideGroupData(PtGroupwrap->GetGroupData(), Message))
+				{
+					Output = new vector<DataControlesyn>();
 
-				DataControlesyn dataptgroup;
+					DataControlesyn dataptgroup;
 
-				dataptgroup.Output.PtGroupwrap = PtGroupwrap;
+					dataptgroup.Output.PtGroupwrap = PtGroupwrap;
 
-				Output->push_back(dataptgroup);
+					Output->push_back(dataptgroup);
 
-				Controle = true;
+					Controle = true;
+				}
 			}
 		}
 		return Output;

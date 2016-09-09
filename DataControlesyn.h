@@ -6,8 +6,8 @@
 #include"Sessionwrap.h"
 using namespace v8;
 using namespace std;
-using namespace WaDirectorywrap_data_v8;
-namespace WaDirectorywrap_data_v8{
+using namespace WaDirectory_View;
+namespace WaDirectory_Controle{
 	union DataContsyn
 	{
 	

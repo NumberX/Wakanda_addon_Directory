@@ -16,7 +16,7 @@ using namespace std;
     // class vector;
 // }
 
-namespace WaDirectory
+namespace WaDirectory_Data
 {
 
 

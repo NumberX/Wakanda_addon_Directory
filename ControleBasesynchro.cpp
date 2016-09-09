@@ -7,7 +7,8 @@
 #include <node.h>
 #include <node_object_wrap.h>
 #include<iostream>
-namespace WaDirectorywrap_data_v8 {
+using namespace WaDirectory_View;
+namespace WaDirectory_Controle {
 	ControleBasesynchro::ControleBasesynchro()
 	{
 	}

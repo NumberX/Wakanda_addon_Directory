@@ -1,6 +1,6 @@
 #include "JsonData.h"
 
-namespace WaDirectory_data
+namespace WaDirectory_Data
 {
 
 	JsonData::JsonData()

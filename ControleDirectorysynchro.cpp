@@ -1,12 +1,13 @@
 #include"ControleDirectorysynchro.h"
 #include"Directorywrap.h"
 #include"ControleBasesynchro.h"
+#include"DataControlesyn.h"
 #include"Utility.h"
 #include <node.h>
 #include <node_object_wrap.h>
 #include<iostream>
-using namespace WaDirectorywrap_data_v8;
-namespace WaDirectorywrap_data_v8{
+using namespace WaDirectory_View;
+namespace WaDirectory_Controle{
 	ControleDirectorysynchro::ControleDirectorysynchro(){
 	
 	}
@@ -27,33 +28,38 @@ namespace WaDirectorywrap_data_v8{
 
 		if (ControleGetLenght(args, Message, 1))
 		{
-			if (ControleDirectoryUnwrap(args, Message,10) == true)
+			if (ControleDirectoryUnwrap(args, Message, 10) == true)
 			{
-				Output = new vector<DataControlesyn>();
-
 				Directorywrap* PtDirectorywrap = ObjectWrap::Unwrap<Directorywrap>(args.Holder());
 
-				DataControlesyn dataptdirectory;
-
-				dataptdirectory.Output.PtDirectorywrap = PtDirectorywrap;
-
-				Output->push_back(dataptdirectory);
-
-				if (ControleSessionUnwrap(args, Message,0) == true)
+				if (ControleValideDirectoryData(PtDirectorywrap->GetDirectory(), Message))
 				{
-					Sessionwrap* PtSessionWrap = ObjectWrap::Unwrap<Sessionwrap>(args[0]->ToObject());
+					Output = new vector<DataControlesyn>();
 
-					DataControlesyn dataptsession;
+					
 
-					dataptsession.Output.PtSessionwrap = PtSessionWrap;
+					DataControlesyn dataptdirectory;
 
-					Output->push_back(dataptsession);
+					dataptdirectory.Output.PtDirectorywrap = PtDirectorywrap;
 
-					Controle = true;
+					Output->push_back(dataptdirectory);
 
-					return Output;
+					if (ControleSessionUnwrap(args, Message, 0) == true)
+					{
+						Sessionwrap* PtSessionWrap = ObjectWrap::Unwrap<Sessionwrap>(args[0]->ToObject());
+
+						DataControlesyn dataptsession;
+
+						dataptsession.Output.PtSessionwrap = PtSessionWrap;
+
+						Output->push_back(dataptsession);
+
+						Controle = true;
+
+						return Output;
+					}
+
 				}
-
 			}
 
 
@@ -74,33 +80,38 @@ namespace WaDirectorywrap_data_v8{
 
 		vector<DataControlesyn>* Output=NULL;
 
-		if(ControleGetLenght(args, Message,1))
+		if(ControleGetLenght(args, Message,2))
 		{ 
 		if (ControleDirectoryUnwrap(args,Message,10) == true)
 		{
-			Output = new vector<DataControlesyn>();
+			
 
 			Directorywrap* PtDirectorywrap = ObjectWrap::Unwrap<Directorywrap>(args.Holder());
 
-			DataControlesyn dataptdirectory;
+			if (ControleValideDirectoryData(PtDirectorywrap->GetDirectory(), Message))
+			{
+				Output = new vector<DataControlesyn>();
 
-			dataptdirectory.Output.PtDirectorywrap = PtDirectorywrap;
+				DataControlesyn dataptdirectory;
 
-			Output->push_back(dataptdirectory);
+				dataptdirectory.Output.PtDirectorywrap = PtDirectorywrap;
 
-			if(ControleUserUnwrap(args,Message,0)== true)
-			{ 
-				Userwrap* PtUserWrap = ObjectWrap::Unwrap<Userwrap>(args[0]->ToObject());
+				Output->push_back(dataptdirectory);
 
-				DataControlesyn dataptuser;
+				if (ControleUserUnwrap(args, Message, 0) == true)
+				{
+					Userwrap* PtUserWrap = ObjectWrap::Unwrap<Userwrap>(args[0]->ToObject());
 
-				dataptuser.Output.PtUserwrap = PtUserWrap;
+					DataControlesyn dataptuser;
 
-				Output->push_back(dataptuser);
+					dataptuser.Output.PtUserwrap = PtUserWrap;
 
-				Controle = true;
+					Output->push_back(dataptuser);
 
-				return Output;
+					Controle = true;
+
+					return Output;
+				}
 			}
 		
 		}
@@ -135,9 +146,11 @@ namespace WaDirectorywrap_data_v8{
 			}
 			else
 			{
-				Output = new vector<DataControlesyn>();
-
 				Directorywrap* PtDirectorywrap = ObjectWrap::Unwrap<Directorywrap>(args.Holder());
+
+				if (ControleValideDirectoryData(PtDirectorywrap->GetDirectory(), Message))
+				{ 
+				Output = new vector<DataControlesyn>();
 
 				DataControlesyn dataptdirectory;
 
@@ -147,18 +160,19 @@ namespace WaDirectorywrap_data_v8{
 
 				Controle = true;
 
+				
 				return Output;
+				}
 
 			}
 
 
 		}
-		else
-		{
+
 
 			return Output;
 
-		}
+		
 
 	}
 
@@ -195,43 +209,46 @@ namespace WaDirectorywrap_data_v8{
 
 					if (Controlestring(args, Message, 1) == true)
 					{
-						
-
-						Output = new vector<DataControlesyn>();
-
 						Directorywrap* PtDirectorywrap = ObjectWrap::Unwrap<Directorywrap>(args.Holder());
 
-						DataControlesyn dataptdirectory;
+						
+						if (ControleValideDirectoryData(PtDirectorywrap->GetDirectory(), Message))
+						{
 
-						dataptdirectory.Output.PtDirectorywrap= PtDirectorywrap;
+							Output = new vector<DataControlesyn>();
 
-						Output->push_back(dataptdirectory);
+							DataControlesyn dataptdirectory;
 
-						Utility util;
+							dataptdirectory.Output.PtDirectorywrap = PtDirectorywrap;
 
-						string UserId = util.V8Utf8ValueToStdString(args[0]);
+							Output->push_back(dataptdirectory);
 
-						DataControlesyn dataUserId;
+							Tools::Utility util;
 
-						dataUserId.Output.UserId = new char[UserId.length() + 1];;
+							string UserId = util.V8Utf8ValueToStdString(args[0]);
 
-						std::strcpy(dataUserId.Output.UserId, UserId.c_str());
+							DataControlesyn dataUserId;
 
-						Output->push_back(dataUserId);
+							dataUserId.Output.UserId = new char[UserId.length() + 1];;
 
-						string PasswordId = util.V8Utf8ValueToStdString(args[1]);
+							std::strcpy(dataUserId.Output.UserId, UserId.c_str());
 
-						DataControlesyn dataPasswordId;
+							Output->push_back(dataUserId);
 
-						dataPasswordId.Output.Password = new char[PasswordId.length() + 1];;
+							string PasswordId = util.V8Utf8ValueToStdString(args[1]);
 
-						std::strcpy(dataPasswordId.Output.Password, PasswordId.c_str());
+							DataControlesyn dataPasswordId;
 
-						Output->push_back(dataPasswordId);
+							dataPasswordId.Output.Password = new char[PasswordId.length() + 1];;
 
-						Controle = true;
+							std::strcpy(dataPasswordId.Output.Password, PasswordId.c_str());
 
-						return Output;
+							Output->push_back(dataPasswordId);
+
+							Controle = true;
+
+							return Output;
+						}
 					}
 
 				}
@@ -261,31 +278,35 @@ namespace WaDirectorywrap_data_v8{
 
 				if (Controlestring(args, Message, 0) == true)
 				{
-					Output = new vector<DataControlesyn>();
-
 					Directorywrap* PtDirectorywrap = ObjectWrap::Unwrap<Directorywrap>(args.Holder());
 
-					DataControlesyn dataptdirectory;
+					if (ControleValideDirectoryData(PtDirectorywrap->GetDirectory(), Message))
+					{
 
-					dataptdirectory.Output.PtDirectorywrap = PtDirectorywrap;
+						Output = new vector<DataControlesyn>();
 
-					Output->push_back(dataptdirectory);
-				
-					Utility util;
+						DataControlesyn dataptdirectory;
 
-					string dataId = util.V8Utf8ValueToStdString(args[0]);
+						dataptdirectory.Output.PtDirectorywrap = PtDirectorywrap;
 
-					DataControlesyn ddatapassage;
+						Output->push_back(dataptdirectory);
 
-					ddatapassage.Output.DataPassage = new char[dataId.length() + 1];;
+						Tools::Utility util;
 
-					std::strcpy(ddatapassage.Output.DataPassage, dataId.c_str());
+						string dataId = util.V8Utf8ValueToStdString(args[0]);
 
-					Output->push_back(ddatapassage);
+						DataControlesyn ddatapassage;
 
-					Controle = true;
-					
-					return Output;
+						ddatapassage.Output.DataPassage = new char[dataId.length() + 1];;
+
+						std::strcpy(ddatapassage.Output.DataPassage, dataId.c_str());
+
+						Output->push_back(ddatapassage);
+
+						Controle = true;
+
+						return Output;
+					}
 
 				}
 
@@ -298,7 +319,16 @@ namespace WaDirectorywrap_data_v8{
 
 
 	}
-	
+	bool ControleDirectorysynchro::ControleValideDirectoryData(IDirectory *PtDirectory,string& Message)
+	{
+		if (PtDirectory == NULL)
+		{
+			Message = "IDirectory is Null";
+			return false;
+		}
+		return true;
+
+	}
 	vector<DataControlesyn>*	ControleDirectorysynchro::ControleUserwrapBelongTosynchro(const v8::FunctionCallbackInfo<v8::Value>& args, bool& Controle, string& Message, int& MethodeNumber)
 	{
 
@@ -308,13 +338,18 @@ namespace WaDirectorywrap_data_v8{
 
 		vector<DataControlesyn>* Output = NULL;
 
-		if (ControleGetLenght(args, Message, 2))
+		if (ControleGetLenght(args, Message, 3))
 		{
 			if (ControleDirectoryUnwrap(args, Message,10) == true)
 			{
-				Output = new vector<DataControlesyn>();
-
 				Directorywrap* PtDirectorywrap = ObjectWrap::Unwrap<Directorywrap>(args.Holder());
+
+				if (ControleValideDirectoryData(PtDirectorywrap->GetDirectory(), Message))
+				{
+					
+					Output = new vector<DataControlesyn>();
+
+				
 
 				DataControlesyn dataptdirectory;
 
@@ -334,7 +369,7 @@ namespace WaDirectorywrap_data_v8{
 
 					if (Controlestring(args, Message, 1) == true)
 					{
-						Utility util;
+						Tools::Utility util;
 
 						string GroupId = util.V8Utf8ValueToStdString(args[1]);
 
@@ -384,7 +419,7 @@ namespace WaDirectorywrap_data_v8{
 
 						Output->push_back(dataptSession);
 
-						Utility util;
+						Tools::Utility util;
 
 						string GroupId = util.V8Utf8ValueToStdString(args[1]);
 
@@ -405,6 +440,7 @@ namespace WaDirectorywrap_data_v8{
 
 					}
 
+				}
 				}
 			}
 		}
@@ -440,28 +476,62 @@ namespace WaDirectorywrap_data_v8{
 
 	}
 
-	vector<DataControlesyn>* ControleDirectorysynchro::ControleGetSessionwrapsynchro(const v8::FunctionCallbackInfo<v8::Value>& args, bool& Controle, string& Message)
+	vector<DataControlesyn>* ControleDirectorysynchro::ControleGetSessionwrapsynchro(const v8::FunctionCallbackInfo<v8::Value>& args, bool& Controle, string& Message,int& Methode)
 	{
 	
-		vector<DataControlesyn>* Output = ControleGetGroupSessionsynchro(args, Controle, Message);
+		Isolate* isolate = args.GetIsolate();
 
-		if (Controle == true)
+		Controle = false;
+
+		vector<DataControlesyn>* Output = NULL;
+
+		if (ControleGetLenght(args, Message, 2))
 		{
+			if (ControleDirectoryUnwrap(args, Message, 10) == true)
+			{
 
-			DataControlesyn ddatapassage = Output->at(1);
+				if (Controlestring(args, Message, 0) == true)
+				{
+					Directorywrap* PtDirectorywrap = ObjectWrap::Unwrap<Directorywrap>(args.Holder());
 
-			DataControlesyn dataIdSession;
+					if (ControleValideDirectoryData(PtDirectorywrap->GetDirectory(), Message))
+					{
+						Methode = 1;
 
-			dataIdSession.Output.SessionId = ddatapassage.Output.DataPassage;
+						Output = new vector<DataControlesyn>();
 
-			Output->pop_back();
+						DataControlesyn dataptdirectory;
 
-			Output->push_back(dataIdSession);
+						dataptdirectory.Output.PtDirectorywrap = PtDirectorywrap;
 
-			return Output;
+						Output->push_back(dataptdirectory);
+
+						Tools::Utility util;
+
+						string dataId = util.V8Utf8ValueToStdString(args[0]);
+
+						DataControlesyn dataIdSession;
+
+						dataIdSession.Output.SessionId = new char[dataId.length() + 1];;
+
+						std::strcpy(dataIdSession.Output.SessionId, dataId.c_str());
+
+						Output->push_back(dataIdSession);
+
+						Controle = true;
+
+						return Output;
+					}
+
+				}
+
+			}
+
 		}
 
+
 		return Output;
+
 	
 	}
 

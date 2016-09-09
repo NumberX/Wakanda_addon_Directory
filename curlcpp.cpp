@@ -3,7 +3,7 @@
 #include "curlcpp.h"
 
 using namespace std;
-namespace WaDirectory_data
+namespace WaDirectory_Data
 {
 
 	curlcpp::curlcpp(string Url)
@@ -156,7 +156,7 @@ namespace WaDirectory_data
 		return Resultat;
 
 	}
-	void WaDirectory_data::curlcpp::CurlCppSetOption(string Url,CURL* curl)
+	void curlcpp::CurlCppSetOption(string Url,CURL* curl)
 	{
 
 

@@ -6,9 +6,10 @@
 #include"DataControlesyn.h"
 #include<vector>
 using namespace std;
-namespace WaDirectorywrap_data_v8{
-	class ControleUsersynchro :public WaDirectorywrap_data_v8::ControleBasesynchro
+namespace WaDirectory_Controle{
+	class ControleUsersynchro :public ControleBasesynchro
 	{
+		static bool ControleValideUserData(IUser *PtUser, string& Message);
 	public:
 		ControleUsersynchro();
 		~ControleUsersynchro();

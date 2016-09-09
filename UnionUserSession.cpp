@@ -1,6 +1,6 @@
 #include "UnionUserSession.h"
 
-namespace WaDirectory
+namespace WaDirectory_Data
 {
 	UnionUserSession::UnionUserSession()
 	{

@@ -16,7 +16,7 @@ using namespace std;
 // }
 
 
-namespace WaDirectory
+namespace WaDirectory_Data
 {
 
     class IDirectory;

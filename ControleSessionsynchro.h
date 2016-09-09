@@ -5,10 +5,15 @@
 #include"v8.h"
 #include"DataControlesyn.h"
 #include<vector>
+#include"ISession.h"
+using namespace WaDirectory_Data;
 using namespace std;
-namespace WaDirectorywrap_data_v8{
-	class ControleSessionsynchro :public WaDirectorywrap_data_v8::ControleBasesynchro
+namespace WaDirectory_Controle{
+	class DataControlesyn;
+	class ControleSessionsynchro :public ControleBasesynchro
 	{
+		static bool ControleValideSessionData(ISession *PtSession, string& Message);
+
 	public:
 		ControleSessionsynchro();
 		~ControleSessionsynchro();

@@ -1,7 +1,7 @@
 #pragma once
 #include<string>
 using namespace std;
-namespace WaDirectory
+namespace WaDirectory_Data
 { 
 class UnionUserSession
 {

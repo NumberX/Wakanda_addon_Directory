@@ -14,7 +14,7 @@
 using namespace std;
 
 
-namespace WaDirectory
+namespace WaDirectory_Data
 {
 
 

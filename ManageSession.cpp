@@ -2,7 +2,7 @@
 #include<string>
 #include<iostream>
 using namespace std;
-namespace WaDirectory
+namespace WaDirectory_Data
 {
 	ManageSession::ManageSession()
 	{

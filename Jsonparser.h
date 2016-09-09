@@ -2,7 +2,7 @@
 #include<string>
 #include<vector>
 using namespace std;
-namespace WaDirectory_data
+namespace WaDirectory_Data
 {
 	class curlcpp;
 	class Jsonparser

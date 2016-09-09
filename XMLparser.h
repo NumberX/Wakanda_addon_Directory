@@ -5,7 +5,7 @@
 #include<vector>
 using namespace rapidxml;
 using namespace std;
-namespace WaDirectory_data
+namespace WaDirectory_Data
 {
 	class XMLparser
 	{

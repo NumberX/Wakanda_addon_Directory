@@ -3,7 +3,7 @@
 #include"JsonData.h"
 #include "curl/curl.h"
 #include "curl/easy.h"
-namespace WaDirectory_data
+namespace WaDirectory_Data
 {
 	class JsonData;
 	class curlcpp
