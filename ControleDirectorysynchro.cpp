@@ -337,23 +337,21 @@ namespace WaDirectory_Controle{
 		Controle = false;
 
 		vector<DataControlesyn>* Output = NULL;
-
-		if (ControleGetLenght(args, Message, 3))
+	
+		if (ControleDirectoryUnwrap(args, Message, 10) == true)
 		{
-			if (ControleDirectoryUnwrap(args, Message,10) == true)
+			Directorywrap* PtDirectorywrap = ObjectWrap::Unwrap<Directorywrap>(args.Holder());
+
+			if (ControleValideDirectoryData(PtDirectorywrap->GetDirectory(), Message))
 			{
-				Directorywrap* PtDirectorywrap = ObjectWrap::Unwrap<Directorywrap>(args.Holder());
-
-				if (ControleValideDirectoryData(PtDirectorywrap->GetDirectory(), Message))
-				{
-					
-					Output = new vector<DataControlesyn>();
-
-				
 
 				DataControlesyn dataptdirectory;
 
 				dataptdirectory.Output.PtDirectorywrap = PtDirectorywrap;
+
+				if (ControleGetLenght(args, Message, 3))
+				{
+			    Output = new vector<DataControlesyn>();
 
 				Output->push_back(dataptdirectory);
 
@@ -442,6 +440,37 @@ namespace WaDirectory_Controle{
 
 				}
 				}
+				if (ControleGetLenght(args, Message, 2))
+				{
+					Output = new vector<DataControlesyn>();
+
+					Output->push_back(dataptdirectory);
+
+					Local<Context> CurentContext = isolate->GetCurrentContext();
+
+					if (CurentContext->GetEmbedderData(0)->IsArgumentsObject())
+					{
+						MethodeNumber = 3;
+
+						DataControlesyn dataPtSession;
+
+						Local<Value> SessionObject1 = CurentContext->GetEmbedderData(0);
+
+						Local<Object> SessionObject = SessionObject1->ToObject();
+
+						Sessionwrap* PtSession = Sessionwrap::Unwrap<Sessionwrap>(SessionObject);
+
+						dataPtSession.Output.PtSessionwrap = PtSession;
+
+						Output->push_back(dataPtSession);
+
+						Controle = true;
+					}
+
+					return Output;
+
+
+				}
 			}
 		}
 		Message="Wrong argument";
@@ -485,24 +514,29 @@ namespace WaDirectory_Controle{
 
 		vector<DataControlesyn>* Output = NULL;
 
-		if (ControleGetLenght(args, Message, 2))
+		if (ControleDirectoryUnwrap(args, Message, 10) == true)
 		{
-			if (ControleDirectoryUnwrap(args, Message, 10) == true)
+			Directorywrap* PtDirectorywrap = ObjectWrap::Unwrap<Directorywrap>(args.Holder());
+
+			DataControlesyn dataptdirectory;
+
+			dataptdirectory.Output.PtDirectorywrap = PtDirectorywrap;
+			if (ControleValideDirectoryData(PtDirectorywrap->GetDirectory(), Message))
 			{
+
+
+				if (ControleGetLenght(args, Message, 2))
+		
+				{
+			
 
 				if (Controlestring(args, Message, 0) == true)
 				{
-					Directorywrap* PtDirectorywrap = ObjectWrap::Unwrap<Directorywrap>(args.Holder());
+					
 
-					if (ControleValideDirectoryData(PtDirectorywrap->GetDirectory(), Message))
-					{
-						Methode = 1;
+					    Methode = 1;
 
 						Output = new vector<DataControlesyn>();
-
-						DataControlesyn dataptdirectory;
-
-						dataptdirectory.Output.PtDirectorywrap = PtDirectorywrap;
 
 						Output->push_back(dataptdirectory);
 
@@ -522,6 +556,36 @@ namespace WaDirectory_Controle{
 
 						return Output;
 					}
+				if (ControleGetLenght(args, Message, 1))
+
+				{
+					Local<Context> CurentContext = isolate->GetCurrentContext();
+
+					if (CurentContext->GetEmbedderData(0)->IsArgumentsObject())
+					{
+						Methode = 2;
+
+						Output = new vector<DataControlesyn>();
+
+						Output->push_back(dataptdirectory);
+
+						DataControlesyn dataPtSession;
+
+						Local<Value> SessionObject1 = CurentContext->GetEmbedderData(0);
+
+						Local<Object> SessionObject = SessionObject1->ToObject();
+
+						Sessionwrap* PtSession = Sessionwrap::Unwrap<Sessionwrap>(SessionObject);
+
+						dataPtSession.Output.PtSessionwrap = PtSession;
+
+						Output->push_back(dataPtSession);
+
+						Controle = true;
+
+						return Output;
+					}
+				}
 
 				}
 

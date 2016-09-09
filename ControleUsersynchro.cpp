@@ -156,21 +156,29 @@ vector<DataControlesyn>*              ControleUsersynchro::ControleIsLoggedInsyn
 
 	vector<DataControlesyn>* Output = NULL;
 
-	if (ControleGetLenght(args, Message, 2)){
-		if (ControleUserUnwrap(args, Message, 10) == true)
+	if (ControleUserUnwrap(args, Message, 10) == true)
+	{
+		Userwrap* PtUserwrap = ObjectWrap::Unwrap<Userwrap>(args.Holder());
+
+		DataControlesyn dataptUser;
+
+		dataptUser.Output.PtUserwrap = PtUserwrap;
+
+		if (ControleValideUserData(PtUserwrap->GetUserData(), Message))
 		{
+
+
+	
+			if (ControleGetLenght(args, Message, 2)){
+
+		
 			if (ControleSessionUnwrap(args, Message, 0) == true){
 
 			
 
-			Userwrap* PtUserwrap = ObjectWrap::Unwrap<Userwrap>(args.Holder());
-
-			if (ControleValideUserData(PtUserwrap->GetUserData(), Message))
-			{
+			
 				Output = new vector<DataControlesyn>();
-				DataControlesyn dataptUser;
-
-				dataptUser.Output.PtUserwrap = PtUserwrap;
+				
 
 				Output->push_back(dataptUser);
 
@@ -186,6 +194,37 @@ vector<DataControlesyn>*              ControleUsersynchro::ControleIsLoggedInsyn
 
 				return Output;
 			}
+			}
+			if (ControleGetLenght(args, Message, 1)){
+				Output = new vector<DataControlesyn>();
+
+				Output = new vector<DataControlesyn>();
+
+
+				Output->push_back(dataptUser);
+
+				Local<Context> CurentContext = isolate->GetCurrentContext();
+
+				if (CurentContext->GetEmbedderData(0)->IsArgumentsObject())
+				{
+					
+
+					DataControlesyn dataPtSession;
+
+					Local<Value> SessionObject1 =CurentContext->GetEmbedderData(0);
+
+					Local<Object> SessionObject = SessionObject1->ToObject();
+
+					Sessionwrap* PtSession = Sessionwrap::Unwrap<Sessionwrap>(SessionObject);
+
+					dataPtSession.Output.PtSessionwrap = PtSession;
+
+					Output->push_back(dataPtSession);
+
+					Controle = true;
+				}
+
+				return Output;
 			}
 		}
 	}

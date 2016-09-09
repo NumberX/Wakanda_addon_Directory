@@ -235,9 +235,19 @@ void Directorywrap::LogInWorkComplete(uv_work_t  *request, int status)
 	Work *work = (Work *)(request->data);
 
 	ISession *PtSession = work->Intra_Data[1].Argument.PtSession;
+	
+	Local<Object> ObjectSessionwrap;
 
-	Local<Object> ObjectSessionwrap = Sessionwrap::CreateSessionWrap(isolate, PtSession, work->Intra_Data[0].Argument.PtDirectorywrap);
+	if (PtSession!=NULL)
+	{ 
 
+	ObjectSessionwrap = Sessionwrap::CreateSessionWrap(isolate, PtSession, work->Intra_Data[0].Argument.PtDirectorywrap);
+
+	Local<Context> CurrentContext = isolate->GetCurrentContext();
+
+	CurrentContext->SetEmbedderData(0, ObjectSessionwrap);
+
+	}
 	Handle<Value> args[] = { Null(isolate), ObjectSessionwrap };
 
 	Local<Function>::New(isolate, work->callback)->Call(isolate->GetCurrentContext()->Global(), 2, args);
@@ -447,39 +457,73 @@ void Directorywrap::GetSessionwrap(const FunctionCallbackInfo<Value>& args) {
 	vector<DataControlesyn>* Pt_Vector = PtControleDirectorysynchro->ControleGetSessionwrapsynchro(args, controle, Message,Methode);
 	if (controle == true)
 	{
-		if (Methode==1)
-		{ 
-		Work *work = new Work();
+		if (Methode == 1)
+		{
+			Work *work = new Work();
 
-		work->request.data = work;
+			work->request.data = work;
 
-		DataControlesyn Directorydata = Pt_Vector->at(0);
+			DataControlesyn Directorydata = Pt_Vector->at(0);
 
-		Directorywrap* PtDirectorywrap = Directorydata.Output.PtDirectorywrap;
+			Directorywrap* PtDirectorywrap = Directorydata.Output.PtDirectorywrap;
 
-		Thread_Data Pt_DirectoryWrap_Intra;
+			Thread_Data Pt_DirectoryWrap_Intra;
 
-		Pt_DirectoryWrap_Intra.Argument.PtDirectorywrap = PtDirectorywrap;
+			Pt_DirectoryWrap_Intra.Argument.PtDirectorywrap = PtDirectorywrap;
 
-		work->Intra_Data.push_back(Pt_DirectoryWrap_Intra);
+			work->Intra_Data.push_back(Pt_DirectoryWrap_Intra);
 
-		DataControlesyn IdSessiondata = Pt_Vector->at(1);
+			DataControlesyn IdSessiondata = Pt_Vector->at(1);
 
-		Thread_Data Pt_SessionId;
+			Thread_Data Pt_SessionId;
 
-		Pt_SessionId.Argument.SessionId = IdSessiondata.Output.SessionId;
+			Pt_SessionId.Argument.SessionId = IdSessiondata.Output.SessionId;
 
-		work->Input_Data.push_back(Pt_SessionId);
+			work->Input_Data.push_back(Pt_SessionId);
 
-		Local<Function> commeback = Local<Function>::Cast(args[1]);
+			Local<Function> commeback = Local<Function>::Cast(args[1]);
 
-		work->callback.Reset(isolate, commeback);
+			work->callback.Reset(isolate, commeback);
 
-		uv_queue_work(uv_default_loop(), &work->request, GetSessionwrapWork1, GetSessionwrapWorkComplete1);
+			uv_queue_work(uv_default_loop(), &work->request, GetSessionwrapWork1, GetSessionwrapWorkComplete1);
 
-		args.GetReturnValue().Set(Undefined(isolate));
-
+			args.GetReturnValue().Set(Undefined(isolate));
 		}
+		if (Methode == 2)
+		{
+			Work *work = new Work();
+
+			work->request.data = work;
+
+			DataControlesyn Directorydata = Pt_Vector->at(0);
+
+			Directorywrap* PtDirectorywrap = Directorydata.Output.PtDirectorywrap;
+
+			Thread_Data Pt_DirectoryWrap_Intra;
+
+			Pt_DirectoryWrap_Intra.Argument.PtDirectorywrap = PtDirectorywrap;
+
+			work->Intra_Data.push_back(Pt_DirectoryWrap_Intra);
+
+			DataControlesyn IdSessiondata = Pt_Vector->at(1);
+
+			Thread_Data Pt_Session;
+
+			Pt_Session.Argument.ptSessionwrap = IdSessiondata.Output.PtSessionwrap;
+
+			work->Input_Data.push_back(Pt_Session);
+
+			Local<Function> commeback = Local<Function>::Cast(args[1]);
+
+			work->callback.Reset(isolate, commeback);
+
+			uv_queue_work(uv_default_loop(), &work->request, GetSessionwrapWok2, GetSessionwrapWorkComplete2);
+
+			args.GetReturnValue().Set(Undefined(isolate));
+		}
+
+
+		
 	}
 else{
 
@@ -515,8 +559,12 @@ void Directorywrap::GetSessionwrapWorkComplete1(uv_work_t  *request, int status)
 
 	ISession *PtSession = work->Intra_Data[1].Argument.PtSession;
 
-	Local<Object> ObjectSessionwrap = Sessionwrap::CreateSessionWrap(isolate, PtSession, work->Intra_Data[0].Argument.PtDirectorywrap);
-
+	Local<Object> ObjectSessionwrap;
+	if (PtSession!=NULL)
+	{ 
+	
+		ObjectSessionwrap = Sessionwrap::CreateSessionWrap(isolate, PtSession, work->Intra_Data[0].Argument.PtDirectorywrap);
+	}
 	Handle<Value> args[] = { Null(isolate), ObjectSessionwrap };
 
 	Local<Function>::New(isolate, work->callback)->Call(isolate->GetCurrentContext()->Global(), 2, args);
@@ -527,11 +575,40 @@ void Directorywrap::GetSessionwrapWorkComplete1(uv_work_t  *request, int status)
 }
 void Directorywrap::GetSessionwrapWok2(uv_work_t  *request)
 {
+	Work *work = (Work*)(request->data);
+
+	Sessionwrap* PtSession = work->Input_Data[0].Argument.ptSessionwrap;
+
+	Thread_Data Pt_SessionWrap_Intra;
+
+	Pt_SessionWrap_Intra.Argument.ptSessionwrap = PtSession;
+
+	work->Intra_Data.push_back(Pt_SessionWrap_Intra);
 
 }
 void Directorywrap::GetSessionwrapWorkComplete2(uv_work_t  *request, int status)
 {
+	Isolate *isolate = Isolate::GetCurrent();
 
+	HandleScope scoop(isolate);
+
+	Work *work = (Work *)(request->data);
+
+	Sessionwrap *PtSessionwrap = work->Intra_Data[1].Argument.ptSessionwrap;
+
+	Local<Object> ObjectSessionwrap;
+	if (PtSessionwrap != NULL)
+	{
+
+		ObjectSessionwrap = PtSessionwrap->handle();
+	}
+	Handle<Value> args[] = { Null(isolate), ObjectSessionwrap };
+
+	Local<Function>::New(isolate, work->callback)->Call(isolate->GetCurrentContext()->Global(), 2, args);
+
+	work->callback.Reset();
+
+	delete work;
 }
 void Directorywrap::UserwrapBelongTo(const FunctionCallbackInfo<Value>& args) {
 

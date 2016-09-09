@@ -229,9 +229,13 @@ namespace WaDirectory_View {
 		Work *work = (Work *)(request->data);
 
 		IUser *PtUser = work->Intra_Data[1].Argument.Ptuser;
+		Local<Object> ObjectUserwrap;
+		if (PtUser!=NULL)
+		{ 
 
-		Local<Object> ObjectUserwrap = Userwrap::CreateUserWrap(isolate, PtUser, work->Intra_Data[0].Argument.ptSessionwrap->Pt_DirectoryWrap);
-
+		
+			ObjectUserwrap = Userwrap::CreateUserWrap(isolate, PtUser, work->Intra_Data[0].Argument.ptSessionwrap->Pt_DirectoryWrap);
+		}
 		Handle<Value> args[] = { Null(isolate), ObjectUserwrap };
 
 		Local<Function>::New(isolate, work->callback)->Call(isolate->GetCurrentContext()->Global(), 2, args);
