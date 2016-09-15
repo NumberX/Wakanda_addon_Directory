@@ -91,21 +91,21 @@ void Groupwrap::Init(Local<Object> exports) {
 
   Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, New);
   
-  tpl->SetClassName(String::NewFromUtf8(isolate, "Groupwrap"));
+  tpl->SetClassName(String::NewFromUtf8(isolate, "Group"));
   
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
   NODE_SET_PROTOTYPE_METHOD(tpl, "GetName", GetName);
   
-  NODE_SET_PROTOTYPE_METHOD(tpl, "GetUserwrapByName", GetUserwrapByName);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "GetUserByName", GetUserwrapByName);
   
-  NODE_SET_PROTOTYPE_METHOD(tpl, "GetSubGroupwrapName", GetSubGroupwrapName);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "GetSubGroupsName", GetSubGroupwrapName);
   
-  NODE_SET_PROTOTYPE_METHOD(tpl, "GetDirectorywrap", GetDirectorywrap);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "GetDirectory", GetDirectorywrap);
 
   constructor.Reset(isolate, tpl->GetFunction());
 
-  exports->Set(String::NewFromUtf8(isolate, "Groupwrap"),
+  exports->Set(String::NewFromUtf8(isolate, "Group"),
 	  tpl->GetFunction());
 }
 

@@ -89,13 +89,13 @@ namespace WaDirectory_Data
 	void ManageSession::Affiche()
 	{
 		vector<UnionUserSession> List = getList();
-		std::cout << "Entrer Affiche" << endl;
+	//	std::cout << "Entrer Affiche" << endl;
 
 		for (int Iterator = 0; Iterator < List.size(); Iterator++)
 		{
 			UnionUserSession Newelement = List.at(Iterator);
 
-			std::cout << "Username :" + Newelement.Username + "  IdUser :" + Newelement.IdUser + " WSID :" + Newelement.cookies << endl;
+		//	std::cout << "Username :" + Newelement.Username + "  IdUser :" + Newelement.IdUser + " WSID :" + Newelement.cookies << endl;
 
 		}
 	

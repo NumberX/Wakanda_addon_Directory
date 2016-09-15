@@ -11,9 +11,9 @@
         ,
 		  
 	
-      "sources": [ "*.cc","*.cpp","*.h", ]
+      "sources": [ "./Src/*.cc","./Src/*.cpp","./Src/*.h", ]
 	  ,"include_dirs": [
-        "./include"
+        "./Library/include"
       ],
 	  'conditions':[
         ['OS=="win"',
@@ -29,18 +29,18 @@
           }
         ]  ],
 	  "library_dirs": [
-        "./Lib/"
+        "./Library/Lib/"
       ],
 	  "link_settings":{
 		"libraries":[ "-lcurl.lib","-llibssh2.lib","-llibcurl.lib","-lopenssl.lib","-lzlib.lib"
 	  
 		],
 		  "ldflags": [
-            "./obj/curl",
-			"./obj/libssh2",
-			"./obj/libcurl",
-			"./obj/openssl.x64",
-			"./obj/zlib",
+            "./Library/obj/curl",
+			"./Library/obj/libssh2",
+			"./Library/obj/libcurl",
+			"./Library/obj/openssl.x64",
+			"./Library/obj/zlib",
             
         ]
 	  }

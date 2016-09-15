@@ -13,6 +13,8 @@ namespace WaDirectory_Controle{
 	class ControleSessionsynchro :public ControleBasesynchro
 	{
 		static bool ControleValideSessionData(ISession *PtSession, string& Message);
+		static vector<DataControlesyn>*              ControleGetsessionbase(const v8::FunctionCallbackInfo<v8::Value>& args, bool& Controle, string& Message);
+
 
 	public:
 		ControleSessionsynchro();

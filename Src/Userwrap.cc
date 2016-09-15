@@ -87,21 +87,21 @@ void Userwrap::Init(Local<Object> exports) {
 
   Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, New);
  
-  tpl->SetClassName(String::NewFromUtf8(isolate, "Userwrap"));
+  tpl->SetClassName(String::NewFromUtf8(isolate, "User"));
   
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
   
-  NODE_SET_PROTOTYPE_METHOD(tpl, "GetDirectorywrap", GetDirectorywrap);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "GetDirectory", GetDirectorywrap);
   
   NODE_SET_PROTOTYPE_METHOD(tpl, "GetName", GetName);
   
-  NODE_SET_PROTOTYPE_METHOD(tpl, "BelongsToGroupwrap", BelongsToGroupwrap);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "BelongsToGroup", BelongsToGroupwrap);
   
   NODE_SET_PROTOTYPE_METHOD(tpl, "IsLoggedIn", IsLoggedIn);
   
   constructor.Reset(isolate, tpl->GetFunction());
   
-  exports->Set(String::NewFromUtf8(isolate, "Userwrap"),
+  exports->Set(String::NewFromUtf8(isolate, "User"),
                tpl->GetFunction());
 }
 
@@ -377,11 +377,13 @@ void Userwrap::IsLoggedIn(const FunctionCallbackInfo<Value>& args) {
 	bool Controle = false;
 
 	string Message;
+	int Methode = 0;
 
-	vector<DataControlesyn>* Pt_Vector = PtControleUsersynchro->ControleIsLoggedInsynchro(args, Controle, Message);
+	vector<DataControlesyn>* Pt_Vector = PtControleUsersynchro->ControleIsLoggedInsynchro(args, Controle, Message,Methode);
 
 	if (Controle == true)
 	{
+
 		Work *work = new Work();
 
 		work->request.data = work;
@@ -405,9 +407,16 @@ void Userwrap::IsLoggedIn(const FunctionCallbackInfo<Value>& args) {
 		Pt_SessionWrap_Intra.Argument.ptSessionwrap = PtSessionWrap;
 
 		work->Intra_Data.push_back(Pt_SessionWrap_Intra);
+		Local<Function> commeback;
+		if (Methode == 1)
+		{
+			commeback = Local<Function>::Cast(args[1]);
+		}
+		else
+		{
+			commeback = Local<Function>::Cast(args[0]);
 
-		Local<Function> commeback = Local<Function>::Cast(args[1]);
-
+		}
 		work->callback.Reset(isolate, commeback);
 
 		uv_queue_work(uv_default_loop(), &work->request, IsLoggedInWork, IsLoggedInWorkComplete);
@@ -442,6 +451,7 @@ void Userwrap::IsLoggedInWork(uv_work_t  *request)
 	Resultat = PtUserWrap->ptuser->IsLoggedIn(PtSessionWrap->ptsession);
 
 	Resultat_Intra.Argument.Resultat = Resultat;
+	
 	work->Input_Data.push_back(Resultat_Intra);
 }
 

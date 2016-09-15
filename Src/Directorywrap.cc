@@ -57,29 +57,29 @@ void Directorywrap::Init(Local<Object> exports) {
 
 	Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, New);
 
-	tpl->SetClassName(String::NewFromUtf8(isolate, "Directorywrap"));
+	tpl->SetClassName(String::NewFromUtf8(isolate, "Directory"));
   
 	tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
 	NODE_SET_PROTOTYPE_METHOD(tpl, "LogIn", LogIn);
 
-	NODE_SET_PROTOTYPE_METHOD(tpl, "GetGroupwrapNames", GetGroupwrapNames);
+	NODE_SET_PROTOTYPE_METHOD(tpl, "GetGroupsNames", GetGroupwrapNames);
   
-	NODE_SET_PROTOTYPE_METHOD(tpl, "GetGroupwrap", GetGroupwrap);
+	NODE_SET_PROTOTYPE_METHOD(tpl, "GetGroup", GetGroupwrap);
   
-	NODE_SET_PROTOTYPE_METHOD(tpl, "GetUserwrap", GetUserwrap);
+	NODE_SET_PROTOTYPE_METHOD(tpl, "GetUser", GetUserwrap);
   
-	NODE_SET_PROTOTYPE_METHOD(tpl, "GetSessionwrap", GetSessionwrap);
+	NODE_SET_PROTOTYPE_METHOD(tpl, "GetSession", GetSessionwrap);
   
-	NODE_SET_PROTOTYPE_METHOD(tpl, "UserwrapBelongTo", UserwrapBelongTo);
+	NODE_SET_PROTOTYPE_METHOD(tpl, "UserBelongTo", UserwrapBelongTo);
  
 	NODE_SET_PROTOTYPE_METHOD(tpl, "LogOut", LogOut);
 	
-	NODE_SET_PROTOTYPE_METHOD(tpl, "GetGroupwrapID", GetGroupwrapID);
+	NODE_SET_PROTOTYPE_METHOD(tpl, "GetGroupsID", GetGroupwrapID);
 
     constructor.Reset(isolate, tpl->GetFunction());
   
-	exports->Set(String::NewFromUtf8(isolate, "Directorywrap"),
+	exports->Set(String::NewFromUtf8(isolate, "Directory"),
                tpl->GetFunction());
 }
 
@@ -243,9 +243,11 @@ void Directorywrap::LogInWorkComplete(uv_work_t  *request, int status)
 
 	ObjectSessionwrap = Sessionwrap::CreateSessionWrap(isolate, PtSession, work->Intra_Data[0].Argument.PtDirectorywrap);
 
+
 	Local<Context> CurrentContext = isolate->GetCurrentContext();
 
 	CurrentContext->SetEmbedderData(0, ObjectSessionwrap);
+
 
 	}
 	Handle<Value> args[] = { Null(isolate), ObjectSessionwrap };
@@ -513,7 +515,7 @@ void Directorywrap::GetSessionwrap(const FunctionCallbackInfo<Value>& args) {
 
 			work->Input_Data.push_back(Pt_Session);
 
-			Local<Function> commeback = Local<Function>::Cast(args[1]);
+			Local<Function> commeback = Local<Function>::Cast(args[0]);
 
 			work->callback.Reset(isolate, commeback);
 
@@ -700,7 +702,7 @@ void Directorywrap::UserwrapBelongTo(const FunctionCallbackInfo<Value>& args) {
 
 			args.GetReturnValue().Set(Undefined(isolate));
 		}
-		if (Methode == 3)
+		if ((Methode == 4) || (Methode == 3))
 		{
 			DataControlesyn Sessiondata = Pt_Vector->at(1);
 
@@ -719,9 +721,17 @@ void Directorywrap::UserwrapBelongTo(const FunctionCallbackInfo<Value>& args) {
 			Pt_inGroupID.Argument.GroupId = GroupIddata.Output.GroupId;
 
 			work->Input_Data.push_back(Pt_inGroupID);
-
-			Local<Function> commeback = Local<Function>::Cast(args[2]);
-
+			
+			Local<Function> commeback;
+			
+			if (Methode == 3)
+			{ 
+				commeback = Local<Function>::Cast(args[2]);
+			}
+			if(Methode == 4)
+			{ 
+				commeback = Local<Function>::Cast(args[1]);
+			}
 			work->callback.Reset(isolate, commeback);
 
 			uv_queue_work(uv_default_loop(), &work->request, UserwrapBelongToWork1, UserwrapBelongToWorkComplete1);

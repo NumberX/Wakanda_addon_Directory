@@ -1,5 +1,7 @@
 #include "ControleUsersynchro.h"
 #include"Utility.h"
+#include<iostream>
+using namespace std;
 
 namespace WaDirectory_Controle{
 	ControleUsersynchro::ControleUsersynchro()
@@ -150,7 +152,7 @@ vector<DataControlesyn>* 			 ControleUsersynchro::ControleGetDirectorywrapsynchr
 	}
 	return Output;
 }
-vector<DataControlesyn>*              ControleUsersynchro::ControleIsLoggedInsynchro(const v8::FunctionCallbackInfo<v8::Value>& args, bool& Controle, string& Message)
+vector<DataControlesyn>*              ControleUsersynchro::ControleIsLoggedInsynchro(const v8::FunctionCallbackInfo<v8::Value>& args, bool& Controle, string& Message,int& Methode1)
 {
 	Isolate* isolate = args.GetIsolate();
 
@@ -167,19 +169,14 @@ vector<DataControlesyn>*              ControleUsersynchro::ControleIsLoggedInsyn
 		if (ControleValideUserData(PtUserwrap->GetUserData(), Message))
 		{
 
-
 	
 			if (ControleGetLenght(args, Message, 2)){
 
 		
 			if (ControleSessionUnwrap(args, Message, 0) == true){
-
-			
-
 			
 				Output = new vector<DataControlesyn>();
 				
-
 				Output->push_back(dataptUser);
 
 				Sessionwrap* PtSessionwrap = ObjectWrap::Unwrap<Sessionwrap>(args[0]->ToObject());
@@ -192,26 +189,22 @@ vector<DataControlesyn>*              ControleUsersynchro::ControleIsLoggedInsyn
 
 				Controle = true;
 
+				Methode1 = 1;
+
 				return Output;
 			}
 			}
 			if (ControleGetLenght(args, Message, 1)){
-				Output = new vector<DataControlesyn>();
 
-				Output = new vector<DataControlesyn>();
+					Output = new vector<DataControlesyn>();
 
+					Output->push_back(dataptUser);
 
-				Output->push_back(dataptUser);
-
-				Local<Context> CurentContext = isolate->GetCurrentContext();
-
-				if (CurentContext->GetEmbedderData(0)->IsArgumentsObject())
-				{
-					
+					Local<Context> CurentContext = isolate->GetCurrentContext();
 
 					DataControlesyn dataPtSession;
 
-					Local<Value> SessionObject1 =CurentContext->GetEmbedderData(0);
+					Local<Value> SessionObject1 = CurentContext->GetEmbedderData(0);
 
 					Local<Object> SessionObject = SessionObject1->ToObject();
 
@@ -221,10 +214,12 @@ vector<DataControlesyn>*              ControleUsersynchro::ControleIsLoggedInsyn
 
 					Output->push_back(dataPtSession);
 
-					Controle = true;
-				}
+					Methode1 = 2;
 
-				return Output;
+					Controle = true;
+
+					return Output;
+					
 			}
 		}
 	}

@@ -100,6 +100,8 @@ namespace WaDirectory_Data
 		Jsonparser *Jspar;
 		Jspar=new Jsonparser(this->GetDirectory()->Get_Url_Wakanda(), this->GetDirectory()->Get_Url_Wakanda());
 		
+		if (inSession->cookies == "")return false;
+		
 		Jspar->cookie = inSession->cookies;
 		
 		vector<string> v1= Jspar->currentuser();
@@ -112,7 +114,7 @@ namespace WaDirectory_Data
 
 			
 		
-			return resultat;
+		return false;
 		
 		
 	}

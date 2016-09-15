@@ -97,15 +97,15 @@ namespace WaDirectory_View {
 
 		Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, NewSession);
 
-		tpl->SetClassName(String::NewFromUtf8(isolate, "Sessionwrap"));
+		tpl->SetClassName(String::NewFromUtf8(isolate, "Session"));
 
 		tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
-		NODE_SET_PROTOTYPE_METHOD(tpl, "GetUserwrap", GetUserwrap);
+		NODE_SET_PROTOTYPE_METHOD(tpl, "GetUser", GetUserwrap);
 
 		NODE_SET_PROTOTYPE_METHOD(tpl, "GetWASID", GetWASID);
 
-		NODE_SET_PROTOTYPE_METHOD(tpl, "GetDirectorywrap", GetDirectorywrap);
+		NODE_SET_PROTOTYPE_METHOD(tpl, "GetDirectory", GetDirectorywrap);
 
 		NODE_SET_PROTOTYPE_METHOD(tpl, "IsValid", IsValid);
 
@@ -113,7 +113,7 @@ namespace WaDirectory_View {
 
 		constructor.Reset(isolate, tpl->GetFunction());
 
-		exports->Set(String::NewFromUtf8(isolate, "Sessionwrap"),
+		exports->Set(String::NewFromUtf8(isolate, "Session"),
 			tpl->GetFunction());
 	}
 
@@ -409,7 +409,7 @@ namespace WaDirectory_View {
 
 		string Message;
 
-		vector<DataControlesyn>* Pt_Vector = PtControleSessionsynchro->ControleIsValidsynchro(args, Controle, Message);
+		vector<DataControlesyn>* Pt_Vector = PtControleSessionsynchro->ControleLogOutsynchro(args, Controle, Message);
 
 		if (Controle == true)
 		{
