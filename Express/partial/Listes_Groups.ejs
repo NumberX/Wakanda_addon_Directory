@@ -1,0 +1,62 @@
+<div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Listes Groups</h1>
+					<span style="color:black; display:block;">var groupsId=DirectoryObject.GetGroupsID();</span>
+	<span style="color:black; display:block;">for(Iteratorgroup in groupsId)</span>
+	<span style="color:black; display:block;">{</span>
+	<span style="color:black; display:block;">	var groupresultat=DirectoryObject.GetGroup(groupsId[Iteratorgroup]);</span>
+	<span style="color:black; display:block;">	listegroup.push(groupresultat);</span>
+		
+	<span style="color:black; display:block;">}</span>
+	</br>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                       
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                <thead>
+                                    <tr>
+                                        <th>Id Group</th>
+                                        <th>Name Group</th>
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+								<%   for (Iterator in listegroup){ 
+									var object= listegroup[Iterator];
+									
+								%>
+                                    
+                                    <tr class="gradeA">
+                                        <td><%=object.getid()%></td>
+                                        <td><%=object.GetName()%></td>
+                               
+                                    </tr>
+									<%}%>
+                                   
+                                  
+                                </tbody>
+                            </table>
+                            <!-- /.table-responsive -->
+                            
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+       
+        </div>
+		
+
+
+
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>

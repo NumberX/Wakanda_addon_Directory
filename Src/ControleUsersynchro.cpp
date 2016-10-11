@@ -181,6 +181,8 @@ vector<DataControlesyn>*              ControleUsersynchro::ControleIsLoggedInsyn
 
 				Sessionwrap* PtSessionwrap = ObjectWrap::Unwrap<Sessionwrap>(args[0]->ToObject());
 
+				std::cout << "SessionWrap cookies" << PtSessionwrap->ptsession->cookies << "\n";
+
 				DataControlesyn dataptSession;
 
 				dataptSession.Output.PtSessionwrap = PtSessionwrap;

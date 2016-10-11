@@ -6,6 +6,9 @@
 #include"Group.h"
 #include"User.h"
 #include<iostream>
+#include<fstream>
+#include<sstream>
+#include<iostream>
 using namespace std;
 namespace WaDirectory_Data
 {
@@ -19,7 +22,7 @@ namespace WaDirectory_Data
 	{
 		this->Url_Wakanda = Url_Wakanda;
 		this->Url_Directory = Url_Directory;
-		
+			
 
 	}
 
@@ -62,6 +65,59 @@ namespace WaDirectory_Data
 	
 		return false;
 	}
+
+	vector<SessionLog> Directory::loadfile()
+	{
+
+		vector<SessionLog> Resultat;
+
+		ifstream fichier("SessionManager.log", ios::in);  // on ouvre en lecture
+
+		if (fichier)  // si l'ouverture a fonctionné
+		{
+			string ligne;
+
+			while (getline(fichier, ligne))
+			{
+				istringstream iss(ligne);
+
+				string mot;
+
+				int Iterator = 0;
+
+				SessionLog SessionLoguere;
+
+				while (std::getline(iss, mot, '|'))
+				{
+
+					if (Iterator == 0){ SessionLoguere.OperationTime = mot; }
+
+					if (Iterator == 1){ SessionLoguere.TypeOperation = mot; }
+
+					if (Iterator == 2){ SessionLoguere.wsid = mot; }
+
+					if (Iterator == 3){ SessionLoguere.IdUser = mot; }
+
+					if (Iterator == 4){ SessionLoguere.NameUser = mot; }
+
+					Iterator++;
+
+				}
+
+				Resultat.push_back(SessionLoguere);
+			}
+
+			fichier.close();
+
+			return Resultat;
+		}
+		else
+			cerr << "Impossible d'ouvrir le fichier !" << endl;
+
+
+	}
+
+
 	ISession*    Directory::LogIn(const std::string& inUser, const std::string& inPassword)
 	{
 		Session* session=NULL;
@@ -81,6 +137,8 @@ namespace WaDirectory_Data
 			
 			session->cookies = wsid;
 
+			//std::cout << "\n \n Test Resultat" << wsid << endl;
+
 			IUser* UserId = GetUser(inUser, inPassword);
 
 			if (List.FindByUserId(UserId->Id) == true)
@@ -94,11 +152,8 @@ namespace WaDirectory_Data
 				LogOut(inSession);
 			}
 			
-			List.Register(UserId->Id, wsid, UserId->Username);
+			List.Register(UserId->Id, wsid, UserId->Username, Jspar->Ttl);
 
-			std::cout << "List currents Users" << endl;
-
-			List.Affiche();
 
 		 }
 		return session;
@@ -157,6 +212,18 @@ namespace WaDirectory_Data
 
 
 	}
+	void         Directory::GetUsersId(std::vector<std::string>& outGroupName)
+	{
+		XMLparser *PtparseurXml;
+
+		PtparseurXml = new XMLparser(this->Get_Url_Directory());
+
+		outGroupName.clear();
+
+		outGroupName = PtparseurXml->ListUsersId();
+
+
+	}
 
 	IGroup*      Directory::GetGroup(const std::string& inGroupName){ 
 		
@@ -187,8 +254,28 @@ namespace WaDirectory_Data
 		if (PtparseurXml->ExistUserByname(inUserName, "name"))
 		{
 			string Id = PtparseurXml->UserIdByname(inUserName);
-			PtUser = new User(inUserName, PtparseurXml->NameUserById(Id,"fullname"),Id , Password);
+			PtUser = new User(inUserName, PtparseurXml->NameUserById(Id, "fullname"), Id, Password);
 		}
+		return PtUser;
+
+
+	}
+
+
+	IUser*       Directory::GetUserById(const std::string& inUserId){
+
+		XMLparser *PtparseurXml;
+
+		PtparseurXml = new XMLparser(this->Get_Url_Directory());
+
+		User *PtUser = NULL;
+
+		string inUserName = PtparseurXml->NameUserById(inUserId, "name");
+
+		std::cout << "InUserName" << inUserName << "\n";
+		;
+		PtUser = new User(inUserName, PtparseurXml->NameUserById(inUserId, "fullname"), inUserId, "");
+		
 		return PtUser;
 
 
@@ -202,11 +289,9 @@ namespace WaDirectory_Data
 		
 		bool resultat = Jspar->Logout();
 
-		this->List.RemoveBycookies(inSession->cookies);
+		//this->List.RemoveBycookies(inSession->cookies);
 
-		std::cout << "List After Logout" << endl;
-
-		this->List.Affiche();
+		//this->List.Affiche();
 		
 		return resultat;
 		
@@ -233,6 +318,12 @@ namespace WaDirectory_Data
 		Jspar->cookie = inSession->cookies;
 		
 		bool resultat = Jspar->currentUserBelongsTo(inGroupID,"");
+		
+		//std::cout << "\n \n Test Resultat Belong 2" << Jspar->cookie << endl;
+
+		this->List.UpdateBycookies(inSession->cookies, Jspar->Ttl);
+
+		//List.Affiche();
 
 		return resultat;
 	
@@ -259,9 +350,11 @@ namespace WaDirectory_Data
 
 	bool         Directory::UserBelongTo(const IUser* inUser, const IGroup* inGroupID){ 
 		
-		XMLparser PtparseurXml(this->Get_Url_Directory());
+		XMLparser *PtparseurXml;
+
+		PtparseurXml = new XMLparser(this->Get_Url_Directory());
 		
-		return PtparseurXml.UserBelongGroup(inUser->Id, inGroupID->Idgroup);
+		return PtparseurXml->UserBelongGroup(inUser->Id, inGroupID->Idgroup);
 
 			
 	

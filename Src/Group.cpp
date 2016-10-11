@@ -32,19 +32,25 @@ namespace WaDirectory_Data
 	{
 		XMLparser *PtparseurXml;
 
-		PtparseurXml=new XMLparser(this->Pt_Directory->Get_Url_Directory());
-	
+		PtparseurXml = new XMLparser(this->Pt_Directory->Get_Url_Directory());
+
 		ouName = PtparseurXml->NameGrouoById(this->Idgroup);
 	}
+	void Group::GetId(string& ouName)
+	{
+		
 
-
+		ouName = this->Idgroup;
+	}
+	
 	IUser* Group::GetUserByName(const std::string&  Username, const std::string& Password)
 	{
 		XMLparser *PtparseurXml;
+
 		PtparseurXml = new XMLparser(this->Pt_Directory->Get_Url_Directory());
 
 		User *usr;
-		if (PtparseurXml->ExistUserByname(Username,"name"))
+		if (PtparseurXml->ExistUserByname(Username, "name"))
 		{
 			
 
@@ -61,14 +67,35 @@ namespace WaDirectory_Data
 		return usr;
 	}
 
+	void Group::GetSubGroupId(vector<string>& ouSubGroupNames)
+	{
+		ouSubGroupNames.clear();
 
+		XMLparser *PtparseurXml;
+
+		PtparseurXml = new XMLparser(this->Pt_Directory->Get_Url_Directory());
+
+		ouSubGroupNames = PtparseurXml->ListGroupIncludeId(this->Idgroup);
+	}
 	void Group::GetSubGroupName(vector<string>& ouSubGroupNames)
 	{
 		ouSubGroupNames.clear();
 		
 		XMLparser *PtparseurXml;
-		PtparseurXml=new XMLparser(this->Pt_Directory->Get_Url_Directory());
-		
+
+		PtparseurXml = new XMLparser(this->Pt_Directory->Get_Url_Directory());
+
 		ouSubGroupNames = PtparseurXml->ListGroupInclude(this->Idgroup);
+	}
+
+	void Group::Getuserinclude(vector<string>& ouSubGroupNames)
+	{
+		ouSubGroupNames.clear();
+
+		XMLparser *PtparseurXml;
+
+		PtparseurXml = new XMLparser(this->Pt_Directory->Get_Url_Directory());
+
+		ouSubGroupNames = PtparseurXml->ListGroupIncludeId(this->Idgroup);
 	}
 }

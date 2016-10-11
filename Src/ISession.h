@@ -42,6 +42,8 @@ namespace WaDirectory_Data
 				
 				IDirectory *Pt_Directory = NULL;
 
+				virtual     void GetWASID1(std::string& outWASID) = 0;
+
 
 
     };

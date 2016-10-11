@@ -38,6 +38,12 @@ namespace WaDirectory_Data
         virtual  IDirectory* GetDirectory()                                   =0;
 
 		virtual void Set_Directory(IDirectory* Pt_Directory)				= 0;
+
+		virtual void GetId(string& ouName) = 0;
+
+		virtual void GetSubGroupId(vector<string>& ouSubGroupNames) = 0;
+
+		virtual void Getuserinclude(vector<string>& ouSubGroupNames) = 0;
 		
 		IDirectory* Pt_Directory = NULL;
 	

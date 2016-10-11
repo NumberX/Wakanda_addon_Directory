@@ -49,7 +49,7 @@ var DirectoryObject=new addon.Directory("http://localhost:8081","C:/Users/Laghza
 
         console.log("\n Test GetDirectory ");
         var GroupWrapObject2 = DirectoryObject.GetGroup("04AE851D785A2043AF2AFC0B209A3316");
-        var DirectoryGroupclone = GroupWrapobject1.GetDirectory();
+		var DirectoryGroupclone = GroupWrapobject1.GetDirectory();
         if (DirectoryGroupclone == DirectoryObject) {
             console.log(" \n Test GetDirectory True ");
 

@@ -10,7 +10,6 @@ class JsonData
 public:
 	JsonData();
 	~JsonData();
-//	fstream *file;
 	string str;
 };
 }

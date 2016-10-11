@@ -29,9 +29,15 @@ class Groupwrap : public node::ObjectWrap {
 
   static void GetName(const v8::FunctionCallbackInfo<v8::Value>& args);
 
+  static void GetId(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   static void GetUserwrapByName(const v8::FunctionCallbackInfo<v8::Value>& args);
 
   static void GetSubGroupwrapName(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+  static void GetSubGroupwrapId(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+  static void GetUserGroupwrapId(const v8::FunctionCallbackInfo<v8::Value>& args);
 
   static void GetDirectorywrap(const v8::FunctionCallbackInfo<v8::Value>& args);
 
@@ -43,7 +49,7 @@ class Groupwrap : public node::ObjectWrap {
 
 
 
-  static      Local<Object> CreateGroupWrap(Isolate* isolate, IGroup* PtGroup, Directorywrap* PtDirectoryWrap);
+  static      Local<Object> CreateGroupWrap(Isolate* isolate, IGroup* PtGroup, Directorywrap* PtDirectoryWrap,IDirectory *pt_Directory);
 
   IGroup *ptgroup=NULL;
 

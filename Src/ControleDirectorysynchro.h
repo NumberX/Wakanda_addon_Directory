@@ -16,6 +16,8 @@ namespace WaDirectory_Controle{
 	
 private:
 
+	static bool ControleDirectorysynchro::valide(string Phrase);
+
 	static vector<DataControlesyn>* ControleGetGroupssynchro(const v8::FunctionCallbackInfo<v8::Value>& args, bool& Controle, string& Message);
 
 	static vector<DataControlesyn>* ControleGetGroupSessionsynchro(const v8::FunctionCallbackInfo<v8::Value>& args, bool& Controle, string& Message);

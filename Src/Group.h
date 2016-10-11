@@ -31,10 +31,16 @@ namespace WaDirectory_Data
 		Group(string id);
 		 void   GetName(std::string& outName);
 
+		 void GetId(string& ouName);
+
 		 IUser* GetUserByName(const std::string& inUserName, const std::string& Password);
 
 		 void GetSubGroupName(std::vector<std::string>& ouSubGroupNames);
-		    
+
+		 void GetSubGroupId(vector<string>& ouSubGroupNames);
+		 
+		 void Getuserinclude(vector<string>& ouSubGroupNames);
+
 		 IDirectory* GetDirectory() ;
 		 void Set_Directory(IDirectory* Pt_Directory);
 

@@ -34,12 +34,12 @@ class Directorywrap : public node::ObjectWrap {
   static void Init(v8::Local<v8::Object> exports);
   IDirectory* GetDirectory();
 
+
  private:
 
 	 static v8::Persistent<v8::Function> constructor;
 
 	 IDirectory *ptdirectory = NULL;
-
 
   explicit Directorywrap();
   ~Directorywrap();
@@ -51,6 +51,9 @@ class Directorywrap : public node::ObjectWrap {
   static void LogInWorkComplete(uv_work_t  *request, int status);
   static void GetGroupwrapNames(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void GetGroupwrapID(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void GetUserswrapID(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void GetUsers(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void getlistmanager(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void GetGroupwrap(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void GetUserwrap(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void GetSessionwrap(const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -66,9 +69,11 @@ class Directorywrap : public node::ObjectWrap {
   static void UserwrapBelongToWork3(uv_work_t  *request);
   static void UserwrapBelongToWorkComplete3(uv_work_t  *request, int status);
   static void LogOut(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void validate(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void Getcookies(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void getsessionlog(const v8::FunctionCallbackInfo<v8::Value>& args);
 
 
-public:
 
 	
 };

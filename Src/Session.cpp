@@ -45,6 +45,10 @@ namespace WaDirectory_Data
 
 			pt = new User(Id[0], Id[1], Id[2],"");
 
+			this->Pt_Directory->List.UpdateBycookies(this->cookies, json->Ttl);
+
+			//this->Pt_Directory->List.Affiche();
+
 			
 
 		}
@@ -62,7 +66,16 @@ namespace WaDirectory_Data
 		vector<string>Id = json->currentuser();
 		
 		if (Id.size() > 1)
+		{ 
+		
+
+			this->Pt_Directory->List.UpdateBycookies(this->cookies, json->Ttl);
+
+			//this->Pt_Directory->List.Affiche();
+
 			return true;
+
+		}
 		return false;
 	}
 
@@ -78,9 +91,7 @@ namespace WaDirectory_Data
 
 		this->Pt_Directory->List.RemoveBycookies(this->cookies);
 
-		std::cout << "List After Logout" << endl;
-
-		this->Pt_Directory->List.Affiche();
+		//this->Pt_Directory->List.Affiche();
 	}
 
 
@@ -93,5 +104,18 @@ namespace WaDirectory_Data
 	void Session::GetWASID(std::string& outWASID) 
 	{
 		outWASID = this->cookies;
+	}
+
+	void Session::GetWASID1(std::string& outWASID)
+	{
+		 
+
+		string sub = "";
+
+		int pos = static_cast<int>(this->cookies.find("WASID	"));
+
+		sub = this->cookies.substr(pos + 6);
+
+		outWASID=sub;
 	}
 }

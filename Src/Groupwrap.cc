@@ -53,7 +53,7 @@ IGroup* Groupwrap::GetGroupData()
 
 	return this->ptgroup;
 }
-Local<Object> Groupwrap::CreateGroupWrap(Isolate* isolate, IGroup* PtGroup,Directorywrap* PtDirectoryWrap)
+Local<Object> Groupwrap::CreateGroupWrap(Isolate* isolate, IGroup* PtGroup, Directorywrap* PtDirectoryWrap, IDirectory *pt_Directory)
 {
 
 	EscapableHandleScope scope(isolate);
@@ -78,7 +78,9 @@ Local<Object> Groupwrap::CreateGroupWrap(Isolate* isolate, IGroup* PtGroup,Direc
 
 	PtGroupWrap->Pt_DirectoryWrap = PtDirectoryWrap;
 
-	PtGroupWrap->ptgroup->Set_Directory(PtGroupWrap->Pt_DirectoryWrap->GetDirectory());
+	
+
+	PtGroupWrap->ptgroup->Set_Directory(pt_Directory);
 
 	return scope.Escape(ObjectGroupWrap);
 
@@ -101,8 +103,14 @@ void Groupwrap::Init(Local<Object> exports) {
   
   NODE_SET_PROTOTYPE_METHOD(tpl, "GetSubGroupsName", GetSubGroupwrapName);
   
-  NODE_SET_PROTOTYPE_METHOD(tpl, "GetDirectory", GetDirectorywrap);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "GetDirectory", GetDirectorywrap); 
 
+  NODE_SET_PROTOTYPE_METHOD(tpl, "getid", GetId); 
+
+  NODE_SET_PROTOTYPE_METHOD(tpl, "getsubgroupId", GetSubGroupwrapId);
+
+  NODE_SET_PROTOTYPE_METHOD(tpl, "userinclude", GetUserGroupwrapId);
+  
   constructor.Reset(isolate, tpl->GetFunction());
 
   exports->Set(String::NewFromUtf8(isolate, "Group"),
@@ -141,7 +149,40 @@ void Groupwrap::New(const FunctionCallbackInfo<Value>& args) {
 	delete PtControleGroupsynchro;
 }
 
+void Groupwrap::GetId(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
 
+	Isolate* isolate = args.GetIsolate();
+
+	ControleGroupsynchro* PtControleGroupsynchro = new ControleGroupsynchro();
+
+	bool controle = false;
+
+	std::string Message;
+
+	vector<DataControlesyn>* Pt_Vector = PtControleGroupsynchro->ControleGetNamesynchro(args, controle, Message);
+
+	if (controle == true)
+	{
+		std::string resultat = "";
+
+		DataControlesyn Groupdata = Pt_Vector->at(0);
+
+		Groupwrap* PtGroupWrap = Groupdata.Output.PtGroupwrap;
+
+		PtGroupWrap->ptgroup->GetId(resultat);
+
+		args.GetReturnValue().Set(String::NewFromUtf8(isolate, resultat.c_str()));
+	}
+	else
+	{
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
+
+		args.GetReturnValue().SetNull();
+	}
+
+	delete PtControleGroupsynchro;
+}
 void Groupwrap::GetName(const FunctionCallbackInfo<Value>& args) {
 
 	Isolate* isolate = args.GetIsolate();
@@ -232,6 +273,44 @@ void Groupwrap::GetUserwrapByName(const FunctionCallbackInfo<Value>& args) {
 	delete PtControleGroupsynchro;
 	
 }
+void Groupwrap::GetSubGroupwrapId(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
+
+	Isolate* isolate = args.GetIsolate();
+
+
+	ControleGroupsynchro* PtControleGroupsynchro = new ControleGroupsynchro();
+
+	bool controle = false;
+
+	std::string Message;
+
+	vector<DataControlesyn>* Pt_Vector = PtControleGroupsynchro->ControleGetSubGroupwrapNamesynchro(args, controle, Message);
+
+	if (controle == true)
+	{
+		std::vector<std::string> resultat;
+
+		DataControlesyn Groupdata = Pt_Vector->at(0);
+
+		Groupwrap* PtGroupWrap = Groupdata.Output.PtGroupwrap;
+
+		PtGroupWrap->ptgroup->GetSubGroupId(resultat);
+
+		Tools::Utility util;
+
+		Local<Array> result_list = util.StdVectorToV8Array(isolate, resultat);
+
+		args.GetReturnValue().Set(result_list);
+	}
+	else
+	{
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
+
+		args.GetReturnValue().SetNull();
+	}
+	delete PtControleGroupsynchro;
+}
 void Groupwrap::GetSubGroupwrapName(const FunctionCallbackInfo<Value>& args) {
 	
 	Isolate* isolate = args.GetIsolate();
@@ -269,6 +348,42 @@ else
 		}
 	delete PtControleGroupsynchro;
 	
+}
+void  Groupwrap::GetUserGroupwrapId(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
+	Isolate* isolate = args.GetIsolate();
+
+	ControleGroupsynchro* PtControleGroupsynchro = new ControleGroupsynchro();
+
+	bool controle = false;
+
+	std::string Message;
+
+	vector<DataControlesyn>* Pt_Vector = PtControleGroupsynchro->ControleGetSubGroupwrapNamesynchro(args, controle, Message);
+
+	if (controle == true)
+	{
+		std::vector<std::string> resultat;
+
+		DataControlesyn Groupdata = Pt_Vector->at(0);
+
+		Groupwrap* PtGroupWrap = Groupdata.Output.PtGroupwrap;
+
+		PtGroupWrap->ptgroup->Getuserinclude(resultat);
+
+		Tools::Utility util;
+
+		Local<Array> result_list = util.StdVectorToV8Array(isolate, resultat);
+
+		args.GetReturnValue().Set(result_list);
+	}
+	else
+	{
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
+
+		args.GetReturnValue().SetNull();
+	}
+	delete PtControleGroupsynchro;
 }
 void Groupwrap::GetDirectorywrap(const FunctionCallbackInfo<Value>& args) {
 

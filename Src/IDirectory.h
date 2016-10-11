@@ -7,7 +7,9 @@
 #define IDirectory_H
 #include<string>
 #include<vector>
+#include "XMLparser.h"
 #include"ManageSession.h"
+#include"SessionLog.h"
 using namespace std;
 
 // namespace std
@@ -60,9 +62,16 @@ namespace WaDirectory_Data
 
 			virtual bool         Isvalid(string Username, string Password) = 0;
 
+			virtual IUser*		 GetUserById(const std::string& inUserId) = 0;
+
 			virtual void        GetGroupId(std::vector<std::string>& outGroupName)=0;
 
-	
+			virtual void        GetUsersId(std::vector<std::string>& outGroupName) = 0;
+
+			virtual vector<SessionLog> loadfile()=0;
+
+			
+
 		std::string Url_Wakanda, Url_Directory;
 
 		ManageSession List;

@@ -43,7 +43,7 @@ namespace WaDirectory_Data
 		
 		void Logout(string url, string cookie);
 		
-		string getWASID();
+		
 	private:
 		void CurlCppSetOption(string Url,CURL* curl);
 	};

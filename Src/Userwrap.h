@@ -23,6 +23,8 @@ class Userwrap : public node::ObjectWrap {
   static void Init(v8::Local<v8::Object> exports);
 
   IUser* GetUserData();
+
+  IUser *ptuser;
  private:
 	
   explicit Userwrap();
@@ -35,6 +37,8 @@ class Userwrap : public node::ObjectWrap {
   static void GetDirectorywrap(const v8::FunctionCallbackInfo<v8::Value>& args);
   
   static void GetName(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+  static void GetId(const v8::FunctionCallbackInfo<v8::Value>& args);
 
   static void BelongsToGroupwrap(const v8::FunctionCallbackInfo<v8::Value>& args);
 
@@ -58,7 +62,7 @@ class Userwrap : public node::ObjectWrap {
 
   static v8::Persistent<v8::Value> prototype_User_Synchrone;
 
-  IUser *ptuser;
+
   
 
   Directorywrap *Pt_DirectoryWrap = NULL;

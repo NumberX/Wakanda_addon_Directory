@@ -42,6 +42,7 @@ private:
   static void GetUserwrapWork(uv_work_t  *request);
   static void GetUserwrapWorkComplete(uv_work_t  *request, int status);
   static void GetWASID(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void GetWASID1(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void GetDirectorywrap(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void IsValid(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void IsValidWork(uv_work_t  *request);

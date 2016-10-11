@@ -12,7 +12,7 @@ public:
 	string IdUser;
 	string cookies;
 	string Username;
-
+	double MaxAgeTtl = 0;
 	string getWASID();
 };
 

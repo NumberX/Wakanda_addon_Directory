@@ -6,6 +6,9 @@
 using namespace rapidxml;
 namespace WaDirectory_Data
 {
+	XMLparser::XMLparser()
+	{
+	}
 	XMLparser::XMLparser(string UrlDirectory)
 	{
 		this->UrlDirectory = UrlDirectory;
@@ -28,7 +31,23 @@ namespace WaDirectory_Data
 	XMLparser::~XMLparser()
 	{
 	}
+	void XMLparser::setUrl(string UrlDirectory)
+	{
+		this->UrlDirectory = UrlDirectory;
+		std::ifstream file(this->UrlDirectory);
+		std::stringstream buffer;
 
+		if (file) {
+			buffer << file.rdbuf();
+			file.close();
+
+			std::string content = buffer.str();
+
+
+			xml.parse<0>((char*)&content[0]);
+
+		}
+	}
 	string XMLparser::UserIdByname(string name)
 	{
 
@@ -234,6 +253,82 @@ namespace WaDirectory_Data
 
 		return resultat;
 	}
+
+	vector<string> XMLparser::ListUsersId()
+	{
+		std::vector<string> resultat;
+
+		rapidxml::xml_node<> * RootNode = xml.first_node("directory");
+
+		if (RootNode == 0) return resultat;
+
+
+		for (rapidxml::xml_node<> * Iterator = RootNode->first_node("user"); Iterator; Iterator = Iterator->next_sibling("user")) {
+
+			rapidxml::xml_attribute<> * IDAttribute = Iterator->first_attribute("ID");
+			if (IDAttribute != 0)
+			{
+				resultat.push_back(IDAttribute->value());
+			}
+		}
+
+
+		return resultat;
+	}
+
+	vector<string> XMLparser::ListGroupIncludeId(string Id)
+	{
+
+
+		std::vector<string> resultat;
+
+		rapidxml::xml_node<> * RootNode = xml.first_node("directory");
+
+		if (RootNode == 0) return resultat;
+
+
+		for (rapidxml::xml_node<> * Iterator = RootNode->first_node("group"); Iterator; Iterator = Iterator->next_sibling("group"))
+		{
+
+			rapidxml::xml_attribute<> * IDAttribute = Iterator->first_attribute("ID");
+
+			if (IDAttribute != 0)
+			{
+
+				if (IDAttribute->value() == Id)
+				{
+
+
+					for (rapidxml::xml_node<> * IteratorInclude = Iterator->first_node("include"); IteratorInclude; IteratorInclude = IteratorInclude->next_sibling("include"))
+					{
+
+						rapidxml::xml_attribute<> * Ptattribute = IteratorInclude->first_attribute();
+
+						string user = "user";
+
+						if (Ptattribute->name() == user)
+						{
+
+							rapidxml::xml_attribute<> * GroupIDAttribute = Ptattribute->next_attribute();
+
+
+							if (GroupIDAttribute != 0)
+							{
+								resultat.push_back(Ptattribute->value());
+							}
+
+						}
+					}
+
+				}
+			}
+		}
+
+
+
+
+		return resultat;
+	}
 	vector<string> XMLparser::ListGroupInclude(string Id)
 	{
 
@@ -287,7 +382,58 @@ namespace WaDirectory_Data
 		return resultat;
 	}
 
+	vector<string> XMLparser::ListuserInclude(string Id)
+	{
 
+
+		std::vector<string> resultat;
+
+		rapidxml::xml_node<> * RootNode = xml.first_node("directory");
+
+		if (RootNode == 0) return resultat;
+
+
+		for (rapidxml::xml_node<> * Iterator = RootNode->first_node("group"); Iterator; Iterator = Iterator->next_sibling("group"))
+		{
+
+			rapidxml::xml_attribute<> * IDAttribute = Iterator->first_attribute("ID");
+
+			if (IDAttribute != 0)
+			{
+
+				if (IDAttribute->value() == Id)
+				{
+
+
+					for (rapidxml::xml_node<> * IteratorInclude = Iterator->first_node("include"); IteratorInclude; IteratorInclude = IteratorInclude->next_sibling("include"))
+					{
+
+						rapidxml::xml_attribute<> * Ptattribute = IteratorInclude->first_attribute();
+
+						string group = "group";
+
+						if (Ptattribute->name() == group)
+						{
+
+							rapidxml::xml_attribute<> * GroupIDAttribute = Ptattribute->next_attribute();
+
+							if (GroupIDAttribute != 0)
+							{
+								resultat.push_back(GroupIDAttribute->value());
+							}
+
+						}
+					}
+
+				}
+			}
+		}
+
+
+
+
+		return resultat;
+	}
 
 	bool XMLparser::UserBelongGroup(string UserId, string groupId)
 	{

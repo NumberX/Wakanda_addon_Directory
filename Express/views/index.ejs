@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+ <% include ../partial/head %>
+
+<body>
+
+    <div id="wrapper">
+
+        <!-- Navigation -->
+			
+			<% include ../partial/header %>
+			
+            <% include ../partial/menu %>
+			
+		<%  if(Submenu =="Index"){ %>
+        
+			<% include ../partial/Dashboard %>
+    
+		<% } %>
+        
+		<%  if(Submenu =="Listes_Belongto"){ %>
+        
+			<% include ../partial/Listes_Belongto %>
+    
+		<% } %>
+		
+		
+		
+		<%  if(Submenu =="Listes_Groups"){ %>
+        
+			<% include ../partial/Listes_Groups %>
+    
+		<% } %>
+		
+		
+		<%  if(Submenu =="User_Roles"){ %>
+        
+			<% include ../partial/Users_Roles %>
+    
+		<% } %>
+		
+		<%  if(Submenu =="Logs"){ %>
+        
+			<% include ../partial/Logs %>
+    
+		<% } %>
+		
+		<%  if(Submenu =="Listes_Users"){ %>
+        
+			<% include ../partial/Listes_Users %>
+    
+		<% } %>
+		
+		
+		<%  if(Submenu =="Listes_Belongtouser"){ %>
+        
+			<% include ../partial/Listes_Belongtouser %>
+    
+		<% } %>
+		
+		<%  if(Submenu =="Listes_loggedin"){ %>
+        
+			<% include ../partial/Listes_loggedin %>
+    
+		<% } %>
+		
+		<%  if(Submenu =="Session_Manager"){ %>
+        
+			<% include ../partial/Session_Manager%>
+    
+		<% } %>
+		
+		<%  if(Submenu =="Session_Persistant"){ %>
+        
+			<% include ../partial/Session_Persistant %>
+    
+		<% } %>
+		
+		<%  if(Submenu =="Sub_Groups"){ %>
+        
+			<% include ../partial/Sub_Groups%>
+    
+		<% } %>
+		
+		<%  if(Submenu =="User_Include"){ %>
+        
+			<% include ../partial/User_Include %>
+    
+		<% } %>		
+		
+
+			
+        
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- jQuery -->
+    <script src="/js/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="/js/bootstrap.min.js"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="/js/metisMenu.min.js"></script>
+
+    <!-- Morris Charts JavaScript -->
+    <script src="/js/raphael.min.js"></script>
+    <script src="/js/morris.min.js"></script>
+    <script src="/js/morris-data.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="/js/sb-admin-2.js"></script>
+	
+			   <!-- DataTables JavaScript -->
+    <script src="/js/jquery.dataTables.min.js"></script>
+    <script src="/js/dataTables.bootstrap.min.js"></script>
+    <script src="/js/dataTables.responsive.js"></script>
+	
+
+	
+	
+
+
+ 
+
+</body>
+
+</html>

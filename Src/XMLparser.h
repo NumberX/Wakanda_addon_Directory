@@ -13,15 +13,20 @@ namespace WaDirectory_Data
 		string UrlDirectory = "";
 	public:
 		XMLparser(string UrlDirectory);
+		XMLparser();
 		~XMLparser();
+		void setUrl(string UrlDirectory);
 		string NameUserById(string Id, string attribut);
 		string NameGrouoById(string Id);
 		vector<string> ListGroup();
 		vector<string> ListGroupId();
+		vector<string> ListUsersId();
 		vector<string> ListGroupInclude(string Id);
 		bool UserBelongGroup(string UserId, string groupId);
 		bool ExistUserByname(string name, string NameAttribut);
 		string UserIdByname(string name);
+		vector<string> ListGroupIncludeId(string Id);
+		vector<string> ListuserInclude(string Id);
 	};
 }
 

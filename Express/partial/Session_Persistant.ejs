@@ -1,0 +1,124 @@
+<div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Session journal</h1>
+					<span style="color:black; display:block;">  var listsessionlog=DirectoryObject.getsessionlog();</span>
+<span style="color:black; display:block;">var element=listsessionlog[0];</span>
+<span style="color:black; display:block;">element.OperationTime element.TypeOperation element.WSID element.IdUser element.NameUser</span>
+</br>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+           
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+						 <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="row">
+                
+				
+                <!-- /.col-lg-12 -->
+            </div>
+                            <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
+							
+                                <thead>
+                                    <tr>
+                                        <th>OperationTime</th>
+                                        <th>TypeOperation</th>
+                                        <th>wsid</th>
+                                        <th>IdUser</th>
+                                        <th>NameUser</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+								<%   for (IteratorVecN in listsessionlog){ 
+										var object= listsessionlog[IteratorVecN];
+										
+										%>
+                                    
+                                    <tr class="gradeA">
+                                        <td><%=object.OperationTime%></td>
+                                        <td><%=object.TypeOperation%></td>
+                                        <td><%=object.wsid%></td>
+                                        <td class="center"><%=object.IdUser%></td>
+                                        <td class="center"><%=object.NameUser%></td>
+                                    </tr>
+                                    <%}%>
+                                   
+                                  
+                                </tbody>
+                            </table>
+                            <!-- /.table-responsive -->
+                            
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+       
+        </div>
+		
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.3.js"></script>
+
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+
+<script>
+
+function updateContent() {
+    window.location.href='http://localhost:8282/Session_Persistant'
+}
+setInterval(updateContent, 30000);
+
+    </script>
+
+    <!-- Page-Level Demo Scripts - Tables - Use for reference -->
+    <script>
+	
+	$.fn.dataTable.ext.search.push(
+    function( settings, data, dataIndex ) {
+			
+       // var OperationTime = String( data[0] ) ; 
+
+		var TypeOperation = String( data[1] ) ; 
+		
+		/*var wsid1 = String( data[2] ) ;
+				
+		var IdUser = String( data[3] ) ; 
+		
+		var NameUser = String( data[4] ) ;
+		
+		var OperationTime1 = String( $('#OperationTime').val() ); */
+
+		var TypeOperation1 =String( $('#TypeOperation').val() ); 
+		
+		/*var wsid11 = String( $('#wsid').val() );
+				
+		var IdUser1 = String( $('#IdUser').val() );
+		
+		var NameUser1 = String( $('#NameUser').val() );*/
+ 
+        if ( ( TypeOperation1=="")||( TypeOperation1==TypeOperation))
+        {
+            return true;
+        }
+        return false;
+    }
+);
+$(document).ready(function() {
+    var table = $('#dataTables-example').DataTable();
+     
+    // Event listener to the two range filtering inputs to redraw on input
+    $('#TypeOperation').keyup( function() {
+        table.draw();
+    } );
+} );
+
+ 
+    </script>

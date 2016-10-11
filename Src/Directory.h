@@ -7,6 +7,7 @@
 #define Directory_H
 #include"IDirectory.h"
 #include"ManageSession.h"
+#include"SessionLog.h"
 #include<string>
 #include<vector>
 using namespace std;
@@ -18,11 +19,12 @@ namespace WaDirectory_Data
 	class User;
 	class Session;
 
+
 	class Directory:public IDirectory
 	{
 	public:
 
-
+		
 
 		Directory();
 
@@ -36,9 +38,13 @@ namespace WaDirectory_Data
 		
 		 void        GetGroupId(std::vector<std::string>& outGroupName);
 
+		 void        GetUsersId(std::vector<std::string>& outGroupName);
+		 
 		 IGroup*      GetGroup(const std::string& inGroupName);
 
 		 IUser*       GetUser(const std::string& inUserName, const std::string& Password);
+
+		 IUser*       GetUserById(const std::string& inUserId);
 
 		 bool         LogOut(const ISession* inSession);
 
@@ -61,6 +67,10 @@ namespace WaDirectory_Data
 		 bool         Existbyname(string name);
 
 		 bool         Isvalid(string Username, string Password);
+
+		 vector<SessionLog> loadfile();
+
+		
 	
 	private :
 		

@@ -115,8 +115,6 @@ namespace WaDirectory_Data
 		curl2 = curl_easy_init();
 
 		initall(curl2);
-
-		string dataheader;
 		
 		string UrlLogin = this->Url + url;
 		
@@ -147,6 +145,8 @@ namespace WaDirectory_Data
             curl_easy_cleanup(curl2);
 			
 			Resultat=cookies1->data;
+
+			
 
 			
 

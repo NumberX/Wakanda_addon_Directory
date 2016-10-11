@@ -2,6 +2,8 @@
 #include"curlcpp.h"
 #include "rapidjson\document.h"
 #include<string>
+#include <iostream>
+#include <sstream>
 #include<vector>
 using namespace std;
 using namespace rapidjson;
@@ -49,9 +51,6 @@ namespace WaDirectory_Data
 
 		curltest = new curlcpp("");
 
-
-
-
 		string Url = this->Url + "/rest/$directory/login";
 
 		this->cookie = "";
@@ -71,7 +70,7 @@ namespace WaDirectory_Data
 
 			document.Parse(curltest->data.str.c_str());
 
-			
+			this->Ttl = this->GetMaxAgeTtl(curltest->dataheaderstr.str.c_str());
 			
 			if (document["result"].GetBool() == true)
 			{
@@ -103,6 +102,60 @@ namespace WaDirectory_Data
 	
 	}
 
+	int Jsonparser::GetMaxAgeTtl(const std::string Input)
+	{
+		string sub = "";
+
+		int Number = 0;
+
+		std::istringstream iss(Input);
+
+		std::string line;
+		while (std::getline(iss, line))
+		{
+
+			std::size_t found = line.find("Set-Cookie: ");
+			if (found != std::string::npos)
+			{
+				int pos = static_cast<int>(line.find("Max-Age="));
+				string sub1;
+				
+				sub1 = line.substr(pos + 8);
+				
+				string Resultat = "";
+
+				int Iterator = 0;
+
+				bool test = false;
+				
+				while ( Iterator<sub1.length() - 1)
+				{
+					if (sub1[Iterator] == ';')
+					{
+						test = true;
+					}
+					if (test == false)
+					{
+						Resultat = Resultat + sub1[Iterator];
+					}
+
+						Iterator=Iterator+1;
+				}
+				
+
+			Number = atoi(Resultat.c_str());
+
+		
+
+				
+			}
+			
+		}
+
+		
+		return Number;
+	}
+
 	bool Jsonparser::Logout()
 	{
 
@@ -125,6 +178,9 @@ namespace WaDirectory_Data
 			Document document;
 
 			document.Parse(curltest->data.str.c_str());
+
+
+			//std::cout << "\n \n Data Body Logout :" << curltest->dataheaderstr.str.c_str() << endl;
 
 			if (document["result"].GetBool() == true)return true;
 
@@ -195,7 +251,8 @@ namespace WaDirectory_Data
 
 			if (document["result"].GetBool() == true)
 			{
-			
+				this->Ttl = this->GetMaxAgeTtl(curltest->dataheaderstr.str.c_str());
+
 				return true;
 			}
 			if (document["result"].GetBool() == false){ return false; }
@@ -234,7 +291,7 @@ namespace WaDirectory_Data
 			}
 			else
 			{
-
+				this->Ttl = this->GetMaxAgeTtl(curltest->dataheaderstr.str.c_str());
 				for (Value::ConstMemberIterator Iterator = document["result"].MemberBegin();
 					Iterator != document["result"].MemberEnd(); ++Iterator)
 				{

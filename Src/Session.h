@@ -37,7 +37,7 @@ namespace WaDirectory_Data
 		 void LogOut();
 		
 		
-
+		 void GetWASID1(std::string& outWASID);
 		 void Set_Directory(IDirectory* Pt_Directory);
 
 	};

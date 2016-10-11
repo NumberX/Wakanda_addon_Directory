@@ -98,6 +98,9 @@ void Userwrap::Init(Local<Object> exports) {
   NODE_SET_PROTOTYPE_METHOD(tpl, "BelongsToGroup", BelongsToGroupwrap);
   
   NODE_SET_PROTOTYPE_METHOD(tpl, "IsLoggedIn", IsLoggedIn);
+
+  NODE_SET_PROTOTYPE_METHOD(tpl, "getid", GetId);
+  
   
   constructor.Reset(isolate, tpl->GetFunction());
   
@@ -206,6 +209,46 @@ void Userwrap::GetName(const FunctionCallbackInfo<Value>& args) {
 
 	delete PtControleUsersynchro;
 	
+}
+
+void Userwrap::GetId(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
+
+	Isolate* isolate = args.GetIsolate();
+
+	ControleUsersynchro *PtControleUsersynchro = new ControleUsersynchro();
+
+	bool Controle = false;
+
+	string Message;
+
+	vector<DataControlesyn>* Pt_Vector = PtControleUsersynchro->ControleGetNamesynchro(args, Controle, Message);
+
+	if (Controle == true)
+	{
+		std::string resultat = "";
+
+		DataControlesyn dataUser = Pt_Vector->at(0);
+
+		Userwrap* PtUserWrap = dataUser.Output.PtUserwrap;
+
+		PtUserWrap->ptuser->GetName(resultat);
+
+		std::string res = PtUserWrap->ptuser->Id;
+
+		args.GetReturnValue().Set(String::NewFromUtf8(isolate, res.c_str()));
+
+	}
+	else
+	{
+		isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
+
+		args.GetReturnValue().SetNull();
+
+	}
+
+	delete PtControleUsersynchro;
+
 }
 void Userwrap::BelongsToGroupwrapWork1(uv_work_t  *request)
 {

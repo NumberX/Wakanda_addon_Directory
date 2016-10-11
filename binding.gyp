@@ -18,6 +18,7 @@
 	  'conditions':[
         ['OS=="win"',
           {
+		  'defines!' : [ '_HAS_EXCEPTIONS=0' ],
             'link_settings': {
               'libraries': [
                 '-lws2_32.lib',

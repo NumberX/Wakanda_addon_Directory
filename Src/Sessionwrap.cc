@@ -105,6 +105,8 @@ namespace WaDirectory_View {
 
 		NODE_SET_PROTOTYPE_METHOD(tpl, "GetWASID", GetWASID);
 
+		NODE_SET_PROTOTYPE_METHOD(tpl, "GetWASID1", GetWASID1);
+
 		NODE_SET_PROTOTYPE_METHOD(tpl, "GetDirectory", GetDirectorywrap);
 
 		NODE_SET_PROTOTYPE_METHOD(tpl, "IsValid", IsValid);
@@ -247,7 +249,42 @@ namespace WaDirectory_View {
 		
 
 	}
+	void Sessionwrap::GetWASID1(const FunctionCallbackInfo<Value>& args) {
 
+		Isolate* isolate = args.GetIsolate();
+
+
+		ControleSessionsynchro *PtControleSessionsynchro = new ControleSessionsynchro();
+
+		bool Controle = false;
+
+		string Message;
+
+		vector<DataControlesyn>* Pt_Vector = PtControleSessionsynchro->ControleGetWASIDsynchro(args, Controle, Message);
+
+		if (Controle == true)
+		{
+			DataControlesyn Sessiondata = Pt_Vector->at(0);
+
+			Sessionwrap* PtSessionWrap = Sessiondata.Output.PtSessionwrap;
+
+			std::string resultat = PtSessionWrap->ptsession->cookies;
+
+			PtSessionWrap->ptsession->GetWASID1(resultat);
+
+			args.GetReturnValue().Set(String::NewFromUtf8(isolate, resultat.c_str()));
+
+
+		}
+		else
+		{
+			isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, Message.c_str())));
+
+			args.GetReturnValue().SetNull();
+		}
+
+		delete PtControleSessionsynchro;
+	}
 	void Sessionwrap::GetWASID(const FunctionCallbackInfo<Value>& args) {
 
 		Isolate* isolate = args.GetIsolate();

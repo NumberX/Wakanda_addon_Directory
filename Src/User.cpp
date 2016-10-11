@@ -41,9 +41,10 @@ namespace WaDirectory_Data
 
 	void User::GetName(string& outName)
 	{
-		XMLparser PtparseurXml(this->Pt_Directory->Get_Url_Directory());
+		XMLparser *PtparseurXml;
 
-		outName = PtparseurXml.NameUserById(this->Id, "name");
+		PtparseurXml = new XMLparser(this->Pt_Directory->Get_Url_Directory());
+		outName = PtparseurXml->NameUserById(this->Id, "name");
 		//outName = this->Username;
 	
 	}
@@ -108,7 +109,10 @@ namespace WaDirectory_Data
 		
 		if (v1[0] == this->Username)
 		{
-			
+			this->Pt_Directory->List.UpdateBycookies(inSession->cookies, Jspar->Ttl);
+
+			//this->Pt_Directory->List.Affiche();
+
 			return true;
 		}
 

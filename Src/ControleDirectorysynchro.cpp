@@ -6,6 +6,7 @@
 #include <node.h>
 #include <node_object_wrap.h>
 #include<iostream>
+#include<regex>
 using namespace WaDirectory_View;
 namespace WaDirectory_Controle{
 	ControleDirectorysynchro::ControleDirectorysynchro(){
@@ -16,7 +17,20 @@ namespace WaDirectory_Controle{
 	
 	}
 
+	bool ControleDirectorysynchro::valide(string Phrase)
+	{
 
+		std::regex word_regex("\\w+");
+		if (std::regex_match(Phrase, word_regex)) {
+
+
+			return true;
+		}
+
+		return false;
+
+
+	}
 
 	vector<DataControlesyn>* ControleDirectorysynchro::ControleLogOutsynchro1(const v8::FunctionCallbackInfo<v8::Value>& args, bool& Controle, std::string& Message)
 	{
@@ -86,6 +100,8 @@ namespace WaDirectory_Controle{
 						dataPtSession.Output.PtSessionwrap = PtSession;
 
 						Output->push_back(dataPtSession);
+
+						
 
 						Controle = true;
 
@@ -248,6 +264,13 @@ namespace WaDirectory_Controle{
 						if (ControleValideDirectoryData(PtDirectorywrap->GetDirectory(), Message))
 						{
 
+							Tools::Utility util;
+
+							string UserId = util.V8Utf8ValueToStdString(args[0]);
+
+							string PasswordId = util.V8Utf8ValueToStdString(args[1]);
+							if (valide(PasswordId) && (valide(UserId))){
+
 							Output = new vector<DataControlesyn>();
 
 							DataControlesyn dataptdirectory;
@@ -255,10 +278,6 @@ namespace WaDirectory_Controle{
 							dataptdirectory.Output.PtDirectorywrap = PtDirectorywrap;
 
 							Output->push_back(dataptdirectory);
-
-							Tools::Utility util;
-
-							string UserId = util.V8Utf8ValueToStdString(args[0]);
 
 							DataControlesyn dataUserId;
 
@@ -268,8 +287,6 @@ namespace WaDirectory_Controle{
 
 							Output->push_back(dataUserId);
 
-							string PasswordId = util.V8Utf8ValueToStdString(args[1]);
-
 							DataControlesyn dataPasswordId;
 
 							dataPasswordId.Output.Password = new char[PasswordId.length() + 1];;
@@ -278,7 +295,16 @@ namespace WaDirectory_Controle{
 
 							Output->push_back(dataPasswordId);
 
-							Controle = true;
+							string Username1 = UserId;
+
+							string Password1 = PasswordId;
+
+
+							
+								Controle = true;
+							}
+
+							
 
 							return Output;
 						}
