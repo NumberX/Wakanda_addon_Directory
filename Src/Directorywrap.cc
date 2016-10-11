@@ -256,6 +256,8 @@ void Directorywrap::LogInWork(uv_work_t  *request)
 
 	Pt_SessionWrap_Intra.Argument.PtSession = work->Intra_Data[0].Argument.PtDirectorywrap->ptdirectory->LogIn(user, password);
 
+
+
 	work->Intra_Data.push_back(Pt_SessionWrap_Intra);
 
 }
@@ -724,9 +726,6 @@ void Directorywrap::GetUserwrap(const FunctionCallbackInfo<Value>& args) {
 
 		resultat = PtDirectoryWrap->ptdirectory->Existbyname(UserId);
 
-		//resultat = PtDirectoryWrap->ptdirectory->Isvalid(UserId, Password);
-
-
 		IUser* PtUser = NULL;
 		if (resultat)
 		{
@@ -741,6 +740,7 @@ void Directorywrap::GetUserwrap(const FunctionCallbackInfo<Value>& args) {
 
 
 			args.GetReturnValue().Set(ObjectUserWrap);
+
 		}
 		else
 		{
@@ -1195,9 +1195,6 @@ void Directorywrap::LogOut(const FunctionCallbackInfo<Value>& args) {
 		DataControlesyn Sessiondata = Pt_Vector->at(1);
 
 		Sessionwrap* PtSessionWrap = Sessiondata.Output.PtSessionwrap;
-
-
-		//std::cout << "\n Wsid logout " << PtSessionWrap->ptsession->cookies << "\n" << endl;
 
 		bool resultat = PtDirectoryWrap->ptdirectory->LogOut(PtSessionWrap->ptsession);
 

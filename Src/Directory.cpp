@@ -125,8 +125,9 @@ namespace WaDirectory_Data
 		Jsonparser *Jspar;
 
 		Jspar = new Jsonparser(this->Url_Wakanda, this->Url_Directory);
-		string wsid=Jspar->login(inUser, inPassword);
 
+		string wsid=Jspar->login(inUser, inPassword);
+		
 		
 		if (wsid.length() > 0)
 		{
@@ -136,8 +137,6 @@ namespace WaDirectory_Data
 			session->wsid = wsid;
 			
 			session->cookies = wsid;
-
-			//std::cout << "\n \n Test Resultat" << wsid << endl;
 
 			IUser* UserId = GetUser(inUser, inPassword);
 
@@ -272,8 +271,6 @@ namespace WaDirectory_Data
 
 		string inUserName = PtparseurXml->NameUserById(inUserId, "name");
 
-		std::cout << "InUserName" << inUserName << "\n";
-		;
 		PtUser = new User(inUserName, PtparseurXml->NameUserById(inUserId, "fullname"), inUserId, "");
 		
 		return PtUser;
@@ -318,8 +315,6 @@ namespace WaDirectory_Data
 		Jspar->cookie = inSession->cookies;
 		
 		bool resultat = Jspar->currentUserBelongsTo(inGroupID,"");
-		
-		//std::cout << "\n \n Test Resultat Belong 2" << Jspar->cookie << endl;
 
 		this->List.UpdateBycookies(inSession->cookies, Jspar->Ttl);
 

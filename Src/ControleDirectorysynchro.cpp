@@ -269,7 +269,7 @@ namespace WaDirectory_Controle{
 							string UserId = util.V8Utf8ValueToStdString(args[0]);
 
 							string PasswordId = util.V8Utf8ValueToStdString(args[1]);
-							if (valide(PasswordId) && (valide(UserId))){
+							//if (valide(PasswordId) && (valide(UserId))){
 
 							Output = new vector<DataControlesyn>();
 
@@ -302,7 +302,7 @@ namespace WaDirectory_Controle{
 
 							
 								Controle = true;
-							}
+							//}
 
 							
 

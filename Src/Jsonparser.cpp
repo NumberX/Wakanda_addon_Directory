@@ -54,7 +54,7 @@ namespace WaDirectory_Data
 		string Url = this->Url + "/rest/$directory/login";
 
 		this->cookie = "";
-		
+
 		this->cookie = curltest->login(Username, Password, Url);
 
 
@@ -179,9 +179,6 @@ namespace WaDirectory_Data
 
 			document.Parse(curltest->data.str.c_str());
 
-
-			//std::cout << "\n \n Data Body Logout :" << curltest->dataheaderstr.str.c_str() << endl;
-
 			if (document["result"].GetBool() == true)return true;
 
 			if (document["result"].GetBool() == false)return false;
@@ -211,9 +208,13 @@ namespace WaDirectory_Data
 
 			document.Parse(curltest->data.str.c_str());
 
+			if(document.HasMember("result")==true)
+			{ 
 			if (document["result"].GetBool() == true)return true;
-
+			
 			if (document["result"].GetBool() == false)return false;
+			}
+
 		}
 		return false;
 
