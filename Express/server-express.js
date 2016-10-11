@@ -9,7 +9,6 @@ var Variable=1;
 const addon = require('./../build/Release/addon');
 var DirectoryObject=new addon.Directory("http://localhost:8081","C:/Users/Laghzaoui/Documents/Wakanda/Demo/Demo Solution/directory.waDirectory");
 
-    //console.log("\n Begin Directory Test \n");
 	
 	var Groups=DirectoryObject.GetGroupsNames();
 	
@@ -29,44 +28,73 @@ var DirectoryObject=new addon.Directory("http://localhost:8081","C:/Users/Laghza
 
 app.use(express.static(__dirname + '/public'));
 
-app.get('/', function(req, res) {
-    res.render('chambre1.ejs');
-});
-
-app.get('/login', function(req, res) {
- 
- res.render('chambre1.ejs');
-
- 
-});
-
-
-app.get('/validate', function(req, res) {
- 
+function pagelogin(req,res,next)
+{
+	res.render('chambre1.ejs');
+	res.end();
+	
+	
+}
+app.get('/',pagelogin);
+function cookies(req,res,next)
+{
+		var reqwsid=req.cookies.WASID;
+	
+	//console.log("wsid listes groups :"+reqwsid+"length :"+reqwsid.length);
+	if(reqwsid.length>0)
+	{
+		//console.log("Wsid2");
+		
+	var cookies1=DirectoryObject.Getcookies(reqwsid);
+	
+	if(cookies1)
+	{
+			DirectoryObject.GetSession(cookies1,function(err,response){
+		
+		if(err)
+		{
+			
+		}
+		else
+		{
+					next();
+		}
+		
+	})
+	
+	}
+	else
+	{
+		pagelogin(req,res);
+	}
+	}
+	else
+	{
+		pagelogin(req,res);
+		
+	}
+	
+}
+function validate(req,res,next)
+{
+	
 		var username=req.param('name') ;
 		
 		var password1=req.param('Password');
 		
-		if((username)&&(password1))
+			if((username)&&(password1))
 		{
 			
-		
- 
         var UsrDireObject = DirectoryObject.GetUser(username, password1);
         
 		if(UsrDireObject)
         {
-			//console.log("test");
-			
-            //console.log("\n Name :" + UsrDireObject.GetName());
-
-            //console.log("\n Test LogIn \n");
 
             DirectoryObject.LogIn(UsrDireObject,function(err,response){
 				
 				if(err)
 				{
-					//console.log(err);
+					console.log(err);
 				}
 				else
 				{
@@ -75,10 +103,8 @@ app.get('/validate', function(req, res) {
 					
 					if( SessionObject)
 					{
-						////console.log("Session object false");
 						var wsid = SessionObject.GetWASID1();
-						////console.log("Wsid :"+wsid);
-						//res.cookie('WASID', wsid);
+						
 						res.append('Set-Cookie', 'WASID='+wsid+'; Path=/; HttpOnly');
 						var Submenu ="Index";
 						 res.render('index.ejs', {
@@ -89,9 +115,8 @@ app.get('/validate', function(req, res) {
 					}
 					else
 					{
-						//console.log("Session object false");
 						
-						res.render('chambre1.ejs');
+						next();
 					}
 				}
  
@@ -100,118 +125,53 @@ app.get('/validate', function(req, res) {
 		}
 		else
 		{
-			res.render('chambre1.ejs');
+			next();
 		}
 	}
 else
 		{
-			res.render('chambre1.ejs');
+			next();
 		}
- 
-});
-app.get('/index', function(req, res) {
+	
+} 
 
-var reqwsid=req.cookies.WASID;
+
+
+
+app.get('/login', pagelogin);
+
+
+app.get('/validate', validate,pagelogin);
+app.get('/index', cookies,function(req, res) {
+
+
 	
-	//console.log("wsid index :"+reqwsid);
-	if(reqwsid.length>1)
-	{
-	var cookies=DirectoryObject.Getcookies(reqwsid);
-	
-	if(cookies)
-	{
-			DirectoryObject.GetSession(cookies,function(err,response){
-		
-		if(err)
-		{
-			
-		}
-		else
-		{
 					res.render('index.ejs', {
 							
 								});
 								res.end();
-		}
-		
-	})
-	
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
 	
  
 });
-app.get('/Listes_Groups', function(req, res) {
-	var reqwsid=req.cookies.WASID;
+app.get('/Listes_Groups',cookies, function(req, res) {
 	
-	//console.log("wsid listes groups :"+reqwsid+"length :"+reqwsid.length);
-	if(reqwsid.length>0)
-	{
-		//console.log("Wsid2");
-		
-	var cookies=DirectoryObject.Getcookies(reqwsid);
-	
-	if(cookies)
-	{
-			DirectoryObject.GetSession(cookies,function(err,response){
-		
-		if(err)
-		{
-			
-		}
-		else
-		{
 					var Submenu ="Listes_Groups";
 	
 					res.render('index.ejs', {
 					Submenu:Submenu,
 					listegroup:listegroup
 					});
-		}
+					res.end();
 		
-	})
-	
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
 });
 
-app.get('/Listes_Belongto', function(req, res) {
+app.get('/Listes_Belongto',cookies, function(req, res) {
 	
         var selected=0;
 		var selectedliste=0;
 		var reqwsid=req.cookies.WASID;
 	
-	//console.log("wsid Sub_Groups:"+reqwsid);
-	if(reqwsid.length>1)
-	{
-	var cookies=DirectoryObject.Getcookies(reqwsid);
 	
-	if(cookies)
-	{
-			DirectoryObject.GetSession(cookies,function(err,response){
-		
-		if(err)
-		{
-				console.log(err);
-		}
-		else
-		{
 				var listmanager=DirectoryObject.getlistmanager();
 				
 				var group1=DirectoryObject.GetGroup(groupsId[selected]);
@@ -264,46 +224,17 @@ app.get('/Listes_Belongto', function(req, res) {
 				
 				
 				
-		}
 		
-	})
-	
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
 	
 });
 
-app.get('/Listes_Belongto1', function(req, res) {
+app.get('/Listes_Belongto1',cookies, function(req, res) {
 	
 
         var selected=req.param('groupselected');
 		var selectedliste=req.param('listeselected');
 		////console.log("/Sub_Groups1 selected"+selected);
-		var reqwsid=req.cookies.WASID;
-	
-	////console.log("wsid Sub_Groups:"+reqwsid);
-	if(reqwsid.length>1)
-	{
-	var cookies=DirectoryObject.Getcookies(reqwsid);
-	
-	if(cookies)
-	{
-			DirectoryObject.GetSession(cookies,function(err,response){
 		
-		if(err)
-		{
-			
-		}
-		else
-	{
 				var listmanager=DirectoryObject.getlistmanager();
 				
 				var group1=DirectoryObject.GetGroup(groupsId[selected]);
@@ -356,45 +287,18 @@ app.get('/Listes_Belongto1', function(req, res) {
 				
 				
 				
-		}
 		
-	})
+		
 	
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
 	
 });
 
 
-app.get('/Listes_Belongto2', function(req, res) {
+app.get('/Listes_Belongto2',cookies, function(req, res) {
 	
         var selected=0;
 		var selectedliste=0;
-		var reqwsid=req.cookies.WASID;
 	
-	//console.log("wsid Sub_Groups:"+reqwsid);
-	if(reqwsid.length>1)
-	{
-	var cookies=DirectoryObject.Getcookies(reqwsid);
-	
-	if(cookies)
-	{
-			DirectoryObject.GetSession(cookies,function(err,response){
-		
-		if(err)
-		{
-			
-		}
-		else
-		{
 				var listmanager=DirectoryObject.getlistmanager();
 				
 				var group1=DirectoryObject.GetGroup(groupsId[selected]);
@@ -447,20 +351,7 @@ app.get('/Listes_Belongto2', function(req, res) {
 				
 				
 				
-		}
-		
-	})
 	
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
 	
 });
 
@@ -469,24 +360,7 @@ app.get('/Listes_Belongto3', function(req, res) {
 
         var selected=req.param('groupselected');
 		var selectedliste=req.param('listeselected');
-		////console.log("/Sub_Groups1 selected"+selected);
-		var reqwsid=req.cookies.WASID;
 	
-	////console.log("wsid Sub_Groups:"+reqwsid);
-	if(reqwsid.length>1)
-	{
-	var cookies=DirectoryObject.Getcookies(reqwsid);
-	
-	if(cookies)
-	{
-			DirectoryObject.GetSession(cookies,function(err,response){
-		
-		if(err)
-		{
-			
-		}
-		else
-	{
 				var listmanager=DirectoryObject.getlistmanager();
 				
 				var group1=DirectoryObject.GetGroup(groupsId[selected]);
@@ -539,216 +413,72 @@ app.get('/Listes_Belongto3', function(req, res) {
 				
 				
 				
-		}
 		
-	})
-	
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
+		
+
 	
 });
 
 
-app.get('/User_Roles', function(req, res) {
+app.get('/User_Roles',cookies, function(req, res) {
 	
-	var reqwsid=req.cookies.WASID;
 	
-	//console.log("wsid User_Roles:"+reqwsid);
-	if(reqwsid.length>1)
-	{
-	var cookies=DirectoryObject.Getcookies(reqwsid);
-	
-	if(cookies)
-	{
-			DirectoryObject.GetSession(cookies,function(err,response){
-		
-		if(err)
-		{
-			
-		}
-		else
-		{
 			var Submenu ="User_Roles";
 	
 				res.render('index.ejs', {
 				Submenu:Submenu
 				});
-		}
+				res.end();
 		
-	})
 	
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
 	
 	
 });
 
-app.get('/Logs', function(req, res) {
+app.get('/Logs',cookies, function(req, res) {
 	
-	var reqwsid=req.cookies.WASID;
 	
-	//console.log("wsid Logs:"+reqwsid);
-	if(reqwsid.length>1)
-	{
-	var cookies=DirectoryObject.Getcookies(reqwsid);
-	
-	if(cookies)
-	{
-			DirectoryObject.GetSession(cookies,function(err,response){
-		
-		if(err)
-		{
-			
-		}
-		else
-		{
 				var Submenu ="Logs";
 	
 				res.render('index.ejs', {
 				Submenu:Submenu
 				});
-		}
-		
-	})
-	
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
+				res.end();
 	
 	
 });
 
-app.get('/Listes_Users', function(req, res) {
-	var reqwsid=req.cookies.WASID;
+app.get('/Listes_Users',cookies, function(req, res) {
 	
-	//console.log("wsid Listes_Users:"+reqwsid);
-	if(reqwsid.length>1)
-	{
-	var cookies=DirectoryObject.Getcookies(reqwsid);
-	
-	if(cookies)
-	{
-			DirectoryObject.GetSession(cookies,function(err,response){
-		
-		if(err)
-		{
-			
-		}
-		else
-		{
 			var Submenu ="Listes_Users";
 	
 				res.render('index.ejs', {
 						Submenu:Submenu,
 						Users:Users
 					});
+					res.end();
 				
-		}
 		
-	})
-	
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
 	
 });
 
-app.get('/Listes_Belongtouser', function(req, res) {
+app.get('/Listes_Belongtouser',cookies, function(req, res) {
 	
-
-	
-		var reqwsid=req.cookies.WASID;
-	
-	//console.log("wsid Listes_Belongtouser:"+reqwsid);
-	if(reqwsid.length>1)
-	{
-	var cookies=DirectoryObject.Getcookies(reqwsid);
-	
-	if(cookies)
-	{
-			DirectoryObject.GetSession(cookies,function(err,response){
-		
-		if(err)
-		{
-			
-		}
-		else
-		{
 				var Submenu ="Listes_Belongtouser";
 	
 				res.render('index.ejs', {
 					Submenu:Submenu
 				});
 				
-		}
-		
-	})
-	
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
+				res.end();
 	
 });
 
-app.get('/Sub_Groups1', function(req, res) {
+app.get('/Sub_Groups1',cookies, function(req, res) {
 	
 	////console.log("/Sub_Groups1");
         var selected=req.param('groupselected');
-		////console.log("/Sub_Groups1 selected"+selected);
-		var reqwsid=req.cookies.WASID;
-	
-	////console.log("wsid Sub_Groups:"+reqwsid);
-	if(reqwsid.length>1)
-	{
-	var cookies=DirectoryObject.Getcookies(reqwsid);
-	
-	if(cookies)
-	{
-			DirectoryObject.GetSession(cookies,function(err,response){
 		
-		if(err)
-		{
-			
-		}
-		else
-		{
 				var group1=DirectoryObject.GetGroup(groupsId[selected]);
 				var listgroup1sub1=group1.GetSubGroupsName();
 				var groupresultatliste=[];
@@ -759,7 +489,6 @@ app.get('/Sub_Groups1', function(req, res) {
 					
 				}
 				
-				//console.log()
 					var Submenu ="Sub_Groups";
 	
 						res.render('index.ejs', {
@@ -769,44 +498,17 @@ app.get('/Sub_Groups1', function(req, res) {
 						groupliste:groupresultatliste
 					});
 				
-		}
 		
-	})
-	
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
 	
 });
-app.get('/Listes_loggedin', function(req, res) {
+app.get('/Listes_loggedin',cookies, function(req, res) {
 	
 	
-	var reqwsid=req.cookies.WASID;
 	
-	//console.log("wsid Listes_loggedin:"+reqwsid);
-	if(reqwsid.length>1)
-	{
-	var cookies=DirectoryObject.Getcookies(reqwsid);
-	var listmanager=DirectoryObject.getlistmanager();
-	if(cookies)
-	{
-			DirectoryObject.GetSession(cookies,function(err,response){
-		
-		if(err)
-		{
-			
-		}
-		else
-		{
-			
+			    var listmanager=DirectoryObject.getlistmanager();
+				
 				var lenghtlist=listmanager.length;
+				
 				for(var i=0;i<lenghtlist;i++)
 				{
 					var object= listmanager[i];
@@ -850,69 +552,28 @@ app.get('/Listes_loggedin', function(req, res) {
 					Submenu:Submenu,
 					listmanager:listmanager
 				});
-				
+				res.end();
 				}
 				
-		}
 		
-	})
-	
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
-	
 	
 });
 
-app.get('/Session_Manager', function(req, res) {
+app.get('/Session_Manager',cookies, function(req, res) {
 	
 
 	
-	var reqwsid=req.cookies.WASID;
-	
-	//console.log("wsid Session_Manager:"+reqwsid);
-	if(reqwsid.length>1)
-	{
-	var cookies=DirectoryObject.Getcookies(reqwsid);
-	var listmanager=DirectoryObject.getlistmanager();
-	if(cookies)
-	{
-			DirectoryObject.GetSession(cookies,function(err,response){
-		
-		if(err)
-		{
-			
-		}
-		else
-		{
+						var listmanager=DirectoryObject.getlistmanager();
+						
 						var Submenu ="Session_Manager";
 	
 						res.render('index.ejs', {
 							Submenu:Submenu,
 							listmanager:listmanager
 						});
+						res.end();
 				
-		}
 		
-	})
-	
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
 	
 	
 });
@@ -964,27 +625,11 @@ var reqwsid=req.param('wsidsessionmanager');
 	
 });
 
-app.get('/Session_Persistant', function(req, res) {
+app.get('/Session_Persistant',cookies, function(req, res) {
 	
 
 	
-	var reqwsid=req.cookies.WASID;
 	
-	//console.log("wsid Session_Persistant:"+reqwsid);
-	if(reqwsid.length>1)
-	{
-	var cookies=DirectoryObject.Getcookies(reqwsid);
-	
-	if(cookies)
-	{
-			DirectoryObject.GetSession(cookies,function(err,response){
-		
-		if(err)
-		{
-			
-		}
-		else
-		{
 					var listsessionlog=DirectoryObject.getsessionlog();
 					
 					var Submenu ="Session_Persistant";
@@ -995,45 +640,17 @@ app.get('/Session_Persistant', function(req, res) {
 					
 					listsessionlog:listsessionlog
 					});
+					res.end();
 				
-		}
 		
-	})
-	
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
 	
 	
 });
 
-app.get('/logout', function(req, res) {
+app.get('/logout',cookies, function(req, res) {
 	
 
-	var reqwsid=req.cookies.WASID;
 	
-	//console.log("wsid logout:"+reqwsid);
-	if(reqwsid.length>1)
-	{
-	var cookies=DirectoryObject.Getcookies(reqwsid);
-	
-	if(cookies)
-	{
-			DirectoryObject.GetSession(cookies,function(err,response){
-		
-		if(err)
-		{
-			
-		}
-		else
-		{
 			
 			    
 				console.log(cookies);
@@ -1043,21 +660,9 @@ app.get('/logout', function(req, res) {
 				//res.append('Set-Cookie', 'WASID= ; Path=/; HttpOnly');
 	
 				res.render('chambre1.ejs');
+				res.end();
 				
-		}
 		
-	})
-	
-	}
-		else
-	{
-		res.render('chambre1.ejs');
-	}
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
 	
 
 	
@@ -1067,28 +672,8 @@ app.get('/logout', function(req, res) {
 	
 });
 
-app.get('/Sub_Groups1', function(req, res) {
+app.get('/Sub_Groups1', cookies,function(req, res) {
 	
-	////console.log("/Sub_Groups1");
-        var selected=req.param('groupselected');
-		////console.log("/Sub_Groups1 selected"+selected);
-		var reqwsid=req.cookies.WASID;
-	
-	////console.log("wsid Sub_Groups:"+reqwsid);
-	if(reqwsid.length>1)
-	{
-	var cookies=DirectoryObject.Getcookies(reqwsid);
-	
-	if(cookies)
-	{
-			DirectoryObject.GetSession(cookies,function(err,response){
-		
-		if(err)
-		{
-			
-		}
-		else
-		{
 				var group1=DirectoryObject.GetGroup(groupsId[selected]);
 				var listgroup1sub1=group1.GetSubGroupsName();
 				var groupresultatliste=[];
@@ -1108,21 +693,9 @@ app.get('/Sub_Groups1', function(req, res) {
 						selected:selected,
 						groupliste:groupresultatliste
 					});
+					res.end();
 				
-		}
-		
-	})
 	
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
 	
 });
 
@@ -1131,26 +704,10 @@ app.get('/Sub_Groups1', function(req, res) {
 
 
 
-app.get('/Sub_Groups', function(req, res) {
+app.get('/Sub_Groups',cookies, function(req, res) {
 	
         var selected=1;
-		var reqwsid=req.cookies.WASID;
-	
-	//console.log("wsid Sub_Groups:"+reqwsid);
-	if(reqwsid.length>1)
-	{
-	var cookies=DirectoryObject.Getcookies(reqwsid);
-	
-	if(cookies)
-	{
-			DirectoryObject.GetSession(cookies,function(err,response){
 		
-		if(err)
-		{
-			
-		}
-		else
-		{
 				var group1=DirectoryObject.GetGroup(groupsId[selected]);
 				var listgroup1sub=group1.getsubgroupId();
 				var listgroup1sub1=group1.GetSubGroupsName();
@@ -1171,47 +728,18 @@ app.get('/Sub_Groups', function(req, res) {
 						selected:selected,
 						groupliste:groupresultatliste
 					});
+					res.end();
 				
-		}
 		
-	})
-	
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
 	
 });
 
-app.get('/User_Include', function(req, res)
+app.get('/User_Include',cookies, function(req, res)
 {
 	
 	//console.log("/Sub_Groups1");
         var selected=2;
-		//console.log("/Sub_Groups1 selected"+selected);
-		var reqwsid=req.cookies.WASID;
-	
-	//console.log("wsid Sub_Groups:"+reqwsid);
-	if(reqwsid.length>1)
-	{
-	var cookies=DirectoryObject.Getcookies(reqwsid);
-	
-	if(cookies)
-	{
-			DirectoryObject.GetSession(cookies,function(err,response){
 		
-		if(err)
-		{
-			
-		}
-		else
-		{
 				var group1=DirectoryObject.GetGroup(groupsId[selected]);
 				var listuser=group1.userinclude();
 				var usersultatliste=[];
@@ -1232,46 +760,16 @@ app.get('/User_Include', function(req, res)
 						selected:selected,
 						groupliste:usersultatliste
 					});
+					res.end();
 				
-		}
 		
-	})
-	
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
-	
 });
 
 app.get('/User_Include1', function(req, res) {
 	
 	//console.log("/Sub_Groups1");
         var selected=req.param('groupselected');
-		//console.log("/Sub_Groups1 selected"+selected);
-		var reqwsid=req.cookies.WASID;
-	
-	//console.log("wsid Sub_Groups:"+reqwsid);
-	if(reqwsid.length>1)
-	{
-	var cookies=DirectoryObject.Getcookies(reqwsid);
-	
-	if(cookies)
-	{
-			DirectoryObject.GetSession(cookies,function(err,response){
 		
-		if(err)
-		{
-			
-		}
-		else
-		{
 				var group1=DirectoryObject.GetGroup(groupsId[selected]);
 				var listuser=group1.userinclude();
 				var usersultatliste=[];
@@ -1291,22 +789,9 @@ app.get('/User_Include1', function(req, res) {
 						selected:selected,
 						groupliste:usersultatliste
 					});
+					res.end();
 				
-		}
 		
-	})
-	
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
-	}
-	else
-	{
-		res.render('chambre1.ejs');
-	}
-	
 });
 
 
