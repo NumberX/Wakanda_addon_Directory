@@ -74,13 +74,48 @@ namespace WaDirectory_Data
 
 		initall(curl2);
 
+		string password2;
+		bool test = false;
+
+		if(strchr(password.c_str(), '"'))
+		{
+			test = true;
+
+			size_t pos = strchr(password.c_str(), '"') - password.c_str();
+
+			int j = 0;
+			for (int i = 0; i < password.length(); i++)
+			{
+				password2+= password[i];
+
+				j++;
+
+				if (j == pos)
+				{
+					password2+= '\\';
+					j++;
+				}
+			}
+
+		}
 		if (curl2) {
 
 
 			this->CurlCppSetOption(url, curl2);
 
-			std::string data = "[\"" + username + "\",\"" + password + "\"]";
+			std::string data;
 
+			if (test==false)
+			{ 
+
+		    	data = "[\"" + username + "\",\"" + password + "\"]";
+			}
+			else
+			{
+			    data = "[\"" + username + "\",\"" + password2 + "\"]";
+			}
+
+			std::cout << "\n \n \n \n Data" << data.c_str() <<"End \n \n \n \n "<< endl;
 			curl_easy_setopt(curl2, CURLOPT_SSL_VERIFYPEER, 0);  // for --insecure option
 
 			curl_easy_setopt(curl2, CURLOPT_POSTFIELDS, data.c_str());
@@ -117,12 +152,50 @@ namespace WaDirectory_Data
 		initall(curl2);
 		
 		string UrlLogin = this->Url + url;
+		string password2;
+		bool test = false;
+
+		if (strchr(password.c_str(), '"'))
+		{
+			test = true;
+
+			size_t pos = strchr(password.c_str(), '"') - password.c_str();
+
+			int j = 0;
+			for (int i = 0; i < password.length(); i++)
+			{
+
+
+				password2 += password[i];
+
+
+				j++;
+
+				if (j == pos)
+				{
+					password2 += '\\';
+					
+					j++;
+				}
+			}
+
+		}
 		
 		if (curl2) {
 
 			this->CurlCppSetOption(UrlLogin,curl2);
 
-			std::string data = "[\"" + username + "\",\"" + password + "\"]";
+			std::string data;
+
+			if (test == false)
+			{
+
+				data = "[\"" + username + "\",\"" + password + "\"]";
+			}
+			else
+			{
+				data = "[\"" + username + "\",\"" + password2 + "\"]";
+			}
 			
 			curl_easy_setopt(curl2, CURLOPT_SSL_VERIFYPEER, 0);  // for --insecure option
 			
@@ -173,6 +246,8 @@ namespace WaDirectory_Data
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
 
 		curl_easy_setopt(curl, CURLOPT_HEADERDATA, this);
+
+		curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "");
 
 
 	}

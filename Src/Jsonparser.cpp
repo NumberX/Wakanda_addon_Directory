@@ -206,6 +206,8 @@ namespace WaDirectory_Data
 
 			Document document;
 
+			std::cout << "Data Response" << curltest->data.str.c_str() << endl;
+
 			document.Parse(curltest->data.str.c_str());
 
 			if(document.HasMember("result")==true)

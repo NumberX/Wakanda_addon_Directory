@@ -1,4 +1,5 @@
 #include "Directorywrap.h"
+#define _HAS_EXCEPTIONS 0
 #include"Utility.h"
 #include"ControleDirectorysynchro.h"
 #include<vector>

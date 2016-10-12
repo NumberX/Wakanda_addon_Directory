@@ -166,7 +166,6 @@ namespace WaDirectory_Data
 	void ManageSession::Affiche()
 	{
 		//vector<UnionUserSession> List = getList();
-		std::cout << "Entrer Affiche :" +list.size()<< endl;
 		if (list.size()>0)
 		{ 
 		for (int Iterator = 0; Iterator < list.size(); Iterator++)
