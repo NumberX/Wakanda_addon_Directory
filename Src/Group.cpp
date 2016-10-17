@@ -35,6 +35,8 @@ namespace WaDirectory_Data
 		PtparseurXml = new XMLparser(this->Pt_Directory->Get_Url_Directory());
 
 		ouName = PtparseurXml->NameGrouoById(this->Idgroup);
+
+		delete PtparseurXml;
 	}
 	void Group::GetId(string& ouName)
 	{
@@ -63,7 +65,8 @@ namespace WaDirectory_Data
 
 		}
 		
-		
+		delete PtparseurXml;
+
 		return usr;
 	}
 
@@ -76,6 +79,8 @@ namespace WaDirectory_Data
 		PtparseurXml = new XMLparser(this->Pt_Directory->Get_Url_Directory());
 
 		ouSubGroupNames = PtparseurXml->ListGroupIncludeId(this->Idgroup);
+
+		delete PtparseurXml;
 	}
 	void Group::GetSubGroupName(vector<string>& ouSubGroupNames)
 	{
@@ -86,6 +91,8 @@ namespace WaDirectory_Data
 		PtparseurXml = new XMLparser(this->Pt_Directory->Get_Url_Directory());
 
 		ouSubGroupNames = PtparseurXml->ListGroupInclude(this->Idgroup);
+
+		delete PtparseurXml;
 	}
 
 	void Group::Getuserinclude(vector<string>& ouSubGroupNames)
@@ -97,5 +104,7 @@ namespace WaDirectory_Data
 		PtparseurXml = new XMLparser(this->Pt_Directory->Get_Url_Directory());
 
 		ouSubGroupNames = PtparseurXml->ListGroupIncludeId(this->Idgroup);
+
+		delete PtparseurXml;
 	}
 }

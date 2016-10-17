@@ -44,9 +44,10 @@ namespace WaDirectory_Data
 		XMLparser *PtparseurXml;
 
 		PtparseurXml = new XMLparser(this->Pt_Directory->Get_Url_Directory());
+		
 		outName = PtparseurXml->NameUserById(this->Id, "name");
-		//outName = this->Username;
 	
+		delete PtparseurXml;
 	}
 
 
@@ -55,6 +56,7 @@ namespace WaDirectory_Data
 		bool resultat;
 
 		Jsonparser *Jspar;
+
 		Jspar=new Jsonparser(this->GetDirectory()->Get_Url_Wakanda(), this->GetDirectory()->Get_Url_Wakanda());
 		
 		string wsid = Jspar->login(this->Username, this->Password);
@@ -63,6 +65,7 @@ namespace WaDirectory_Data
 		
 		resultat = Jspar->currentUserBelongsTo(inGroupName, "");
 		
+		delete Jspar;
 
 		return resultat;
 	}
@@ -88,6 +91,9 @@ namespace WaDirectory_Data
 			resultat = Jspar->currentUserBelongsTo(inGroupName->Idgroup,"" );
 			
 		}
+
+		delete Jspar;
+
 		return resultat;
 	}
 
@@ -111,12 +117,12 @@ namespace WaDirectory_Data
 		{
 			this->Pt_Directory->List.UpdateBycookies(inSession->cookies, Jspar->Ttl);
 
-			//this->Pt_Directory->List.Affiche();
+			delete Jspar;
 
 			return true;
 		}
 
-			
+		delete Jspar;
 		
 		return false;
 		

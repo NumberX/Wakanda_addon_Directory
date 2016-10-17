@@ -72,7 +72,9 @@
 <script>
 
 function updateContent() {
-    window.location.href='http://localhost:8282/Session_Persistant'
+<%delete  listsessionlog;
+ %>
+   window.location.href='http://localhost:8282/Session_Persistant'
 }
 setInterval(updateContent, 30000);
 

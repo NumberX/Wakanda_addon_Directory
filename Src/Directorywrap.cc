@@ -257,8 +257,6 @@ void Directorywrap::LogInWork(uv_work_t  *request)
 
 	Pt_SessionWrap_Intra.Argument.PtSession = work->Intra_Data[0].Argument.PtDirectorywrap->ptdirectory->LogIn(user, password);
 
-
-
 	work->Intra_Data.push_back(Pt_SessionWrap_Intra);
 
 }

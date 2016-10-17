@@ -8,6 +8,7 @@
 #include <chrono>
 #include <fstream>
 #include <ctime>
+#include<mutex>
 using namespace std;
 namespace WaDirectory_Data
 {
@@ -23,31 +24,52 @@ namespace WaDirectory_Data
 
 	string ManageSession::Getcookies(string IdUser)
 	{
+
+		myMutex.lock();
 		for (int Iterator = 0; Iterator < list.size(); Iterator++)
 		{
 			UnionUserSession Newelement = list.at(Iterator);
 
-			if (Newelement.IdUser == IdUser)return Newelement.cookies;
+			if (Newelement.IdUser == IdUser)
 
+			{
+				myMutex.unlock();
+				return Newelement.cookies;
+			}
 		}
+		
+		myMutex.unlock();
+
 		return "";
 
 	}
 
 	string ManageSession::GetUserId(string cookies)
 	{
+		myMutex.lock();
+
+
 		for (int Iterator = 0; Iterator < list.size(); Iterator++)
 		{
 			UnionUserSession Newelement = list.at(Iterator);
 
-			if (Newelement.cookies ==cookies)return Newelement.IdUser;
+			if (Newelement.cookies == cookies)
+			{
+				myMutex.unlock();
 
+				return Newelement.IdUser;
+			}
 		}
+
+		myMutex.unlock();
 		return "";
 
 	}
 	void ManageSession::Register(string IdUser, string cookies, string Username, double InputTtl)
 	{
+		
+		myMutex.lock();
+
 		UnionUserSession Newelement;
 		
 		Newelement.cookies = cookies;
@@ -56,29 +78,43 @@ namespace WaDirectory_Data
 
 		Newelement.Username = Username;
 
-		Newelement.MaxAgeTtl = InputTtl;
+		std::cout << "\n \n TTl Register \n \n" << InputTtl << endl;
+
+		(Newelement.MaxAgeTtl) = InputTtl;
 
 		time_t OperationTime = time(0);
 
 		SaveOperation(OperationTime, "Login", Newelement.getWASID(), Newelement.IdUser, Newelement.Username);
 
 		this->list.push_back(Newelement);
+
+		myMutex.unlock();
 	}
 
 	bool ManageSession::FindByUserId(string IdUser)
 	{
+		myMutex.lock();
+
 		for (int Iterator = 0; Iterator < list.size(); Iterator++)
 		{
 			UnionUserSession Newelement = list.at(Iterator);
 
-			if(Newelement.IdUser==IdUser)return true;
+			if (Newelement.IdUser == IdUser)
+			{
+				myMutex.unlock();
 
+				return true;
+			}
 		}
+		myMutex.unlock();
+
 		return false;
 	}
 
 	bool ManageSession::findcookiesbywsid(string& wsid)
 	{
+		myMutex.lock();
+
 		for (int Iterator = 0; Iterator < list.size(); Iterator++)
 		{
 			UnionUserSession Newelement = list.at(Iterator);
@@ -86,15 +122,23 @@ namespace WaDirectory_Data
 			if (Newelement.getWASID() == wsid)
 			{ 
 				wsid = Newelement.cookies;
+		
+				myMutex.unlock();
+				
 				return true;
 			}
 		}
+		
+		myMutex.unlock();
+		
 		return false;
 	}
 	vector<UnionUserSession> ManageSession::getList()
 	{
 		vector < UnionUserSession > Output;
 		
+		myMutex.lock();
+
 		for (int Iterator = 0; Iterator < list.size(); Iterator++)
 		{
 			UnionUserSession Newelement = list.at(Iterator);
@@ -103,10 +147,15 @@ namespace WaDirectory_Data
 
 			Output.push_back(Newelement);
 		}
+
+		myMutex.unlock();
+		
 		return Output;
 	}
 	void ManageSession::Remove(string IdUser)
 	{
+		myMutex.lock();
+
 		for (int Iterator = 0; Iterator < list.size(); Iterator++)
 		{
 			UnionUserSession Newelement = list.at(Iterator);
@@ -118,13 +167,22 @@ namespace WaDirectory_Data
 				SaveOperation(OperationTime, "Logout", Newelement.getWASID(), Newelement.IdUser, Newelement.Username);
 
 				
-				list.erase(list.begin() + Iterator); }
+				
+				list.erase(list.begin() + Iterator); 
+			
+				
+			}
 
 		}
+
+		myMutex.unlock();
 
 	}
 	void ManageSession::RemoveBycookies(string cookies)
 	{
+
+		myMutex.lock();
+
 		for (int Iterator = 0; Iterator < list.size(); Iterator++)
 		{
 			UnionUserSession Newelement = list.at(Iterator);
@@ -137,16 +195,21 @@ namespace WaDirectory_Data
 				SaveOperation(OperationTime, "Logout", Newelement.getWASID(), Newelement.IdUser, Newelement.Username);
 			
 				list.erase(list.begin() + Iterator);
+
+				
 			
 			}
 
 		}
+		myMutex.unlock();
 
 	}
 
 	void ManageSession::UpdateBycookies(string cookies, double InputTtl)
 	{
 		
+		myMutex.lock();
+
 		for (int Iterator = 0; Iterator < list.size(); Iterator++)
 		{
 			
@@ -156,18 +219,24 @@ namespace WaDirectory_Data
 				time_t OperationTime = time(0);
 
 				SaveOperation(OperationTime, "Update", list.at(Iterator).getWASID(), list.at(Iterator).IdUser, list.at(Iterator).Username);
-			
-				list.at(Iterator).MaxAgeTtl = InputTtl;
+
+				(list.at(Iterator).MaxAgeTtl) = InputTtl;
+
 			}
 
 		}
+
+		myMutex.unlock();
+
 		
 	}
 	void ManageSession::Affiche()
 	{
-		//vector<UnionUserSession> List = getList();
+
 		if (list.size()>0)
 		{ 
+			myMutex.lock();
+
 		for (int Iterator = 0; Iterator < list.size(); Iterator++)
 		{
 			UnionUserSession Newelement = list.at(Iterator);
@@ -175,6 +244,9 @@ namespace WaDirectory_Data
 			std::cout << "Username :" << Newelement.Username << "  IdUser :" << Newelement.IdUser << " WSID :" << Newelement.getWASID() << " TTl : " << Newelement.MaxAgeTtl<< endl;
 
 		}
+
+		myMutex.unlock();
+		
 		}
 	
 	}
@@ -191,64 +263,71 @@ namespace WaDirectory_Data
 		outputFile.close();
 	}
 
-	void ManageSession::Task(int TimeSleep,IDirectory *Pt_Directory,vector<UnionUserSession>  & list1)
+	void ManageSession::Task(int TimeSleep, IDirectory *Pt_Directory, vector<UnionUserSession>  & list1)
 	{
+
+		while (true)
+		{
+		Affiche();
 
 		std::chrono::milliseconds duration(TimeSleep);
 
-	
-		std:this_thread::sleep_for(duration);
+	    std:this_thread::sleep_for(duration);
 
-		int Nombre=list1.size();
-		
+		std::cout << "\n \n \n Begin \n \n \n " << endl;
+
+		int Nombre = list1.size();
+
 		int time1 = TimeSleep / 1000;
 
-		if (Nombre>0)
-		{ 
-		for (int Iterator = 0; Iterator < Nombre; Iterator++)
+		if (Nombre > 0)
 		{
-			list1.at(Iterator);
+			myMutex.lock();
 
-			if (list1.at(Iterator).MaxAgeTtl - time1 <= 0){
+			for (int Iterator = 0; Iterator < Nombre; Iterator++)
+			{
+				list1.at(Iterator);
 
-				ISession* inSession = new Session(list1.at(Iterator).cookies);
+				if (list1.at(Iterator).MaxAgeTtl - time1 <= 0){
 
-				Pt_Directory->LogOut(inSession);
+					ISession* inSession = new Session(list1.at(Iterator).cookies);
 
-				time_t OperationTime = time(0);
+					Pt_Directory->LogOut(inSession);
 
-				SaveOperation(OperationTime, "Logout", list1.at(Iterator).getWASID(), list1.at(Iterator).IdUser, list1.at(Iterator).Username);
+					delete inSession;
 
-				list1.erase(list1.begin() + Iterator);
-				
-				if ((Iterator != 0) || (Iterator == 0))
+					time_t OperationTime = time(0);
+
+					Affiche();
+
+					SaveOperation(OperationTime, "Logout", list1.at(Iterator).getWASID(), list1.at(Iterator).IdUser, list1.at(Iterator).Username);
+
+					list1.erase(list1.begin() + Iterator);
+
+
+					if ((Iterator != 0) || (Iterator == 0))
+					{
+						Iterator--;
+					}
+
+					Nombre = Nombre - 1;
+				}
+				else
 				{
-					Iterator--;
+
+
+					list1.at(Iterator).MaxAgeTtl = list1.at(Iterator).MaxAgeTtl - time1;
+
+
 				}
 
-				Nombre=Nombre-1;
-			}
-			else
-			{
-				list1.at(Iterator).MaxAgeTtl = list1.at(Iterator).MaxAgeTtl - time1;
 			}
 
+			myMutex.unlock();
 		}
-		}
-		//this->Affiche();
+		std::cout << "\n \n \n End \n \n \n " << endl;
 
-	
-	try
-	{
-		// instructions pouvant déclencher des exceptions 
-		// dérivant de std::exception 
-		this->Task(TimeSleep, Pt_Directory,list1);
-	
-	}
-	catch (const std::exception & e)
-	{
-		std::cerr <<"Ereur from task"<<e.what();
-	}
+	};
 	
 	}
 

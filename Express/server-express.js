@@ -647,20 +647,54 @@ app.get('/Session_Persistant',cookies, function(req, res) {
 	
 });
 
-app.get('/logout',cookies, function(req, res) {
+app.get('/logout', function(req, res) {
 	
 
 	
 			
 			    
-				console.log(cookies);
+				var reqwsid=req.cookies.WASID;
+	
+	//console.log("wsid listes groups :"+reqwsid+"length :"+reqwsid.length);
+	if(reqwsid.length>0)
+	{
+		//console.log("Wsid2");
+		
+	var cookies1=DirectoryObject.Getcookies(reqwsid);
+	
+	if(cookies1)
+	{
+			DirectoryObject.GetSession(cookies1,function(err,response){
+		
+		if(err)
+		{
+			
+		}
+		else
+		{
+					DirectoryObject.LogOut(response);
+					pagelogin(req,res);
+		}
+		
+	})
+	
+	}
+	else
+	{
+		pagelogin(req,res);
+	}
+	}
+	else
+	{
+		pagelogin(req,res);
+		
+	}
 				
-				DirectoryObject.LogOut(response);
+				
 					
 				//res.append('Set-Cookie', 'WASID= ; Path=/; HttpOnly');
 	
-				res.render('chambre1.ejs');
-				res.end();
+				
 				
 		
 	

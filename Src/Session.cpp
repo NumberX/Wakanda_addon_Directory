@@ -47,11 +47,10 @@ namespace WaDirectory_Data
 
 			this->Pt_Directory->List.UpdateBycookies(this->cookies, json->Ttl);
 
-			//this->Pt_Directory->List.Affiche();
-
-			
-
 		}
+
+		delete json;
+
 		return pt;
 	}
 
@@ -71,11 +70,14 @@ namespace WaDirectory_Data
 
 			this->Pt_Directory->List.UpdateBycookies(this->cookies, json->Ttl);
 
-			//this->Pt_Directory->List.Affiche();
+			delete json;
 
 			return true;
 
 		}
+
+		delete json;
+
 		return false;
 	}
 
@@ -91,7 +93,7 @@ namespace WaDirectory_Data
 
 		this->Pt_Directory->List.RemoveBycookies(this->cookies);
 
-		//this->Pt_Directory->List.Affiche();
+		delete json;
 	}
 
 

@@ -4,6 +4,7 @@ namespace WaDirectory_Data
 {
 	UnionUserSession::UnionUserSession()
 	{
+		//this->MaxAgeTtl = new double();
 	}
 
 

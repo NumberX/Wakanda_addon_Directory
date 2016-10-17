@@ -41,10 +41,17 @@ namespace WaDirectory_Data
 
 		if (PtparseurXml->ExistUserByname(name, "name"))
 		{
-			 return true;
+			 
+			delete PtparseurXml;
+
+			return true;
+
 
 		}
-				return false;
+
+		delete PtparseurXml;
+
+		return false;
 	}
 
 	bool Directory::Isvalid(string Username,string Password)
@@ -59,10 +66,13 @@ namespace WaDirectory_Data
 		if (wsid.length() > 0)
 		{
 
+			delete Jspar;
+
 			return true;
 
 		}
-	
+		delete Jspar;
+
 		return false;
 	}
 
@@ -149,12 +159,17 @@ namespace WaDirectory_Data
 				ISession* inSession = new Session(cookies);
 
 				LogOut(inSession);
+
+				delete inSession;
 			}
 			
 			List.Register(UserId->Id, wsid, UserId->Username, Jspar->Ttl);
 
 
 		 }
+
+		delete Jspar;
+
 		return session;
 	
 	
@@ -196,6 +211,8 @@ namespace WaDirectory_Data
 		outGroupName.clear();
 		
 		outGroupName = PtparseurXml->ListGroup();
+
+		delete PtparseurXml;
 	
 	
 	}
@@ -209,6 +226,8 @@ namespace WaDirectory_Data
 
 		outGroupName = PtparseurXml->ListGroupId();
 
+		delete PtparseurXml;
+
 
 	}
 	void         Directory::GetUsersId(std::vector<std::string>& outGroupName)
@@ -220,6 +239,8 @@ namespace WaDirectory_Data
 		outGroupName.clear();
 
 		outGroupName = PtparseurXml->ListUsersId();
+
+		delete PtparseurXml;
 
 
 	}
@@ -235,6 +256,8 @@ namespace WaDirectory_Data
 		if (PtparseurXml->NameGrouoById(inGroupName).length()>0)
 		
 			PtGroup = new Group(inGroupName);
+
+		delete PtparseurXml;
 		
 		return PtGroup;
 	
@@ -255,6 +278,9 @@ namespace WaDirectory_Data
 			string Id = PtparseurXml->UserIdByname(inUserName);
 			PtUser = new User(inUserName, PtparseurXml->NameUserById(Id, "fullname"), Id, Password);
 		}
+
+		delete PtparseurXml;
+
 		return PtUser;
 
 
@@ -273,6 +299,8 @@ namespace WaDirectory_Data
 
 		PtUser = new User(inUserName, PtparseurXml->NameUserById(inUserId, "fullname"), inUserId, "");
 		
+		delete PtparseurXml;
+
 		return PtUser;
 
 
@@ -281,14 +309,14 @@ namespace WaDirectory_Data
 	bool         Directory::LogOut(const ISession* inSession){
 
 		Jsonparser *Jspar;
+
 		Jspar = new Jsonparser(this->Url_Wakanda, this->Url_Directory);
+		
 		Jspar->cookie = inSession->cookies;
 		
 		bool resultat = Jspar->Logout();
 
-		//this->List.RemoveBycookies(inSession->cookies);
-
-		//this->List.Affiche();
+		delete Jspar;
 		
 		return resultat;
 		
@@ -302,6 +330,7 @@ namespace WaDirectory_Data
 			session = new Session();
 			
 			session->cookies = inSessionID;
+
 			return session;
 		
 		
@@ -310,6 +339,7 @@ namespace WaDirectory_Data
 	bool         Directory::UserBelongTo(const ISession* inSession, const std::string& inGroupID){
 		
 		Jsonparser* Jspar;
+
 		Jspar = new Jsonparser(this->Url_Wakanda, this->Url_Directory);
 
 		Jspar->cookie = inSession->cookies;
@@ -317,8 +347,8 @@ namespace WaDirectory_Data
 		bool resultat = Jspar->currentUserBelongsTo(inGroupID,"");
 
 		this->List.UpdateBycookies(inSession->cookies, Jspar->Ttl);
-
-		//List.Affiche();
+		
+		delete Jspar;
 
 		return resultat;
 	
@@ -338,6 +368,10 @@ namespace WaDirectory_Data
 		bool resultat=PTJasper->currentUserBelongsTo(inGroupID, "");
 		
 		PTJasper->Logout();
+
+		delete PTJasper;
+
+		delete PtSession;
 		
 		return resultat;
 	
@@ -349,6 +383,8 @@ namespace WaDirectory_Data
 
 		PtparseurXml = new XMLparser(this->Get_Url_Directory());
 		
+		delete PtparseurXml;
+
 		return PtparseurXml->UserBelongGroup(inUser->Id, inGroupID->Idgroup);
 
 			

@@ -1,7 +1,8 @@
 #pragma once
 #include"UnionUserSession.h"
-
+#include<mutex>
 #include<vector>
+#include <condition_variable>
 namespace WaDirectory_Data
 {
 	class IDirectory;
@@ -9,11 +10,20 @@ namespace WaDirectory_Data
 	{
 		
 	public:
+
+		std::mutex myMutex;
+
+		condition_variable cond_var;
+
+		bool notified = true;
+
 		vector<UnionUserSession> list;
 
 		ManageSession();
 
 		~ManageSession();
+
+		std::mutex mutex;
 
 		void Register(string IdUser, string cookies, string Username, double InputTtl);
 
