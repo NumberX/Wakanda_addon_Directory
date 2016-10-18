@@ -459,34 +459,20 @@ void Directorywrap::getsessionlog(const v8::FunctionCallbackInfo<v8::Value>& arg
 		Local<Array> Tab = Array::New(isolate);
 
 		vector<SessionLog> Resultat=PtDirectoryWrap->ptdirectory->loadfile();
-
-		for (int Iterator = 0; Iterator < Resultat.size(); Iterator++)
-		{
-			SessionLog Newelement;
-
-			Newelement.OperationTime = Resultat.at(Iterator).OperationTime;
-
-			Newelement.TypeOperation = Resultat.at(Iterator).TypeOperation;
-
-			Newelement.wsid = Resultat.at(Iterator).wsid;
-
-			Newelement.IdUser = Resultat.at(Iterator).IdUser;
-
-			Newelement.NameUser = Resultat.at(Iterator).NameUser;
+		
+		int Index = 0;
+		for (auto Iterator : Resultat){
 
 			Local<Object> object1 = Object::New(isolate);
 
-			object1->Set(String::NewFromUtf8(isolate, "OperationTime"), String::NewFromUtf8(isolate, Newelement.OperationTime.c_str()));
-			object1->Set(String::NewFromUtf8(isolate, "TypeOperation"), String::NewFromUtf8(isolate, Newelement.TypeOperation.c_str()));
-			object1->Set(String::NewFromUtf8(isolate, "wsid"), String::NewFromUtf8(isolate, Newelement.wsid.c_str()));
-			object1->Set(String::NewFromUtf8(isolate, "IdUser"), String::NewFromUtf8(isolate, Newelement.IdUser.c_str()));
-			object1->Set(String::NewFromUtf8(isolate, "NameUser"), String::NewFromUtf8(isolate, Newelement.NameUser.c_str()));
-			Tab->Set(Iterator, object1);
-
+			object1->Set(String::NewFromUtf8(isolate, "OperationTime"), String::NewFromUtf8(isolate, Iterator.OperationTime.c_str()));
+			object1->Set(String::NewFromUtf8(isolate, "TypeOperation"), String::NewFromUtf8(isolate, Iterator.TypeOperation.c_str()));
+			object1->Set(String::NewFromUtf8(isolate, "wsid"), String::NewFromUtf8(isolate, Iterator.wsid.c_str()));
+			object1->Set(String::NewFromUtf8(isolate, "IdUser"), String::NewFromUtf8(isolate, Iterator.IdUser.c_str()));
+			object1->Set(String::NewFromUtf8(isolate, "NameUser"), String::NewFromUtf8(isolate, Iterator.NameUser.c_str()));
+			Tab->Set(Index, object1);
+			Index++;
 		}
-
-
-
 
 		args.GetReturnValue().Set(Tab);
 	}
@@ -526,34 +512,21 @@ void Directorywrap::getlistmanager(const v8::FunctionCallbackInfo<v8::Value>& ar
 
 		PtDirectoryWrap->ptdirectory->List;
 
-		for (int Iterator = 0; Iterator < PtDirectoryWrap->ptdirectory->List.list.size(); Iterator++)
-		{
-			UnionUserSession Newelement;
-			Newelement.IdUser= PtDirectoryWrap->ptdirectory->List.list.at(Iterator).IdUser;
+		int Index = 0;
 
-			Newelement.Username= PtDirectoryWrap->ptdirectory->List.list.at(Iterator).Username;
-			
-			Newelement.Username= PtDirectoryWrap->ptdirectory->List.list.at(Iterator).Username;
-			
-			Newelement.MaxAgeTtl= PtDirectoryWrap->ptdirectory->List.list.at(Iterator).MaxAgeTtl;
-			
-			Newelement.MaxAgeTtl= PtDirectoryWrap->ptdirectory->List.list.at(Iterator).MaxAgeTtl;
-			
-			Newelement.cookies=PtDirectoryWrap->ptdirectory->List.list.at(Iterator).cookies;
-			
+		for (auto Iterator : PtDirectoryWrap->ptdirectory->List.list){
+
 			Local<Object> object1 = Object::New(isolate);
 
-			object1->Set(String::NewFromUtf8(isolate, "IdUser"), String::NewFromUtf8(isolate, Newelement.IdUser.c_str()));
-			object1->Set(String::NewFromUtf8(isolate, "Username"), String::NewFromUtf8(isolate, Newelement.Username.c_str()));
-			object1->Set(String::NewFromUtf8(isolate, "WSID"), String::NewFromUtf8(isolate, Newelement.getWASID().c_str()));
-			object1->Set(String::NewFromUtf8(isolate, "TTL"), Number::New(isolate, Newelement.MaxAgeTtl));
-			Tab->Set(Iterator, object1);
+			object1->Set(String::NewFromUtf8(isolate, "IdUser"), String::NewFromUtf8(isolate, Iterator.IdUser.c_str()));
+			object1->Set(String::NewFromUtf8(isolate, "Username"), String::NewFromUtf8(isolate, Iterator.Username.c_str()));
+			object1->Set(String::NewFromUtf8(isolate, "WSID"), String::NewFromUtf8(isolate, Iterator.getWASID().c_str()));
+			object1->Set(String::NewFromUtf8(isolate, "TTL"), Number::New(isolate, Iterator.MaxAgeTtl));
+			Tab->Set(Index, object1);
+			Index++;
 
 		}
 		
-
-		
-
 		args.GetReturnValue().Set(Tab);
 	}
 

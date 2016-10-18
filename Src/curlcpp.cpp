@@ -115,7 +115,6 @@ namespace WaDirectory_Data
 			    data = "[\"" + username + "\",\"" + password2 + "\"]";
 			}
 
-			std::cout << "\n \n \n \n Data" << data.c_str() <<"End \n \n \n \n "<< endl;
 			curl_easy_setopt(curl2, CURLOPT_SSL_VERIFYPEER, 0);  // for --insecure option
 
 			curl_easy_setopt(curl2, CURLOPT_POSTFIELDS, data.c_str());

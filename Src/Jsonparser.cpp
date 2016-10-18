@@ -71,16 +71,20 @@ namespace WaDirectory_Data
 			document.Parse(curltest->data.str.c_str());
 
 			this->Ttl = this->GetMaxAgeTtl(curltest->dataheaderstr.str.c_str());
-			
-			if (document["result"].GetBool() == true)
-			{
-				return (this->cookie);
-			}
 
-			if (document["result"].GetBool() == false)
+			if (document.HasMember("result") == true)
 			{
-				return "";
 
+				if (document["result"].GetBool() == true)
+				{
+					return (this->cookie);
+				}
+
+				if (document["result"].GetBool() == false)
+				{
+					return "";
+
+				}
 			}
 		}
 		
@@ -178,10 +182,13 @@ namespace WaDirectory_Data
 			Document document;
 
 			document.Parse(curltest->data.str.c_str());
+			if (document.HasMember("result") == true)
+			{
 
-			if (document["result"].GetBool() == true)return true;
+				if (document["result"].GetBool() == true)return true;
 
-			if (document["result"].GetBool() == false)return false;
+				if (document["result"].GetBool() == false)return false;
+			}
 		}
 		return false;
 	}
@@ -205,8 +212,6 @@ namespace WaDirectory_Data
 		else {
 
 			Document document;
-
-			std::cout << "Data Response" << curltest->data.str.c_str() << endl;
 
 			document.Parse(curltest->data.str.c_str());
 
@@ -252,13 +257,17 @@ namespace WaDirectory_Data
 
 			document.Parse(curltest->data.str.c_str());
 
-			if (document["result"].GetBool() == true)
+			if (document.HasMember("result") == true)
 			{
-				this->Ttl = this->GetMaxAgeTtl(curltest->dataheaderstr.str.c_str());
 
-				return true;
+				if (document["result"].GetBool() == true)
+				{
+					this->Ttl = this->GetMaxAgeTtl(curltest->dataheaderstr.str.c_str());
+
+					return true;
+				}
+				if (document["result"].GetBool() == false){ return false; }
 			}
-			if (document["result"].GetBool() == false){ return false; }
 
 		}
 		return false;
@@ -288,28 +297,32 @@ namespace WaDirectory_Data
 
 			document.Parse(curltest->data.str.c_str());
 
-			if (document["result"].IsNull())
+			if (document.HasMember("result") == true)
 			{
 
-			}
-			else
-			{
-				this->Ttl = this->GetMaxAgeTtl(curltest->dataheaderstr.str.c_str());
-				for (Value::ConstMemberIterator Iterator = document["result"].MemberBegin();
-					Iterator != document["result"].MemberEnd(); ++Iterator)
+				if (document["result"].IsNull())
 				{
-					if (Iterator->name == "userName") {
-						resultat.push_back(Iterator->value.GetString());
-					}
-					if (Iterator->name == "fullName") {
-						resultat.push_back(Iterator->value.GetString());
-					}
-					if (Iterator->name == "ID") {
-						resultat.push_back(Iterator->value.GetString());
+
+				}
+				else
+				{
+					this->Ttl = this->GetMaxAgeTtl(curltest->dataheaderstr.str.c_str());
+					for (Value::ConstMemberIterator Iterator = document["result"].MemberBegin();
+						Iterator != document["result"].MemberEnd(); ++Iterator)
+					{
+						if (Iterator->name == "userName") {
+							resultat.push_back(Iterator->value.GetString());
+						}
+						if (Iterator->name == "fullName") {
+							resultat.push_back(Iterator->value.GetString());
+						}
+						if (Iterator->name == "ID") {
+							resultat.push_back(Iterator->value.GetString());
+						}
+
 					}
 
 				}
-
 			}
 
 		}

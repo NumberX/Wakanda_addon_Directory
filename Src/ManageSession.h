@@ -8,14 +8,9 @@ namespace WaDirectory_Data
 	class IDirectory;
 	class ManageSession
 	{
-		
-	public:
-
+	private:
 		std::mutex myMutex;
-
-		condition_variable cond_var;
-
-		bool notified = true;
+	public:
 
 		vector<UnionUserSession> list;
 
