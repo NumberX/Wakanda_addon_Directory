@@ -188,7 +188,7 @@ namespace WaDirectory_Data
 		{
 			
 
-			if (list.at(Iterator).cookies == cookies){
+			if (list[Iterator].cookies == cookies){
 
 				time_t OperationTime = time(0);
 
@@ -236,8 +236,7 @@ namespace WaDirectory_Data
 
 		while (true)
 		{
-		Affiche();
-
+		
 		std::chrono::milliseconds duration(TimeSleep);
 
 	    std:this_thread::sleep_for(duration);
@@ -246,49 +245,53 @@ namespace WaDirectory_Data
 
 		int time1 = TimeSleep / 1000;
 
-		if (Nombre > 0)
-		{
-			std::lock_guard<std::mutex> lockGuard(myMutex);
-
-			for (int Iterator = 0; Iterator < Nombre; Iterator++)
+			if (Nombre > 0)
 			{
-				list1.at(Iterator);
+				std::lock_guard<std::mutex> lockGuard(myMutex);
 
-				if (list1[Iterator].MaxAgeTtl - time1 <= 0){
+				for (int Iterator = 0; Iterator < Nombre; Iterator++)
+				{
+					list1.at(Iterator);
 
-					ISession* inSession = new Session(list1[Iterator].cookies);
+					if (list1[Iterator].MaxAgeTtl - time1 <= 0){
 
-					Pt_Directory->LogOut(inSession);
+						ISession* inSession = new Session(list1[Iterator].cookies);
 
-					delete inSession;
+						Pt_Directory->LogOut(inSession);
 
-					time_t OperationTime = time(0);
+						delete inSession;
 
-					Affiche();
-
-					SaveOperation(OperationTime, "Logout", list1[Iterator].getWASID(), list1[Iterator].IdUser, list1[Iterator].Username);
-
-					list1.erase(list1.begin() + Iterator);
+						time_t OperationTime = time(0);
 
 
-					if ((Iterator != 0) || (Iterator == 0))
+						SaveOperation(OperationTime, "Logout", list1[Iterator].getWASID(), list1[Iterator].IdUser, list1[Iterator].Username);
+
+
+						list1.erase(list1.begin() + Iterator);
+
+
+						if (Iterator == 0)
+						{
+		
+						}
+						else if (Iterator != 0)
+						{
+							Iterator--;
+						}
+
+						Nombre = Nombre - 1;
+					}
+					else
 					{
-						Iterator--;
+
+						list1[Iterator].MaxAgeTtl = list1[Iterator].MaxAgeTtl - time1;
+
+
 					}
 
-					Nombre = Nombre - 1;
 				}
-				else
-				{
-
-
-					list1[Iterator].MaxAgeTtl = list1[Iterator].MaxAgeTtl - time1;
-
-
-				}
-
 			}
-		}
+			
 
 	}
 	

@@ -119,8 +119,6 @@ if (args.Length() == 2)
 
 				  Directorywrap* Obj_Directory_Wrap = new Directorywrap();
 
-				
-
 				  IDirectory *Pt_Directory = new Directory(Url_Wakanda, Url_Directory);
 
 				  
